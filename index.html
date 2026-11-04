@@ -160,12 +160,26 @@ body.locked main>section,body.locked nav{display:none!important}
 .tm{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding:8px 0;gap:8px;font-size:14px;word-break:break-all}
 .armed{background:var(--bad)!important;color:#fff!important;border-color:var(--bad)!important}
 #toast{white-space:normal;max-width:90vw;text-align:center}
+#mot{display:flex;gap:8px;align-items:flex-start;margin:-4px 2px 14px;padding:0;background:none;border:0;width:100%;text-align:left;color:var(--ink);font:600 15px/1.35 Figtree,system-ui,sans-serif;cursor:pointer;animation:motf 5s ease-in-out 1.6s infinite}
+#mot .ic{flex:none;font-size:17px;animation:motsp 2.4s ease-in-out infinite}
+#mot .w{display:inline-block;opacity:0;transform:translateY(8px);animation:motw .55s cubic-bezier(.2,.8,.2,1) forwards}
+#mot .w.g{background:linear-gradient(90deg,var(--acc),var(--glow),var(--acc));background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:motw .55s cubic-bezier(.2,.8,.2,1) forwards,shine 3s linear infinite}
+@keyframes motw{to{opacity:1;transform:none}}
+@keyframes motf{0%,100%{transform:none}50%{transform:translateY(-2px)}}
+@keyframes motsp{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.25) rotate(15deg)}}
+@media (prefers-reduced-motion:reduce){#mot .w{opacity:1;transform:none}}
+.hw{font-size:13px;margin-top:6px;color:var(--bad);font-weight:600}
+.hw.ok{color:var(--ok);font-weight:400}
+#save:disabled{opacity:.6}
+.nt code{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:3px 7px;font-size:14px;word-break:break-all}
+.nt ol{margin:8px 0;padding-left:20px;font-size:14px}.nt li{margin:4px 0}
 .hide{display:none}
 </style>
 </head>
 <body class="locked">
 <main>
 <h1>Glass<span>Studio</span>CR <span id="who" class="hide"><span id="whoe"></span><button class="alt sm" id="out">Salir</button></span></h1>
+<button id="mot" type="button" aria-label="Mensaje del día. Tocá para ver otro"></button>
 <div id="lk-login" class="card lk hide">
   <h2>Entrar</h2><div class="m">Agenda del equipo de GlassStudioCR. Solo entran los correos autorizados.</div>
   <div id="gwrap"><div class="row"><button class="gbtn" id="lg"><svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M45.1 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h11.8c-.5 2.8-2.1 5.1-4.4 6.7v5.5h7.1c4.2-3.8 6.6-9.5 6.6-16.2z"/><path fill="#34A853" d="M24 46c5.9 0 10.9-2 14.5-5.3l-7.1-5.5c-2 1.3-4.5 2.1-7.4 2.1-5.7 0-10.6-3.8-12.3-9H4.4v5.7C8 41.1 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.7 28.3c-.4-1.3-.7-2.8-.7-4.3s.3-3 .7-4.3V14H4.4C2.9 17 2 20.4 2 24s.9 7 2.4 10z"/><path fill="#EA4335" d="M24 10.7c3.2 0 6.1 1.1 8.4 3.3l6.3-6.3C34.9 4.2 29.9 2 24 2 15.4 2 8 6.9 4.4 14l7.3 5.7c1.7-5.2 6.6-9 12.3-9z"/></svg>Entrar con Google</button></div>
@@ -201,6 +215,7 @@ body.locked main>section,body.locked nav{display:none!important}
     <label for="cli">Cliente</label><input id="cli" list="cl" autocomplete="off"><datalist id="cl"></datalist>
     <div class="two"><div><label for="tel">WhatsApp</label><input id="tel" type="tel"></div><div><label for="veh">Vehículo</label><input id="veh"></div></div>
     <div class="two"><div><label for="fecha">Día</label><input id="fecha" type="date"></div><div><label for="hora">Hora</label><input id="hora" type="time" value="09:00"></div></div>
+    <div class="hw hide" id="hw" role="status"></div>
     <label for="ubic">Ubicación del cliente</label><div class="row" style="margin-top:0"><input id="ubic" placeholder="Pegá el enlace o las coordenadas" autocomplete="off"><button class="alt sm" id="ubp" type="button">Pegar</button></div><div class="m" id="ubm"></div><div id="ubprev"></div>
     <label for="note">Notas (detalles)</label><input id="note">
     <div style="margin-top:10px" id="svcs"></div>
@@ -230,6 +245,7 @@ body.locked main>section,body.locked nav{display:none!important}
     <div class="row"><input id="tme" type="email" placeholder="correo@gmail.com" autocapitalize="off" aria-label="Correo a autorizar"><button class="sm" id="tma" style="padding:10px 14px">Autorizar</button></div>
     <div id="tml" style="margin-top:6px"></div>
     <div class="row"><button class="alt" id="tms">Enviar enlace de la app por WhatsApp</button></div></div>
+  <div class="card nt" id="ntcard"><h2>Avisos al celular</h2><div class="m">Cuando alguien del equipo agenda o cambia una cita, les llega un aviso a los 3, aunque la app esté cerrada. Funciona en Android y en iPhone con la app gratis <b>ntfy</b>.</div><div id="ntb"></div></div>
   <div class="card"><h2>Respaldo</h2><div class="m">Pegá aquí el respaldo de tu app (APK o la versión anterior) para pasar tus citas, clientes y gastos. Solo se agregan, no se borra nada. También podés crear un respaldo de todo lo que hay aquí.</div><textarea id="bt" rows="3" aria-label="Respaldo"></textarea><div class="row"><button class="alt" id="bk">Crear respaldo</button><button class="alt" id="rs">Importar</button></div></div>
 </section>
 </main>
@@ -298,14 +314,61 @@ function calc(){var t=Math.max(0,picked().reduce(function(a,x){return a+x.p},0)-
 $("desc").oninput=calc;$("ota").oninput=calc;
 $("cli").onchange=function(){setTimeout(fillUbic,0);var c=S.jobs.find(function(j){return j.cli.toLowerCase()===$("cli").value.toLowerCase()});if(c){if(!$("tel").value)$("tel").value=c.tel||"";if(!$("veh").value)$("veh").value=c.veh||""}};
 function clients(){var u={};S.jobs.forEach(function(j){u[j.cli]=1});$("cl").innerHTML=Object.keys(u).map(function(n){return '<option value="'+esc(n)+'">'}).join("")}
+function clash(f,t,id,L){if(!t)return null;return (L||S.jobs).find(function(j){return j.date===f&&j.time===t&&j.id!=id})||null}
+function clashMsg(c){return "Ya hay una cita a las "+fmtT(c.time)+" ese día ("+c.cli+(c.by?", la agendó "+whoN(c.by):"")+"). Escogé otra hora."}
+function updClash(){var f=$("fecha").value||today,t=$("hora").value,c=clash(f,t,EID),w=$("hw");
+  var L=S.jobs.filter(function(j){return j.date===f&&j.time&&j.id!=EID}).sort(byT);
+  if(c){w.textContent="⚠ "+clashMsg(c);w.className="hw"}else if(L.length){w.textContent="Horas ocupadas ese día: "+L.map(function(j){return fmtT(j.time)}).join(", ");w.className="hw ok"}else{w.className="hw hide"}}
+$("fecha").addEventListener("input",updClash);$("hora").addEventListener("input",updClash);
+function whoN(e){e=(e||"").split("@")[0].replace(/[._\d]+/g," ").trim().split(" ")[0]||"alguien";return e.charAt(0).toUpperCase()+e.slice(1)}
+function myEmail(){return (AUTH&&AUTH.currentUser&&AUTH.currentUser.email||"").toLowerCase()}
+function fmtD(f){var d=pd(f);return DN[d.getDay()]+" "+d.getDate()+" "+MN[d.getMonth()]}
 $("save").onclick=function(){
   var it=picked();if(!$("cli").value){toast("Escribí el nombre del cliente.");return}
   if(!it.length){toast("Marcá al menos un servicio.");return}
-  var f=$("fecha").value||today;
-  var nj={cli:$("cli").value,tel:$("tel").value,veh:$("veh").value,items:it.map(function(x){return x.n}),lines:it,disc:+$("desc").value||0,total:calc(),date:f,time:$("hora").value,note:$("note").value,ubic:$("ubic").value};if(!DB){toast("Sin conexión con el sistema compartido.");return}if(EID){nj.id=EID;var oj=S.jobs.find(function(x){return x.id==EID});nj.st=oj?oj.st:"Pendiente"}else{nj.id=Date.now();nj.st="Pendiente"}DB.doc("jobs/"+nj.id).set(nj).catch(dberr);if(!EID)S.jobs.push(nj);
-  persist();toast(EID?"Cambios guardados ✓":"Cita agendada ✓");resetForm();
-  SERV.forEach(function(s){$("c-"+s.id).checked=false});calc();sel=f;wOff=Math.round((monday(pd(f))-monday(new Date()))/6048e5);show("ag");
+  if(!DB){toast("Sin conexión con el sistema compartido.");return}
+  var f=$("fecha").value||today,t=$("hora").value,id=EID,c=clash(f,t,id);
+  if(c){toast(clashMsg(c));updClash();return}
+  var b=$("save");b.disabled=true;
+  /* Revisa contra el servidor por si alguien acaba de agendar esa hora */
+  var chk=t?DB.collection("jobs").where("date","==",f).get({source:"server"}).then(function(sn){return sn.docs.map(function(d){return d.data()})},function(){return null}):Promise.resolve(null);
+  chk.then(function(L){b.disabled=false;if(EID!==id)return;
+    var c2=L&&clash(f,t,id,L);if(c2){toast(clashMsg(c2));updClash();return}
+    var nj={cli:$("cli").value,tel:$("tel").value,veh:$("veh").value,items:it.map(function(x){return x.n}),lines:it,disc:+$("desc").value||0,total:calc(),date:f,time:t,note:$("note").value,ubic:$("ubic").value},oj=null;
+    if(EID){nj.id=EID;oj=S.jobs.find(function(x){return x.id==EID});nj.st=oj?oj.st:"Pendiente";nj.by=oj&&oj.by||myEmail()}else{nj.id=Date.now();nj.st="Pendiente";nj.by=myEmail()}
+    DB.doc("jobs/"+nj.id).set(nj).catch(dberr);if(!EID)S.jobs.push(nj);
+    var cu=fmtD(f)+(t?" · "+fmtT(t):"");
+    if(!oj)notify("Nueva cita · "+nj.cli,cu+"\n"+nj.items.join(", ")+"\nLa agendó "+whoN(myEmail()));
+    else if(oj.date!==f||oj.time!==t)notify("Cita cambiada · "+nj.cli,"Ahora: "+cu+" (antes "+fmtD(oj.date)+(oj.time?" · "+fmtT(oj.time):"")+")\nLa cambió "+whoN(myEmail()));
+    persist();toast(oj?"Cambios guardados ✓":"Cita agendada ✓");resetForm();$("hw").className="hw hide";
+    SERV.forEach(function(s){$("c-"+s.id).checked=false});calc();sel=f;wOff=Math.round((monday(pd(f))-monday(new Date()))/6048e5);show("ag")});
 };
+
+/* AVISOS (ntfy) */
+var NTFY="",NTURL=location.origin+location.pathname;
+function notify(title,msg){if(!NTFY)return;try{fetch("https://ntfy.sh/",{method:"POST",body:JSON.stringify({topic:NTFY,title:title,message:msg,tags:["calendar"],click:NTURL})}).catch(function(){})}catch(e){}}
+function ntSteps(){return "Para recibir los avisos de citas de GlassStudioCR:\n1. Instalá la app gratis ntfy\n   Android: https://play.google.com/store/apps/details?id=io.heckel.ntfy\n   iPhone: https://apps.apple.com/app/ntfy/id1625396347\n2. Abrila, tocá + (Suscribirse a un tema) y escribí exactamente:\n"+NTFY+"\n3. Permití las notificaciones. ¡Listo!"}
+function renderNtfy(){var el=$("ntb");if(!el)return;
+  if(!NTFY){el.innerHTML=BOSS?'<div class="row"><button id="nton">Activar avisos</button></div>':'<div class="m" style="margin-top:8px">Pedile a Esteban que active los avisos.</div>';
+    if($("nton"))$("nton").onclick=function(){ntNew()};return}
+  el.innerHTML='<ol><li>Instalá <b>ntfy</b>: <a href="https://play.google.com/store/apps/details?id=io.heckel.ntfy" target="_blank" rel="noopener">Android</a> · <a href="https://apps.apple.com/app/ntfy/id1625396347" target="_blank" rel="noopener">iPhone</a></li><li>Abrila, tocá <b>+</b> y escribí este canal:<br><code>'+esc(NTFY)+'</code></li><li>Permití las notificaciones.</li></ol><div class="m">Mantenelo en secreto: quien tenga el canal ve los avisos.</div>'+
+   '<div class="row" style="flex-wrap:wrap"><button class="alt sm" id="ntc">Copiar canal</button><button class="alt sm" id="ntw">Mandar pasos por WhatsApp</button><button class="alt sm" id="ntt">Probar aviso</button>'+(BOSS?'<button class="alt sm" id="ntr">Cambiar canal</button>':'')+'</div>';
+  $("ntc").onclick=function(){(navigator.clipboard?navigator.clipboard.writeText(NTFY):Promise.reject()).then(function(){toast("Canal copiado ✓")},function(){toast(NTFY)})};
+  $("ntw").onclick=function(){window.open("https://wa.me/?text="+encodeURIComponent(ntSteps()),"_blank")};
+  $("ntt").onclick=function(){notify("Prueba de GlassStudioCR","Si ves esto, los avisos funcionan ✓ ("+whoN(myEmail())+")");toast("Aviso de prueba enviado")};
+  if($("ntr"))$("ntr").onclick=function(){var b=this;ask(b,ntNew)}}
+function ntNew(){var a=new Uint8Array(12),c="abcdefghijkmnpqrstuvwxyz23456789",t="glassstudiocr-";crypto.getRandomValues(a);for(var i=0;i<a.length;i++)t+=c[a[i]%c.length];
+  DB.doc("settings/notify").set({topic:t,by:myEmail(),at:Date.now()}).then(function(){toast("Avisos activados ✓")}).catch(dberr)}
+
+/* MENSAJE DEL DIA */
+var MOT=["Cada cliente feliz es tu mejor publicidad.", "Hoy es un buen día para dejar todo brillando.", "La constancia le gana al talento cuando el talento no trabaja.", "Un parabrisas claro, un cliente seguro. Eso hacés vos.", "No se trata de hacerlo rápido, sino de hacerlo bien.", "Lo que hoy pulís con paciencia, mañana te lo pagan con confianza.", "El éxito es la suma de pequeños trabajos bien hechos.", "Hacelo con ganas o no lo hagás: hoy toca con ganas.", "Cada cita es una oportunidad de ganarte un cliente para siempre.", "Tu trabajo devuelve la claridad. Que tu día también la tenga.", "Los grandes negocios empezaron justo donde estás vos.", "Sonreí: la primera impresión también se pule.", "Disciplina hoy, libertad mañana.", "Hacé hoy lo que tu yo del futuro te va a agradecer.", "Nadie recuerda lo fácil, todos recuerdan lo bien hecho.", "Un día a la vez, un foco a la vez.", "El cansancio pasa, el orgullo del trabajo bien hecho se queda.", "Somos equipo: lo que uno empuja, los tres lo logramos.", "La calidad nunca es un accidente.", "Que hoy cada carro salga mejor de lo que llegó.", "Tu actitud vale tanto como tu técnica.", "Si fuera fácil, cualquiera lo haría. Por eso lo hacés vos.", "Cada detalle cuenta. Vos sos el de los detalles.", "Las metas grandes se logran con días pequeños bien aprovechados.", "Hoy no es un día más, es un día para crecer.", "El cliente no compra un pulido, compra la tranquilidad de ver bien.", "Trabajá en silencio y dejá que el brillo haga el ruido.", "Vamos con todo: el día ya empezó y es nuestro.", "La puntualidad también es parte del servicio.", "Lo que hacés con pasión se nota a simple vista.", "Hoy sembrás, mañana cosechás clientes fieles.", "Pura vida se vive trabajando con alegría.", "Ningún parabrisas es tan opaco como para no brillar otra vez. Vos tampoco.", "Un buen equipo convierte días duros en días productivos.", "Empezá donde estás, usá lo que tenés, hacé lo que podés.", "El esfuerzo de hoy es el negocio que tendrás mañana.", "Cuidá a cada cliente como si fuera el primero.", "La excelencia es un hábito, no un acto.", "Hoy es perfecto para superar lo de ayer.", "Cuando todo se ponga pesado, acordate por qué empezaste.", "No cuentes los días, hacé que los días cuenten.", "El que persevera, alcanza.", "Que tu trabajo hable por vos.", "Cada cliente que vuelve es una medalla.", "Mente positiva, manos firmes, resultado brillante.", "Los sueños no funcionan si vos no trabajás.", "Un foco opaco es solo un foco esperando por vos.", "La confianza del cliente se gana con cada detalle.", "Hoy dale ese extra que nadie más da.", "El negocio crece cuando el equipo crece.", "Ser constante es más importante que ser perfecto.", "Llegá con energía, salí con orgullo.", "Lo que hacemos con cariño siempre se nota.", "Las oportunidades llegan a los que están listos. Estate listo.", "Hoy toca demostrar por qué nos escogen.", "Lo mejor de GlassStudioCR todavía está por venir.", "No hay atajo para el trabajo bien hecho.", "Cada día es una página nueva: escribila bonita.", "Un cliente satisfecho trae tres más.", "El brillo de afuera empieza por la actitud de adentro.", "Paso a paso también se llega lejos.", "Hacé que cada cita valga la pena.", "Las ganas mueven más que la suerte.", "Somos pocos, pero somos buenos.", "Atendé con respeto, trabajá con calidad, cobrá con orgullo.", "Si hoy cuesta, mañana va a valer la pena.", "Tu mejor competencia sos vos de ayer.", "Dale con todo, que el esfuerzo siempre paga.", "El cliente ve el resultado; vos sabés todo el esfuerzo detrás. Sentite orgulloso.", "Detrás de un gran resultado hay un gran equipo.", "Que nada te quite las ganas de hacerlo bien.", "Hoy es un gran día para ganarte una reseña de cinco estrellas.", "Creé en lo que hacés y los demás también lo van a creer.", "Hacé lo de siempre, pero mejor que siempre.", "El orden y la puntualidad también venden.", "Una buena actitud abre más puertas que cualquier anuncio.", "Crecer duele un poquito, pero quedarse igual duele más.", "Hoy cada minuto cuenta: aprovechalo.", "Somos los que devuelven la claridad. Qué gran trabajo.", "Los clientes no olvidan cómo los hiciste sentir.", "Si te cansás, descansá; pero no te rindás.", "El éxito no es casualidad, es trabajo, paciencia y equipo.", "Hacé las cosas tan bien que te recomienden sin pedirlo.", "Cada carro es una carta de presentación.", "La lluvia viene, y tus clientes la van a ver pasar sin problema.", "Un día productivo empieza con la primera cita bien hecha.", "Celebrá los logros pequeños: construyen los grandes.", "Hoy elegí la actitud de campeón.", "Un equipo unido no tiene días malos, tiene días de aprendizaje.", "El talento te abre la puerta; la disciplina te mantiene adentro.", "Nunca subestimés el poder de un trabajo impecable.", "Vos ponés el esfuerzo, el brillo pone el resto.", "Hoy hacelo con calma, con cuidado y con cariño.", "Lo que vale la pena toma tiempo. Seguí.", "Cada nueva cita es un voto de confianza en vos.", "La meta del mes se gana un día a la vez.", "Trabajá duro, sé amable y cosas buenas van a pasar.", "El futuro de este negocio se construye con lo que hagás hoy.", "Gracias por ser parte de este equipo. Hoy brillamos juntos.", "Claridad en el vidrio, claridad en la mente. ¡A darle!"];
+var MOTI=null;
+function dayNum(){var n=new Date();return Math.floor((Date.UTC(n.getFullYear(),n.getMonth(),n.getDate()))/864e5)}
+function showMot(i){MOTI=((i%MOT.length)+MOT.length)%MOT.length;var w=MOT[MOTI].split(" "),gi=w.length>3?Math.floor(w.length/2):-1;
+  $("mot").innerHTML='<span class="ic" aria-hidden="true">✨</span><span>'+w.map(function(x,k){return '<span class="w'+(k===gi||k===gi+1?' g':'')+'" style="animation-delay:'+(k*90)+'ms'+(k===gi||k===gi+1?','+(k*90)+'ms':'')+'">'+esc(x)+'</span>'}).join(" ")+'</span>'}
+showMot(dayNum()*37);
+$("mot").onclick=function(){showMot(MOTI+1)};
+setInterval(function(){var d=dayNum()*37%MOT.length;if(MOT_D!==d){MOT_D=d;showMot(d)}},60000);var MOT_D=dayNum()*37%MOT.length;
 
 /* NUMEROS */
 function range(p,off){var n=new Date();
@@ -380,8 +443,9 @@ function ask(b,fn){if(b.dataset.armed){clearTimeout(b._t);delete b.dataset.armed
   b._o=b.textContent;b.dataset.armed="1";b.textContent="¿Seguro? Tocá otra vez";b.classList.add("armed");b._t=setTimeout(function(){delete b.dataset.armed;b.textContent=b._o;b.classList.remove("armed")},4000)}
 function stopSubs(){SUBS.forEach(function(f){try{f()}catch(e){}});SUBS=[];DB=null}
 function startSubs(u){DB=firebase.firestore();var first=true;
-  SUBS.push(DB.collection("jobs").onSnapshot(function(sn){S.jobs=sn.docs.map(function(d){return d.data()});fix();if(first){first=false;lockShow(null);show(CUR==="num"&&!OWN?"ag":CUR)}else refresh()},function(e){if(e&&e.code==="permission-denied"){$("ne").textContent=u.email;lockShow("noauth")}else{lockShow(null)}}));
+  SUBS.push(DB.collection("jobs").onSnapshot(function(sn){S.jobs=sn.docs.map(function(d){return d.data()});fix();if(!first){var me=myEmail();sn.docChanges().forEach(function(ch){var j=ch.doc.data();if(ch.type==="added"&&!ch.doc.metadata.hasPendingWrites&&j.by&&j.by!==me)toast("🔔 "+whoN(j.by)+" agendó a "+j.cli+" · "+fmtD(j.date)+(j.time?" "+fmtT(j.time):""))})}if(CUR==="new")updClash();if(first){first=false;lockShow(null);show(CUR==="num"&&!OWN?"ag":CUR)}else refresh()},function(e){if(e&&e.code==="permission-denied"){$("ne").textContent=u.email;lockShow("noauth")}else{lockShow(null)}}));
   SUBS.push(DB.doc("settings/goal").onSnapshot(function(sn){S.goal=sn.exists?sn.data().v:0;if(CUR==="num"&&OWN)renderNum()},function(){}));
+  SUBS.push(DB.doc("settings/notify").onSnapshot(function(sn){NTFY=sn.exists?(sn.data().topic||""):"";renderNtfy()},function(){renderNtfy()}));
   SUBS.push(DB.doc("settings/prices").onSnapshot(function(sn){S.prices=sn.exists?sn.data():{};applyPrices()},function(){}));
   if(OWN){SUBS.push(DB.collection("exp").onSnapshot(function(sn){S.exp=sn.docs.map(function(d){return d.data()});if(CUR==="num")renderNum()},function(){}));
     SUBS.push(DB.collection("team").onSnapshot(function(sn){TEAM=sn.docs.map(function(d){return d.id});renderTeam()},function(){}))}}
@@ -507,7 +571,7 @@ var _rn=renderNum;renderNum=function(){_rn();animNums($("stats"));animNums($("cm
 setInterval(function(){if(!$("v-ag").classList.contains("hide"))renderHero()},30000);
 var TABS=["ag","new","cli","num"];
 function show(v){if(v==="ag")LASTK=null;if(v==="num"&&!OWN)v="ag";CUR=v;TABS.forEach(function(k){$("v-"+k).classList.toggle("hide",k!==v);$("t-"+k).setAttribute("aria-selected",k===v)});
-  if(v==="ag")renderAg();if(v==="new"){$("fecha").value=sel;clients()}if(v==="cli")renderCli();if(v==="num"){$("gf").value=today;renderNum()}window.scrollTo(0,0)}
+  if(v==="ag")renderAg();if(v==="new"){$("fecha").value=sel;clients();updClash()}if(v==="cli")renderCli();if(v==="num"){$("gf").value=today;renderNum()}window.scrollTo(0,0)}
 TABS.forEach(function(k){$("t-"+k).onclick=function(){if(k==="new"&&EID)resetForm();show(k)}});
 buildSvcs();calc();show("ag");initDb();
 </script>
