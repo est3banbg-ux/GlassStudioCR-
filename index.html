@@ -999,7 +999,7 @@ function bindSetup(){if(!$("mcon"))return;
 function renderAds(){var el=$("adb");if(!el)return;
   if(!META||!META.token||ADSET){el.innerHTML=BOSS?adSetupHtml():'<div class="m">Esteban todavía no conectó la cuenta de anuncios.</div>';bindSetup();return}
   var P=[["today","Hoy"],["last_7d","7 días"],["this_month","Mes"],["last_30d","30 días"]];
-  var h='<div class="seg" id="aseg" style="margin:0 0 10px">'+P.map(function(x){return '<button data-ap="'+x[0]+'" aria-pressed="'+(x[0]===AP)+'">'+x[1]+'</button>'}).join("")+'</div>';
+  var h='<div class="seg" id="aseg" style="margin:0 0 10px">'+P.map(function(x){return '<button style="font-size:13px;padding:10px 4px" data-ap="'+x[0]+'" aria-pressed="'+(x[0]===AP)+'">'+x[1]+'</button>'}).join("")+'</div>';
   if(ADE)h+='<div class="ial b">'+esc(ADE)+'</div>';
   if(ADC.at&&ADC.p===AP){var s=ADC.sum||{},cv=pickConv(s),sp=+s.spend||0,td=+(ADC.today&&ADC.today.spend)||0;
     var avg=ADC.days.reduce(function(a,x){return a+(+x.spend||0)},0)/30;
@@ -1015,7 +1015,7 @@ function renderAds(){var el=$("adb");if(!el)return;
       (!S.jobs.some(function(j){return j.src})?'<div class="m">Para medir esto, al agendar elegí «¿Cómo nos conoció?» en Nueva cita.</div>':'')+'</div>';
     if(ADC.days.length){var D=[],mx=0,i;for(i=30;i>=1;i--){var k=ymd(addD(new Date(),-i)),row=ADC.days.find(function(x){return x.date_start===k});D.push([k,row?+row.spend:0])}
       D.forEach(function(x){mx=Math.max(mx,x[1])});var W=300,H=70,bw=W/D.length,sv="";
-      D.forEach(function(x,i){var hh=mx?Math.max(1,x[1]/mx*H):1;sv+='<rect class="br" x="'+(i*bw+bw*.15)+'" y="'+(H-hh)+'" width="'+(bw*.7)+'" height="'+hh+'" rx="1.5" style="fill:var(--glow);animation-delay:'+(i*15)+'ms"/>';if(i%7===0)sv+='<text x="'+(i*bw+bw/2)+'" y="'+(H+11)+'" text-anchor="middle">'+pd(x[0]).getDate()+' '+MN[pd(x[0]).getMonth()]+'</text>'});
+      D.forEach(function(x,i){var hh=mx?Math.max(1,x[1]/mx*H):1;sv+='<rect class="br" x="'+(i*bw+bw*.15)+'" y="'+(H-hh)+'" width="'+(bw*.7)+'" height="'+hh+'" rx="1.5" style="fill:var(--glow);animation-delay:'+(i*15)+'ms"/>';if(i%7===3)sv+='<text x="'+(i*bw+bw/2)+'" y="'+(H+11)+'" text-anchor="middle">'+pd(x[0]).getDate()+' '+MN[pd(x[0]).getMonth()]+'</text>'});
       if(avg&&mx){var ay=H-avg/mx*H;sv+='<line x1="0" x2="'+W+'" y1="'+ay+'" y2="'+ay+'" stroke="var(--acc)" stroke-dasharray="4 4" stroke-width="1.5"/>'}
       h+='<div class="m" style="margin-top:12px">Gasto por día, últimos 30 días (la línea es el promedio)</div><svg viewBox="0 0 '+W+' '+(H+14)+'" width="100%" role="img" aria-label="Gasto diario en anuncios">'+sv+'</svg>'}
     var C=ADC.camp.map(function(c){var v=pickConv(c);return {n:c.campaign_name,sp:+c.spend||0,v:v,ctr:+c.ctr||0,fr:+c.frequency||0}}).filter(function(c){return c.sp>0}).sort(function(a,b){return (a.v?a.v.cost:1e12)-(b.v?b.v.cost:1e12)});
@@ -1025,7 +1025,7 @@ function renderAds(){var el=$("adb");if(!el)return;
     if(sp&&!cv)T.push(["w","Este periodo gastaste pero no hubo resultados. Revisá que el objetivo de la campaña sea Mensajes o Clientes potenciales."]);
     if(+s.ctr&&+s.ctr<1)T.push(["w","Pocas personas tocan el anuncio (CTR "+fmt1(+s.ctr)+"%). Probá con un video corto de antes y después de un pulido."]);
     if(+s.frequency>3)T.push(["w","La misma gente ya vio el anuncio "+fmt1(+s.frequency)+" veces. Cambiá la foto o el video, o ampliá un poco la zona."]);
-    if(wc&&C[0].v&&wc.v.cost>C[0].v.cost*1.5)T.push(["w","«"+esc(wc.n)+"» te sale "+Math.round(wc.v.cost/C[0].v.cost*10)/10+" veces más caro por resultado que «"+esc(C[0].n)+"». Pasá parte de ese dinero a la mejor."]);
+    if(wc&&C[0].v&&wc.v.cost>C[0].v.cost*1.5)T.push(["w","«"+esc(wc.n)+"» te sale "+fmt1(wc.v.cost/C[0].v.cost)+" veces más caro por resultado que «"+esc(C[0].n)+"». Pasá parte de ese dinero a la mejor."]);
     if(cv&&nw.length&&cv.n>nw.length*4)T.push(["i","Llegaron "+cv.n+" "+cv.lab+" pero solo "+nw.length+" "+(nw.length===1?"cliente nuevo":"clientes nuevos")+". Responder rápido y con precio claro ayuda a cerrar más."]);
     if(avg&&td>avg*1.5)T.push(["w","Hoy llevás "+money(td)+", más de lo normal ("+money(avg)+" por día)."]);
     if(T.length)h+='<div style="margin-top:10px"><div class="m">Cómo mejorar</div>'+T.map(function(x){return '<div class="ial '+x[0]+'">'+x[1]+'</div>'}).join("")+'</div>';
