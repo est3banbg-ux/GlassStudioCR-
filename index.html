@@ -1135,10 +1135,11 @@ function money(n){n=+n||0;var c=adCur();if(c==="CRC")return crc(n);return (c==="
 function actId(m){return "act_"+String((m||META).act||"").replace(/\D/g,"")}
 function gget(tok,path,params){var q=new URLSearchParams(Object.assign({access_token:tok},params||{}));
   return fetch(GV+path+"?"+q.toString()).then(function(r){return r.json()},function(){throw {message:"net"}}).then(function(j){if(j&&j.error)throw j.error;return j})}
+function adDet(e){var m=((e&&(e.error_user_msg||e.message))||"").toString().replace(/EAA[\w-]+/g,"[token]").slice(0,160);return " (Detalle de Meta: código "+((e&&e.code)||"?")+(e&&e.error_subcode?"/"+e.error_subcode:"")+(m?" · "+m:"")+")"}
 function adErr(e){var c=e&&e.code;if(e&&e.message==="net")return "No me pude conectar con Meta. Revisá tu internet.";
   if(c===190)return "El permiso de Meta venció o no es válido. Generá uno nuevo y pegalo otra vez.";
   if(c===100||c===803)return "No encontré esa cuenta publicitaria. Revisá el número de la cuenta.";
-  if(c===200||c===10||c===272||c===274||c===294)return "El permiso no tiene acceso a esa cuenta. Revisá que le asignaste la cuenta publicitaria al usuario del sistema.";
+  if(c===200||c===10||c===272||c===274||c===294)return "El permiso no tiene acceso a esa cuenta. Revisá que le asignaste la cuenta publicitaria al usuario del sistema."+adDet(e);
   if(c===17||c===4||c===613||c===80000||c===80004)return "Meta pidió esperar un poco. Probá de nuevo en unos minutos.";
   return "Meta respondió: "+((e&&e.message)||e)}
 function pickConv(row){var A=(row&&row.actions)||[],C=(row&&row.cost_per_action_type)||[];
