@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Agendá tu pulido a domicilio · GlassStudioCR</title>
-<meta name="description" content="Pulido de parabrisas y focos a domicilio, gratis en toda la GAM. Elegí tu día y hora en 1 minuto.">
+<meta name="description" content="Pulido de parabrisas y focos a domicilio, gratis en toda la GAM. Promo: agendá aquí tu parabrisas y te regalamos el vidrio trasero y los retrovisores.">
 <meta property="og:title" content="Agendá tu pulido a domicilio · GlassStudioCR">
-<meta property="og:description" content="Parabrisas y focos como nuevos sin salir de casa. Domicilio gratis en San José, Heredia y Alajuela. Elegí tu hora en 1 minuto.">
+<meta property="og:description" content="🎁 Agendá aquí tu pulido de parabrisas y te regalamos el vidrio trasero y los retrovisores. Domicilio gratis en San José, Heredia y Alajuela.">
 <meta property="og:image" content="https://citas.glassstudiocr.com/reservar/og.jpg">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta property="og:url" content="https://citas.glassstudiocr.com/reservar/">
@@ -92,6 +92,14 @@ body.book #wiz{display:block}
 .svc .pr{font:800 17px "Bricolage Grotesque",sans-serif;white-space:nowrap}
 .tag{display:inline-block;font-size:11px;font-weight:700;background:var(--glow);color:#3b2a00;border-radius:99px;padding:1px 8px;margin-left:4px;vertical-align:2px}
 .hint{color:var(--mute);font-size:13px;margin-top:10px}
+/* PROMO */
+.promo{display:flex;gap:12px;align-items:center;background:linear-gradient(135deg,#ffe08a,#f2b134);color:#3b2a00;border-radius:18px;padding:13px 15px;margin:0 0 16px;box-shadow:0 8px 22px rgba(0,0,0,.22)}
+.promo i{font-style:normal;font-size:30px;flex:none;animation:wig 2.4s ease-in-out infinite}
+@keyframes wig{0%,80%,100%{transform:none}85%{transform:rotate(-12deg)}90%{transform:rotate(10deg)}95%{transform:rotate(-6deg)}}
+.promo b{display:block;font:800 16px/1.2 "Bricolage Grotesque",sans-serif}
+.promo small{display:block;font-size:13px;line-height:1.3;margin-top:2px;opacity:.85}
+.gift{display:block;margin-top:5px;font-size:12px;font-weight:700;color:#7a5200;background:color-mix(in srgb,var(--glow) 28%,transparent);border-radius:8px;padding:3px 8px;width:fit-content}
+@media (prefers-color-scheme:dark){.gift{color:#ffe08a}}
 .days{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
 .days::-webkit-scrollbar{display:none}
 .day{flex:none;width:66px;scroll-snap-align:start;background:var(--card);border:2px solid var(--line);border-radius:16px;padding:9px 0;text-align:center}
@@ -163,6 +171,7 @@ footer{color:var(--mute);font-size:12px;text-align:center;margin:26px 0 10px}
     <div class="brand"><svg width="34" height="34" viewBox="0 0 48 48" aria-hidden="true"><path d="M9 14Q24 8 39 14L44 34Q24 39 4 34Z" fill="rgba(255,255,255,.18)" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/><circle cx="30" cy="25" r="7" fill="#fff"/><circle cx="30" cy="25" r="2.4" fill="#0b5d66"/><path d="M35 30l7 7" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg><span style="color:#fff">Glass<span>Studio</span>CR</span></div>
     <h1>Vidrios como nuevos, <em>sin salir de casa</em></h1>
     <p>Pulido de parabrisas y focos a domicilio. Llegamos <b>gratis</b> a cualquier punto de la GAM: San José, Heredia y Alajuela.</p>
+    <div class="promo" id="promo" hidden><i>🎁</i><span><b>Promo: agendá aquí y te regalamos el vidrio trasero y los retrovisores</b><small>Al agendar el pulido de parabrisas desde esta página. Sedán o SUV, mismo regalo.</small></span></div>
     <div class="chips"><span>🚗 Vamos donde estés</span><span>🛡️ Protección cerámica incluida</span><span>⏱️ Agendás en 1 minuto</span></div>
     <button class="cta" id="go">Agendar mi cita <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
   </div></div>
@@ -248,6 +257,11 @@ var GLASS=[{id:"pb",n:"Pulido de parabrisas + protección cerámica",s:"Lo más 
   {id:"tvc",n:"Todos los vidrios + protección cerámica",s:"Parabrisas, laterales y trasero",p:{sedan:40000,suv:40000},ic:"✨"},
   {id:"tv",n:"Todos los vidrios sin protección",s:"Solo el pulido",p:{sedan:30000,suv:30000},ic:"🪟"},
   {id:"none",n:"No necesito vidrios",s:"Solo los focos",p:{sedan:0,suv:0},ic:"—"}];
+/* PROMO: al agendar el parabrisas por esta página se regala el vidrio trasero y los retrovisores.
+   Para apagarla: PROMO.on=false, ponerle fecha final en PROMO.end ("2026-12-31"), o guardar promo:false en pub/cfg. */
+var PROMO={on:true,end:"",svc:"pb",n:"🎁 Regalo promo: vidrio trasero + retrovisores"};
+function promoOn(){return PROMO.on&&(!PROMO.end||ymd(new Date())<=PROMO.end)}
+function hasGift(){return promoOn()&&S.gl===PROMO.svc}
 var FOCOS={id:"fo",n:"Pulido de focos con polímero líquido",s:"El par, quedan transparentes",p:20000,ic:"💡"};
 var SUVRX=["rav ?4","cr-?v","hr-?v","c-?hr","prado","land ?cruiser","fortuner","rush","hilux","tacoma","tundra","4 ?runner","highlander","sequoia","sportage","sorento","seltos","sonet","tucson","santa ?fe","creta","venue","kona","palisade","x-?trail","qashqai","kicks","frontier","navara","pathfinder","montero","outlander","asx","l ?200","pajero","nativa","mu-?x","d-?max","ranger","explorer","escape","ecosport","bronco","everest","cx-?[3589]0?","bt-?50","forester","outback","xv","crosstrek","vitara","jimny","s-?cross","terios","bego","tiguan","t-?cross","t-?roc","touareg","amarok","duster","koleos","captur","oroch","trailblazer","tracker","equinox","colorado","silverado","wrangler","cherokee","compass","renegade","gladiator","x[1-7]","q[2-8]","gl[abce]","ml","rx","nx","ux","gx","lx","xc[469]0","h6","jolion","haval","korando","tivoli","rexton","actyon","musso","partner","l300","hiace","4x4","pick ?up","pickup","camioneta","suv","jeep"];
 var SEDRX=["corolla","yaris","camry","prius","etios","civic","accord","city","fit","jazz","sentra","versa","almera","march","tiida","note","elantra","accent","i10","i20","i30","grand i10","sonata","rio","picanto","k3","k5","cerato","forte","soluto","mazda ?[236]","demio","swift","alto","celerio","ciaz","dzire","baleno","mirage","lancer","attrage","jetta","golf","gol","polo","vento","virtus","spark","sail","aveo","cruze","onix","beat","focus","fiesta","logan","sandero","clase c","model 3","leaf","ioniq","sedan","sed[aá]n","hatchback"];
@@ -259,7 +273,7 @@ function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return
 function fmtH(h){return (h%12||12)+":00 "+(h<12?"am":"pm")}
 function pd(s){var p=s.split("-");return new Date(+p[0],+p[1]-1,+p[2])}
 function niceDay(s){var d=pd(s),t=ymd(new Date()),m=ymd(new Date(Date.now()+864e5));return (s===t?"hoy, ":s===m?"mañana, ":"")+DN[d.getDay()]+" "+d.getDate()+" de "+MNL[d.getMonth()]}
-try{firebase.initializeApp(FBC);DB=firebase.firestore();DB.doc("pub/cfg").get().then(function(d){if(d.exists){var x=d.data();if(x.wa)CFG.wa=String(x.wa).replace(/\D/g,"");if(x.open===false)CFG.open=false;if(Array.isArray(x.off))CFG.off=x.off}if(!CFG.open)closed()}).catch(function(){})}catch(e){}
+try{firebase.initializeApp(FBC);DB=firebase.firestore();DB.doc("pub/cfg").get().then(function(d){if(d.exists){var x=d.data();if(x.wa)CFG.wa=String(x.wa).replace(/\D/g,"");if(x.open===false)CFG.open=false;if(Array.isArray(x.off))CFG.off=x.off;if(x.promo===false){PROMO.on=false;promoUI()}}if(!CFG.open)closed()}).catch(function(){})}catch(e){}
 function closed(){$("go").outerHTML='<a class="cta" href="https://wa.me/'+CFG.wa+'?text='+encodeURIComponent("Hola GlassStudioCR, quiero agendar un pulido")+'">Escribinos por WhatsApp para agendar</a>'}
 function waUrl(t){return "https://wa.me/"+CFG.wa+"?text="+encodeURIComponent(t)}
 
@@ -292,7 +306,7 @@ function chkModel(){var g=guess(),w=$("vw");if(g&&S.vt&&g!==S.vt){var nm=$("veh"
 $("veh").addEventListener("input",function(){chkModel();upd()});
 
 /* PASO 2: servicios */
-function svcBtn(o,pr,on,attr){return '<button class="opt" '+attr+' aria-pressed="'+on+'"><span class="ic">'+o.ic+'</span><span class="tx"><b>'+o.n+(o.id==="pb"?'<span class="tag">Más pedido</span>':'')+'</b><small>'+o.s+'</small></span><span class="pr">'+(pr?crc(pr):"")+'</span></button>'}
+function svcBtn(o,pr,on,attr){return '<button class="opt" '+attr+' aria-pressed="'+on+'"><span class="ic">'+o.ic+'</span><span class="tx"><b>'+o.n+(o.id==="pb"?'<span class="tag">Más pedido</span>':'')+'</b><small>'+o.s+'</small>'+(promoOn()&&o.id===PROMO.svc?'<span class="gift">🎁 + vidrio trasero y retrovisores de regalo</span>':'')+'</span><span class="pr">'+(pr?crc(pr):"")+'</span></button>'}
 function buildSvc(){var vt=S.vt||"sedan";$("gl").innerHTML=GLASS.map(function(g){return svcBtn(g,g.p[vt],S.gl===g.id,'data-g="'+g.id+'"')}).join("");
   $("fo").innerHTML=svcBtn(FOCOS,FOCOS.p,S.fo,'id="fob"');
   Array.prototype.forEach.call(document.querySelectorAll("[data-g]"),function(b){b.onclick=function(){S.gl=b.dataset.g;buildSvc();upd()}});
@@ -331,11 +345,11 @@ $("gps").onclick=function(){if(!navigator.geolocation){$("lv").innerHTML='<div c
 ["addr","cli","tel"].forEach(function(i){$(i).addEventListener("input",function(){err("");upd()})});
 
 /* PASO 5: resumen y envío */
-function lines(){var vt=S.vt,L=[],g=GLASS.find(function(x){return x.id===S.gl});if(g&&g.id!=="none")L.push({n:g.n+(g.id==="pb"?" ("+(vt==="suv"?"SUV":"sedán")+")":""),p:g.p[vt]});if(S.fo)L.push({n:FOCOS.n,p:FOCOS.p});return L}
+function lines(){var vt=S.vt,L=[],g=GLASS.find(function(x){return x.id===S.gl});if(g&&g.id!=="none")L.push({n:g.n+(g.id==="pb"?" ("+(vt==="suv"?"SUV":"sedán")+")":""),p:g.p[vt]});if(S.fo)L.push({n:FOCOS.n,p:FOCOS.p});if(hasGift())L.push({n:PROMO.n,p:0});return L}
 function mapLink(){return S.lat!=null?"https://www.google.com/maps/search/?api=1&query="+S.lat+","+S.lng:""}
 function renderSum(){var L=lines();$("sum").innerHTML='<div><i>📅</i><span><b>'+niceDay(S.day).replace(/^./,function(c){return c.toUpperCase()})+'</b><br>'+fmtH(S.h)+' a '+fmtH(S.h+DUR)+'</span></div>'+
   '<div><i>🚗</i><span>'+esc($("veh").value.trim())+' · '+(S.vt==="suv"?"SUV o pick-up":"Sedán o hatchback")+'</span></div>'+
-  L.map(function(l){return '<div><i>✨</i><span>'+esc(l.n)+'</span><b>'+crc(l.p)+'</b></div>'}).join("")+
+  L.map(function(l){return l.p?'<div><i>✨</i><span>'+esc(l.n)+'</span><b>'+crc(l.p)+'</b></div>':'<div><i>🎁</i><span>'+esc(l.n.replace(/^🎁 /,""))+'</span><b style="color:var(--ok)">Gratis</b></div>'}).join("")+
   '<div><i>📍</i><span>'+(S.lat!=null?'Ubicación enviada'+($("addr").value.trim()?' · '+esc($("addr").value.trim()):''):esc($("addr").value.trim()))+'<br><small style="color:var(--ok);font-weight:600">Domicilio gratis en la GAM</small></span></div>'+
   '<div><i>👤</i><span>'+esc($("cli").value.trim())+' · '+telN().replace(/(\d{4})(\d{4})/,"$1 $2")+'</span></div>'+
   '<div><i>💰</i><span>Total</span><span class="tot" style="flex:none">'+crc(total())+'</span></div>'}
@@ -359,6 +373,8 @@ function done(){var t=waText();$("wa").href=waUrl(t);$("dt").innerHTML="<b>"+nic
   document.body.classList.remove("book");document.body.classList.add("ok");window.scrollTo(0,0);confetti()}
 function confetti(){if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;var C=["#0d7a85","#3fc1cd","#f2b134","#ffe08a","#1f8a4c"];
   for(var i=0;i<50;i++){var d=document.createElement("i");d.className="cf";d.style.left=Math.random()*100+"vw";d.style.background=C[i%C.length];d.style.setProperty("--dx",(Math.random()*160-80)+"px");d.style.setProperty("--r",(Math.random()*900-450)+"deg");d.style.animationDelay=Math.random()*.4+"s";document.body.appendChild(d);setTimeout(function(x){x.remove()}.bind(null,d),2400)}}
+function promoUI(){$("promo").hidden=!promoOn();buildSvc()}
+promoUI();
 upd();
 </script>
 </body>
