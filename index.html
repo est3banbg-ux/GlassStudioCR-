@@ -987,11 +987,13 @@ function adLoad(force){if(!META||!META.token||!META.act){renderAds();return}if(A
   .then(function(r){ADC={acc:r[0],sum:(r[1].data||[])[0]||{},days:r[2].data||[],camp:r[3].data||[],today:(r[4].data||[])[0]||{},at:Date.now(),p:AP};ADL=false;renderAds()},
     function(e){ADL=false;ADE=adErr(e);renderAds()})}
 function adSetupHtml(){return '<div class="m">Pegá aquí el permiso (token) de Meta y el número de tu cuenta publicitaria. Es de solo lectura: con él la app puede ver tus números, pero no puede gastar ni cambiar tus anuncios.</div>'+
-  '<label for="mtk">Permiso (token)</label><input id="mtk" type="password" autocomplete="off" autocapitalize="off" placeholder="EAA…">'+
-  '<label for="mac">Número de la cuenta publicitaria</label><input id="mac" inputmode="numeric" autocomplete="off" placeholder="Ej: 123456789012345" value="'+esc(META&&META.act||"")+'">'+
+  '<label for="mtk">Permiso (token)</label><input id="mtk" type="text" name="meta_tk" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other" placeholder="EAA…" style="font-family:monospace;font-size:13px">'+
+  '<label for="mac">Número de la cuenta publicitaria</label><input id="mac" name="meta_act" inputmode="numeric" autocomplete="off" data-lpignore="true" placeholder="Ej: 123456789012345" value="'+esc(META&&META.act||"")+'">'+
   '<div class="row"><button id="mcon">Conectar</button>'+(META&&META.token?'<button class="alt" id="mcan">Cancelar</button>':'')+'</div><div class="lmsg" id="mmsg" role="status"></div>'}
 function bindSetup(){if(!$("mcon"))return;
-  $("mcon").onclick=function(){var tk=$("mtk").value.trim(),ac=$("mac").value.replace(/\D/g,"");if(!tk||!ac){lm("mmsg","Pegá el permiso y el número de la cuenta.");return}
+  $("mcon").onclick=function(){var tk=$("mtk").value.trim(),ar=$("mac").value.trim();
+    if(/^EAA/.test(ar)&&!/^EAA/.test(tk)){var t2=ar;ar=tk;tk=t2;$("mtk").value=tk;$("mac").value=ar}
+    var ac=ar.replace(/\D/g,"");if(tk&&!/^EAA/.test(tk)){lm("mmsg","El permiso tiene que empezar con EAA. Revisá que pegaste el token de Meta y no otra cosa.");return}if(!tk||!ac){lm("mmsg","Pegá el permiso y el número de la cuenta.");return}
     lm("mmsg","Probando la conexión con Meta…",true);gget(tk,"act_"+ac,{fields:"name,currency"}).then(function(a){
       DB.doc("settings/meta").set({token:tk,act:ac,name:a.name||"",by:myEmail(),at:Date.now()}).then(function(){ADSET=false;ADC={};toast("Conectado a "+(a.name||"tu cuenta")+" ✓");confetti()}).catch(dberr)},
       function(e){lm("mmsg",adErr(e))})};
