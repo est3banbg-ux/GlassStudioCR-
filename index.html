@@ -274,6 +274,27 @@ button.danger{background:var(--bad);color:#fff}
 .chips2 button{flex:none;padding:2px 8px;font-size:12px;border-radius:99px}
 .sw{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;font-weight:600}
 .sw input{width:46px;height:26px;accent-color:var(--acc)}
+#nmd{margin-bottom:12px}
+.gsum .gt{font-size:13px;opacity:.8}.gsum .gb{font:800 30px/1.1 "Bricolage Grotesque",system-ui,sans-serif;margin:4px 0}
+.gsum .gs{font-size:14px;opacity:.9}
+.gsum .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;position:relative;z-index:1}
+.gsum .chips span{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:3px 10px;font-size:13px;font-weight:600}
+.goal-c{border-top:1px solid var(--line);padding:12px 0}
+.goal-c:first-of-type{border-top:0}
+.goal-h{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.goal-t{font-weight:700}
+.goal-v{font:800 17px "Bricolage Grotesque",system-ui,sans-serif;white-space:nowrap}
+.gbar{height:10px;border-radius:99px;background:var(--line);margin:8px 0 6px;overflow:hidden}
+.gbar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--acc),#3fc1cd);transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.gbar.ok i{background:linear-gradient(90deg,#1f8a4c,#4cc782)}.gbar.late i{background:linear-gradient(90deg,#e0a020,#f2b134)}.gbar.over i{background:linear-gradient(90deg,#b3392f,#ff8b80)}
+.gst{display:inline-block;font-size:12px;font-weight:700;border-radius:99px;padding:1px 8px;margin-right:6px;border:1px solid currentColor}
+.gst.ok{color:var(--ok)}.gst.on{color:var(--acc)}.gst.late{color:var(--glow)}.gst.over{color:var(--bad)}
+.gmeta{font-size:13px;color:var(--mute);margin-top:2px}
+.gsug{border:1px dashed var(--acc);border-radius:12px;padding:10px 12px;margin-top:8px;background:var(--bg)}
+.gsug b{display:block}.gsug .m{margin:2px 0 8px}
+.mbtn{display:flex;gap:6px;align-items:center;margin-top:6px}
+.mbtn button{flex:none;width:38px;padding:6px 0;font-size:18px;line-height:1}
+.mbtn button.sm{width:auto;padding:7px 10px;font-size:13px}
 .hide{display:none}
 </style>
 </head>
@@ -471,6 +492,20 @@ addEventListener("resize",function(){if(!done){setup();lastU=0}});
 </section>
 
 <section id="v-not" class="hide">
+  <div class="seg" id="nmd"><button data-m="n" aria-pressed="true">📝 Notas</button><button data-m="g" aria-pressed="false">🎯 Metas</button></div>
+  <div id="gwrapM" class="hide">
+  <div class="seg" id="gseg"><button data-p="d">Día</button><button data-p="w">Semana</button><button data-p="m">Mes</button><button data-p="y">Año</button></div>
+  <div class="card hero gsum" id="gsum"></div>
+  <div class="card"><h2>Metas del equipo</h2><div id="glist"></div></div>
+  <div class="card"><h2>Sugerencias ✨</h2><div class="m">Calculadas con sus números reales. Tocá Aceptar para sumarlas a las metas del equipo.</div><div id="gsugl"></div></div>
+  <div class="card"><h2>Nueva meta</h2>
+    <label for="gty">Tipo</label><select id="gty"></select>
+    <div id="gtw"><label for="gtt">Nombre de la meta</label><input id="gtt" placeholder="Ej: Publicar 3 trabajos en Instagram"></div>
+    <label for="gtv" id="gtvl">Meta</label><input id="gtv" type="number" inputmode="numeric" min="1">
+    <div class="m" id="gper" style="margin-top:6px"></div>
+    <div class="row"><button id="gadd2">Agregar meta</button></div></div>
+  </div>
+  <div id="nwrapM">
   <div class="card"><h2>Nueva nota</h2>
     <textarea id="ntx" rows="3" placeholder="Ej: Llamar a Marta para el retoque de focos" aria-label="Nota" style="margin-top:0"></textarea>
     <div class="two"><div><label for="ncl">Cliente (opcional)</label><input id="ncl" list="cl2" autocomplete="off"><datalist id="cl2"></datalist></div><div><label for="ndu">Recordar el</label><input id="ndu" type="date"></div></div>
@@ -479,6 +514,7 @@ addEventListener("resize",function(){if(!done){setup();lastU=0}});
   </div>
   <div class="seg" id="nseg"><button data-f="p">Pendientes</button><button data-f="h">Hechas</button><button data-f="t">Todas</button></div>
   <div class="card"><input id="nq" placeholder="Buscar por cliente o texto" aria-label="Buscar nota"><div class="m" id="ns" style="margin-top:8px"></div><div id="nl"></div></div>
+  </div>
 </section>
 
 <section id="v-ins" class="hide">
@@ -687,7 +723,7 @@ $("bk").onclick=function(){$("bt").value=JSON.stringify(S);$("bt").select()};
 $("rs").onclick=function(){try{var d=JSON.parse($("bt").value);if(!d.jobs)throw 0;ask($("rs"),function(){importData(d);$("bt").value=""})}catch(e){toast("El texto no es un respaldo válido.")}};
 var DB=null,OWN=false,CUR="ag";
 function dberr(e){toast("No se pudo guardar: "+((e&&e.message)||e))}
-function refresh(){if(CUR==="ag")renderAg();if(CUR==="cli")renderCli();if(CUR==="num"&&OWN)renderNum();if(CUR==="not")renderNotes();if(CUR==="ins")renderIns();updBadge()}
+function refresh(){if(CUR==="ag")renderAg();if(CUR==="cli")renderCli();if(CUR==="num"&&OWN)renderNum();if(CUR==="not"){renderNotes();if(NMODE==="g")renderGoals()}if(CUR==="ins")renderIns();updBadge()}
 function bp(s){return S.prices[s.id]!=null?S.prices[s.id]:s.p}
 function applyPrices(){SERV.forEach(function(s){var el=$("p-"+s.id);if(!el)return;el.disabled=false;if(document.activeElement!==el&&!$("c-"+s.id).checked&&!EID)el.value=bp(s)});calc();
   if(!$("bpl").querySelector("input:focus"))$("bpl").innerHTML=SERV.map(function(s){return '<div class="svc"><label for="bp-'+s.id+'">'+s.n+'</label><input class="p" type="number" inputmode="numeric" id="bp-'+s.id+'" value="'+bp(s)+'"></div>'}).join("")}
@@ -831,9 +867,96 @@ $("goal").onchange=function(){saveGoal(+this.value||0);renderGoal();toast("Meta 
 var _ra=renderAg;renderAg=function(){renderHero();_ra();bindGo($("dl"))};
 var _rn=renderNum;renderNum=function(){_rn();animNums($("stats"));animNums($("cmp"));renderGoal()};
 setInterval(function(){if(!$("v-ag").classList.contains("hide"))renderHero()},30000);
+
+/* ===== METAS (dentro de Notas) ===== */
+var GOALS=[],NMODE="n";
+try{if(localStorage.getItem("gscr_nmode")==="g")NMODE="g"}catch(e){}
+function setNMode(m){NMODE=m;try{localStorage.setItem("gscr_nmode",m)}catch(e){}Array.prototype.forEach.call($("nmd").children,function(b){b.setAttribute("aria-pressed",b.dataset.m===m)});$("gwrapM").classList.toggle("hide",m!=="g");$("nwrapM").classList.toggle("hide",m!=="n");if(m==="g")renderGoals()}
+Array.prototype.forEach.call($("nmd").children,function(b){b.onclick=function(){setNMode(b.dataset.m)}});
+var GP="m",PN={d:"Día",w:"Semana",m:"Mes",y:"Año"};
+var GT=[{id:"inc",n:"Ingresos",u:1,ic:"💰"},{id:"jobs",n:"Trabajos hechos",ic:"🔧"},{id:"svc:parabrisas",n:"Parabrisas pulidos",ic:"🚘"},{id:"svc:focos",n:"Focos pulidos (pares)",ic:"💡"},{id:"svc:hidro",n:"Tratamientos hidrofóbicos",ic:"💧"},{id:"newcli",n:"Clientes nuevos",ic:"🙋"},{id:"recover",n:"Clientes recuperados (5+ meses sin venir)",ic:"🔁"},{id:"ticket",n:"Ticket promedio",u:1,ic:"🎯"},{id:"expmax",n:"Gastos máximos",u:1,ic:"🧾",inv:1},{id:"manual",n:"Otra meta (la marcan ustedes)",ic:"⭐"}];
+function gtype(id){return GT.find(function(t){return t.id===id})||GT[GT.length-1]}
+function prange(p,off){var n=new Date();if(p==="d"){var d=addD(n,off||0);return [ymd(d),ymd(d)]}return range(p,off||0)}
+function pkey(p,off){var r=prange(p,off);return p==="m"?r[0].slice(0,7):p==="y"?r[0].slice(0,4):r[0]}
+function pelapsed(p){var r=prange(p,0),a=pd(r[0]).getTime(),b=addD(pd(r[1]),1).getTime(),n=Date.now();return Math.max(.02,Math.min(1,(n-a)/(b-a)))}
+function plabel(p){var r=prange(p,0),a=pd(r[0]),ML=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+  return p==="d"?"Hoy, "+DN[a.getDay()]+" "+a.getDate()+" "+MN[a.getMonth()]:p==="w"?"Semana del "+a.getDate()+" "+MN[a.getMonth()]:p==="m"?ML[a.getMonth()].replace(/^./,function(c){return c.toUpperCase()})+" "+a.getFullYear():"Año "+a.getFullYear()}
+function doneJobs(a,b){return S.jobs.filter(function(j){return isDone(j)&&j.date>=a&&j.date<=b})}
+function ckey(j){return (j.cli||"").trim().toLowerCase()}
+function firstVisit(){var F={};S.jobs.forEach(function(j){if(!isDone(j))return;var k=ckey(j);if(!F[k]||j.date<F[k])F[k]=j.date});return F}
+function metric(t,a,b,g,pk){var D=doneJobs(a,b);
+  if(t==="inc")return D.reduce(function(x,j){return x+(+j.total||0)},0);
+  if(t==="jobs")return D.length;
+  if(t.indexOf("svc:")===0){var sv=SERV.find(function(s){return "svc:"+s.id===t});return sv?D.filter(function(j){return (j.items||[]).indexOf(sv.n)>-1}).length:0}
+  if(t==="newcli"){var F=firstVisit();return Object.keys(F).filter(function(k){return F[k]>=a&&F[k]<=b}).length}
+  if(t==="recover"){var c=0,seen={};D.forEach(function(j){var k=ckey(j);if(seen[k])return;var prev=S.jobs.filter(function(x){return isDone(x)&&ckey(x)===k&&x.date<a}).map(function(x){return x.date}).sort().pop();if(prev&&(pd(a)-pd(prev))/864e5>=150){c++;seen[k]=1}});return c}
+  if(t==="ticket")return D.length?D.reduce(function(x,j){return x+(+j.total||0)},0)/D.length:0;
+  if(t==="expmax")return (S.exp||[]).filter(function(e){return e.d>=a&&e.d<=b}).reduce(function(x,e){return x+(+e.amt||0)},0);
+  if(t==="manual")return ((g&&g.prog)||{})[pk]||0;return 0}
+function fmtv(t,v){return gtype(t).u?crc(v):Math.round(v)}
+function gstatus(g,v,el){var T=+g.target||1,t=g.type;
+  if(gtype(t).inv)return v>T?["over","Se pasó"]:["ok","Bajo control"];
+  if(v>=T)return ["ok","¡Lograda! 🎉"];
+  if(t==="ticket")return v>=T*.9?["on","Cerca"]:["late","Por subir"];
+  return v>=T*el*.9?["on","En camino"]:["late","Atrasada"]}
+function niceRound(x,u){if(u){var st=x>=1e6?50000:x>=2e5?10000:5000;return Math.max(st,Math.ceil(x/st)*st)}return Math.max(1,Math.ceil(x))}
+function gHist(t,p,k){var v=[];for(var i=1;i<=k;i++){var r=prange(p,-i);v.push(metric(t,r[0],r[1]))}return v}
+function gAvg(a){return a.length?a.reduce(function(x,y){return x+y},0)/a.length:0}
+function gSuggest(p){var out=[],K=p==="y"?1:p==="m"?3:p==="w"?4:14,avgP=gAvg(SERV.map(function(s){return bp(s)}));
+  var defJobs={d:2,w:8,m:30,y:300}[p],hj=gHist("jobs",p,K),hi=gHist("inc",p,K);
+  if(p==="d"){hj=hj.filter(function(x){return x>0});hi=hi.filter(function(x){return x>0})}
+  var aj=gAvg(hj),ai=gAvg(hi),tj=aj?niceRound(aj*1.15):defJobs,ti=ai?niceRound(ai*1.1,1):niceRound(tj*avgP,1);
+  var per={d:"los últimos días con trabajo",w:"las últimas 4 semanas",m:"los últimos 3 meses",y:"el año pasado"}[p];
+  out.push({type:"inc",target:ti,why:ai?"Su promedio en "+per+" fue "+crc(ai)+". Un 10% más es un reto alcanzable.":"Aún no hay historial: es lo que darían "+tj+" trabajos a su precio promedio."});
+  out.push({type:"jobs",target:tj,why:aj?"Promedio reciente: "+(Math.round(aj*10)/10)+" trabajos. Subir un poquito el ritmo.":"Un ritmo inicial razonable para arrancar."});
+  if(p!=="d"){var par=gAvg(gHist("svc:parabrisas",p,K)),fo=gAvg(gHist("svc:focos",p,K)),hi2=gAvg(gHist("svc:hidro",p,K));
+    out.push({type:"svc:focos",target:niceRound(Math.max(fo*1.3,tj*.3)),why:par>fo?"Pulen más parabrisas que focos: ofrecer focos a cada cliente de parabrisas es venta fácil.":"Los focos se venden bien: mantengan el ritmo con un poco más."});
+    out.push({type:"svc:hidro",target:niceRound(Math.max(hi2*1.3,tj*.2)),why:"El hidrofóbico es un extra rápido: ofrecerlo al terminar el pulido sube el ticket."})}
+  var lim=ymd(addD(new Date(),-150)),M={};S.jobs.forEach(function(j){if(!isDone(j))return;var k=ckey(j);if(!M[k]||j.date>M[k])M[k]=j.date});
+  var old=Object.keys(M).filter(function(k){return M[k]<lim}).length;
+  if(old&&(p==="w"||p==="m"))out.push({type:"recover",target:Math.max(1,Math.min(old,Math.ceil(old*(p==="w"?.15:.4)))),why:(old===1?"1 cliente no viene":old+" clientes no vienen")+" hace 5+ meses. Escríbanles desde la pestaña Clientes."});
+  if(p!=="d"){var nc=gAvg(gHist("newcli",p,K));out.push({type:"newcli",target:niceRound(Math.max(nc*1.2,{w:2,m:6,y:60}[p])),why:"Clientes nuevos = el negocio crece. Pidan recomendaciones al agradecer cada trabajo."})}
+  if(p==="m"||p==="y"){var ae=gAvg(gHist("expmax",p,K));if(ae)out.push({type:"expmax",target:niceRound(ae*.9,1),why:"Gastaron en promedio "+crc(ae)+". Bajar 10% es plata directa a la ganancia."})}
+  if(p!=="d"){var at=gAvg(gHist("ticket",p,K));if(at)out.push({type:"ticket",target:niceRound(at*1.08,1),why:"Ticket promedio reciente: "+crc(at)+". Combinar servicios lo sube."})}
+  var ex=GOALS.filter(function(g){return g.period===p}).map(function(g){return g.type});
+  return out.filter(function(o){return ex.indexOf(o.type)<0}).slice(0,4)}
+function gStreak(){var c=0,d=new Date();if(!doneJobs(ymd(d),ymd(d)).length)d=addD(d,-1);for(var i=0;i<400;i++){var n=doneJobs(ymd(d),ymd(d)).length;if(n){c++;d=addD(d,-1)}else if(d.getDay()===0){d=addD(d,-1)}else break}return c}
+function gCeleb(id){try{var o=JSON.parse(localStorage.getItem("gscr_cel")||"{}");if(o[id])return true;o[id]=1;localStorage.setItem("gscr_cel",JSON.stringify(o));return false}catch(e){return true}}
+var GSUG=[],GTSEL="inc";
+function renderGoals(){
+  Array.prototype.forEach.call($("gseg").children,function(b){b.setAttribute("aria-pressed",b.dataset.p===GP)});
+  var p=GP,r=prange(p,0),pk=pkey(p,0),el=pelapsed(p),G=GOALS.filter(function(g){return g.period===p}).sort(function(a,b){return (a.created||0)-(b.created||0)});
+  var done=0,party=false,html=G.map(function(g){var v=metric(g.type,r[0],r[1],g,pk),T=+g.target||1,ty=gtype(g.type),st=gstatus(g,v,el),pct=Math.min(100,v/T*100);
+    if(st[0]==="ok"&&!ty.inv){done++;if(!gCeleb(g.id+"|"+pk))party=true}
+    var prv=prange(p,-1),pv=metric(g.type,prv[0],prv[1],g,pkey(p,-1)),proj=(!ty.inv&&g.type!=="ticket"&&v<T&&el<1&&v>0)?" · A este ritmo: "+fmtv(g.type,v/el):"";
+    var prevL={d:"Ayer",w:"Semana pasada",m:"Mes pasado",y:"Año pasado"}[p];
+    return '<div class="goal-c"><div class="goal-h"><div><div class="goal-t">'+ty.ic+' '+esc(g.title||ty.n)+(g.src==="sug"?" ✨":"")+'</div><div class="gmeta">'+(g.by?"Por "+esc(whoN(g.by))+" · ":"")+prevL+": "+fmtv(g.type,pv)+'</div></div><div class="goal-v">'+fmtv(g.type,v)+' <span class="m">/ '+fmtv(g.type,T)+'</span></div></div>'+
+      '<div class="gbar '+st[0]+'"><i data-w="'+pct+'"></i></div><span class="gst '+st[0]+'">'+st[1]+'</span><span class="m">'+(ty.inv?(v<=T?"Quedan "+crc(T-v):"Pasado por "+crc(v-T)):v<T?"Faltan "+fmtv(g.type,T-v):"")+proj+'</span>'+
+      '<div class="mbtn">'+(g.type==="manual"?'<button class="alt" data-gm="'+g.id+'" data-d="-1" aria-label="Restar uno">−</button><button data-gm="'+g.id+'" data-d="1" aria-label="Sumar uno">+</button><span class="m">Tocá + cuando avancen</span>':'')+'<span style="flex:1"></span><button class="alt sm" data-gd="'+g.id+'">Quitar</button></div></div>'}).join("");
+  $("glist").innerHTML=G.length?html:'<div class="empty">Todavía no hay metas para este periodo. Acepten una sugerencia o creen la suya abajo.</div>';
+  var sk=gStreak(),nj=doneJobs(r[0],r[1]).length,allPct=G.length?Math.round(done/G.length*100):0;
+  $("gsum").innerHTML='<div class="gt">'+plabel(p)+'</div><div class="gb">'+(G.length?done+" de "+G.length+" metas logradas":"Pongan sus metas")+'</div><div class="gs">'+(G.length?(done===G.length?"¡Todas logradas! Son unas máquinas 🏆":Math.round(el*100)+"% del periodo transcurrido"):"Elijan sugerencias o creen las suyas")+'</div><div class="gbar" style="background:rgba(255,255,255,.2);position:relative;z-index:1"><i data-w="'+allPct+'" style="background:linear-gradient(90deg,#f2b134,#ffe08a)"></i></div><div class="chips"><span>🔥 Racha: '+sk+(sk===1?" día":" días")+' con trabajo</span><span>📅 '+nj+(nj===1?" trabajo":" trabajos")+' este periodo</span></div>';
+  requestAnimationFrame(function(){requestAnimationFrame(function(){Array.prototype.forEach.call(document.querySelectorAll("#gwrapM .gbar i"),function(i){i.style.width=i.dataset.w+"%"})})});
+  if(party){confetti();toast("¡Meta lograda! 🎉")}
+  GSUG=gSuggest(p);
+  $("gsugl").innerHTML=GSUG.length?GSUG.map(function(o,i){var ty=gtype(o.type);return '<div class="gsug"><b>'+ty.ic+' '+ty.n+': '+fmtv(o.type,o.target)+'</b><div class="m">'+o.why+'</div><button class="sm" data-gs="'+i+'">Aceptar meta</button></div>'}).join(""):'<div class="empty">Ya tienen todas las sugerencias de este periodo. ¡A cumplirlas!</div>';
+  Array.prototype.forEach.call(document.querySelectorAll("[data-gs]"),function(b){b.onclick=function(){var o=GSUG[+b.dataset.gs];addGoal({type:o.type,target:o.target,src:"sug"})}});
+  Array.prototype.forEach.call(document.querySelectorAll("[data-gd]"),function(b){b.onclick=function(){var g=GOALS.find(function(x){return x.id===b.dataset.gd});if(!g)return;confirmDel({t:"¿Quitar esta meta?",w:esc(g.title||gtype(g.type).n),m:"Si te equivocás, vas a tener unos segundos para deshacerlo.",ok:"Sí, quitar"},function(){delDocs([["settings/"+g.id,g]],"Meta quitada")})}});
+  Array.prototype.forEach.call(document.querySelectorAll("[data-gm]"),function(b){b.onclick=function(){var g=GOALS.find(function(x){return x.id===b.dataset.gm});if(!g||!DB)return;var pr=Object.assign({},g.prog||{});pr[pk]=Math.max(0,(pr[pk]||0)+(+b.dataset.d));DB.doc("settings/"+g.id).update({prog:pr}).catch(dberr)}});
+  if(!$("gty").options.length)$("gty").innerHTML=GT.map(function(t){return '<option value="'+t.id+'">'+t.ic+' '+t.n+'</option>'}).join("");
+  $("gty").value=GTSEL;gtyChange();
+  $("gper").textContent="Se agrega como meta de: "+PN[p].toLowerCase()+". Para otro periodo, cambiá arriba (Día, Semana, Mes, Año)."}
+function gtyChange(){GTSEL=$("gty").value;var t=gtype(GTSEL);$("gtw").classList.toggle("hide",GTSEL!=="manual");$("gtvl").textContent=t.u?"Meta (₡)":"Meta (cantidad)"}
+$("gty").onchange=gtyChange;
+function addGoal(o){if(!DB){toast("Sin conexión con el sistema compartido.");return}var id="goal_"+Date.now();o.id=id;o.kind="goal";o.period=GP;o.created=Date.now();o.by=myEmail();o.prog={};if(!o.title)o.title="";
+  DB.doc("settings/"+id).set(o).then(function(){toast("Meta agregada ✓")}).catch(dberr)}
+$("gadd2").onclick=function(){var t=$("gty").value,v=+$("gtv").value;if(!v||v<1){toast("Escribí cuánto es la meta");return}if(t==="manual"&&!$("gtt").value.trim()){toast("Ponele nombre a la meta");return}
+  addGoal({type:t,target:v,title:t==="manual"?$("gtt").value.trim():""});$("gtv").value="";$("gtt").value=""};
+Array.prototype.forEach.call($("gseg").children,function(b){b.onclick=function(){GP=b.dataset.p;renderGoals()}});
+setNMode(NMODE);
 var TABS=["ag","new","cli","not","ins","num"];
 function show(v){if(v==="ag")LASTK=null;if(v==="num"&&!OWN)v="ag";CUR=v;TABS.forEach(function(k){$("v-"+k).classList.toggle("hide",k!==v);$("t-"+k).setAttribute("aria-selected",k===v)});
-  if(v==="ag")renderAg();if(v==="new"){$("fecha").value=sel;clients();updClash()}if(v==="cli")renderCli();if(v==="num"){$("gf").value=today;renderNum();adLoad(false)}if(v==="not")renderNotes();if(v==="ins")renderIns();window.scrollTo(0,0)}
+  if(v==="ag")renderAg();if(v==="new"){$("fecha").value=sel;clients();updClash()}if(v==="cli")renderCli();if(v==="num"){$("gf").value=today;renderNum();adLoad(false)}if(v==="not"){renderNotes();if(NMODE==="g")renderGoals()}if(v==="ins")renderIns();window.scrollTo(0,0)}
 TABS.forEach(function(k){$("t-"+k).onclick=function(){if(k==="new"&&EID)resetForm();show(k)}});
 /* CONFIRMAR ANTES DE BORRAR + DESHACER */
 var DLGF=null,UNDO=null;
@@ -851,8 +974,8 @@ function delDocs(docs,msg){if(!DB)return;Promise.all(docs.map(function(x){return
 
 /* NOTAS Y RECORDATORIOS */
 var NOTES=[],INS=[],MOVS=[],NF="p";
-function onSettings(sn){NOTES=[];INS=[];MOVS=[];var hadM=!!(META&&META.token);META=null;sn.docs.forEach(function(d){var x=d.data();if(!x)return;if(d.id==="meta")META=x;if(x.kind==="note")NOTES.push(x);else if(x.kind==="ins")INS.push(x);else if(x.kind==="mov")MOVS.push(x)});
-  if(CUR==="num"&&!!(META&&META.token)!==hadM)adLoad(true);updBadge();if(CUR==="not")renderNotes();if(CUR==="ins")renderIns();if(CUR==="ag")renderAg();if(CUR==="cli")renderCli()}
+function onSettings(sn){GOALS=[];NOTES=[];INS=[];MOVS=[];var hadM=!!(META&&META.token);META=null;sn.docs.forEach(function(d){var x=d.data();if(!x)return;if(d.id==="meta")META=x;if(x.kind==="goal")GOALS.push(x);else if(x.kind==="note")NOTES.push(x);else if(x.kind==="ins")INS.push(x);else if(x.kind==="mov")MOVS.push(x)});
+  if(CUR==="num"&&!!(META&&META.token)!==hadM)adLoad(true);updBadge();if(CUR==="not"){renderNotes();if(NMODE==="g")renderGoals()}if(CUR==="ins")renderIns();if(CUR==="ag")renderAg();if(CUR==="cli")renderCli()}
 function cliList(){var u={};S.jobs.forEach(function(j){if(j.cli)u[j.cli.trim()]=1});return Object.keys(u).sort(function(a,b){return a.localeCompare(b)})}
 function cliTel(n){n=(n||"").trim().toLowerCase();var j=S.jobs.filter(function(x){return (x.cli||"").trim().toLowerCase()===n&&x.tel}).pop();return j?j.tel:""}
 function pendNotes(cli){var k=(cli||"").trim().toLowerCase();if(!k)return [];return NOTES.filter(function(n){return !n.done&&n.cli&&n.cli.trim().toLowerCase()===k}).sort(noteSort)}
