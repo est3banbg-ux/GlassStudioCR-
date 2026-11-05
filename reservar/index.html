@@ -161,6 +161,17 @@ body.ok .dock{display:none}
 .lbtn{display:block;width:100%;text-align:center;border:1.5px solid var(--line);border-radius:16px;padding:14px;margin-top:10px;color:var(--ink);text-decoration:none;font-weight:600}
 .cf{position:fixed;top:-12px;width:9px;height:14px;border-radius:2px;z-index:30;pointer-events:none;animation:fall 1.8s cubic-bezier(.3,.6,.5,1) forwards}
 @keyframes fall{to{transform:translate(var(--dx),105vh) rotate(var(--r))}}
+.cars{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 4px}
+.cars:empty{display:none}
+.cars button{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:2px solid var(--line);border-radius:99px;padding:7px 12px;font-weight:700;font-size:14px}
+.cars button[aria-pressed=true]{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 12%,var(--card))}
+.cars button.ok::before{content:"✓";color:var(--ok)}
+.cars .x{margin-left:2px;opacity:.6;font-weight:800}
+.more{margin-top:16px;background:var(--card);border:2px dashed var(--acc);border-radius:18px;padding:14px;text-align:center}
+.more button{display:inline-flex;align-items:center;gap:8px;background:var(--acc);color:var(--accink);font-weight:700;border-radius:14px;padding:12px 16px}
+.more small{display:block;color:var(--mute);font-size:13px;margin-top:8px}
+.more a{color:var(--acc);font-weight:700}
+.sum .carh{font:800 16px "Bricolage Grotesque",sans-serif;padding-top:14px}
 footer{color:var(--mute);font-size:12px;text-align:center;margin:26px 0 10px}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
@@ -172,7 +183,7 @@ footer{color:var(--mute);font-size:12px;text-align:center;margin:26px 0 10px}
     <h1>Vidrios como nuevos, <em>sin salir de casa</em></h1>
     <p>Pulido de parabrisas y focos a domicilio. Llegamos <b>gratis</b> a cualquier punto de la GAM: San José, Heredia y Alajuela.</p>
     <div class="promo" id="promo" hidden><i>🎁</i><span><b>Promo: agendá aquí y te regalamos el vidrio trasero y los retrovisores</b><small>Al agendar el pulido de parabrisas desde esta página. Sedán o SUV, mismo regalo.</small></span></div>
-    <div class="chips"><span>🚗 Vamos donde estés</span><span>🛡️ Protección cerámica incluida</span><span>⏱️ Agendás en 1 minuto</span></div>
+    <div class="chips"><span>🚗 Vamos donde estés</span><span>🚙🚗 ¿Varios carros? Agendalos juntos</span><span>🛡️ Protección cerámica incluida</span><span>⏱️ Agendás en 1 minuto</span></div>
     <button class="cta" id="go">Agendar mi cita <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
   </div></div>
   <div class="wrap">
@@ -192,7 +203,7 @@ footer{color:var(--mute);font-size:12px;text-align:center;margin:26px 0 10px}
   <div class="top"><div class="wrap"><button class="back" id="bk" aria-label="Atrás"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button><div class="prog"><small id="pt">Paso 1 de 4</small><div class="bar"><i id="pb"></i></div></div></div></div>
   <div class="wrap">
     <div class="step" id="s1">
-      <h2>¿Qué carro tenés?</h2><p class="sub">Elegí el tipo, así el precio te sale exacto.</p>
+      <div class="cars" id="ct1"></div><h2 id="h1t">¿Qué carro tenés?</h2><p class="sub">Elegí el tipo, así el precio te sale exacto.</p>
       <div class="vt">
         <button class="opt" data-vt="sedan" aria-pressed="false"><svg viewBox="0 0 160 70" aria-hidden="true"><path d="M8 50c0-6 4-9 10-10l22-4 20-14c4-3 9-4 14-4h28c6 0 11 2 15 6l14 13 18 3c5 1 7 4 7 9v5c0 3-2 5-5 5h-6" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round"/><path d="M8 50v5c0 3 2 4 5 4h9M54 59h52" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><path d="M62 24l-12 12h44V21H74c-5 0-9 1-12 3zM100 21v15h30l-11-11c-3-3-6-4-10-4z" fill="color-mix(in srgb,var(--acc) 30%,transparent)"/><circle cx="38" cy="59" r="10" fill="var(--card)" stroke="currentColor" stroke-width="3.5"/><circle cx="122" cy="59" r="10" fill="var(--card)" stroke="currentColor" stroke-width="3.5"/></svg><b>Sedán o hatchback</b><small>Carro bajo: Corolla, Yaris, Civic, Accent, Mazda 3…</small></button>
         <button class="opt" data-vt="suv" aria-pressed="false"><svg viewBox="0 0 160 70" aria-hidden="true"><path d="M8 52V38c0-4 3-7 7-8l22-4 14-14c3-3 7-4 11-4h52c5 0 9 2 12 6l12 16 9 2c4 1 6 4 6 8v12c0 3-2 5-5 5h-6" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round"/><path d="M8 52v3c0 3 2 4 5 4h9M54 59h52" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><path d="M58 14l-14 14h50V12H64c-2 0-4 1-6 2zM100 12v16h38l-10-13c-2-2-4-3-7-3z" fill="color-mix(in srgb,var(--acc) 30%,transparent)"/><circle cx="38" cy="59" r="10" fill="var(--card)" stroke="currentColor" stroke-width="3.5"/><circle cx="122" cy="59" r="10" fill="var(--card)" stroke="currentColor" stroke-width="3.5"/></svg><b>SUV o pick-up</b><small>Carro alto: RAV4, CR-V, Hilux, Prado, Tucson…</small></button>
@@ -203,9 +214,10 @@ footer{color:var(--mute);font-size:12px;text-align:center;margin:26px 0 10px}
     </div>
 
     <div class="step" id="s2">
-      <h2>¿Qué le hacemos?</h2><p class="sub">Elegí los vidrios y, si querés, sumá los focos.</p>
+      <div class="cars" id="ct2"></div><h2 id="h2t">¿Qué le hacemos?</h2><p class="sub">Elegí los vidrios y, si querés, sumá los focos.</p>
       <div class="svc" id="gl"></div>
       <div class="svc" style="margin-top:10px" id="fo"></div>
+      <div class="more" id="more"></div>
     </div>
 
     <div class="step" id="s3">
@@ -246,13 +258,14 @@ footer{color:var(--mute);font-size:12px;text-align:center;margin:26px 0 10px}
   <a class="lbtn" href="./">Agendar otro carro</a>
 </div></section>
 
-<div class="dock"><div class="wrap"><div class="t"><small>Total</small><b id="tot">₡0</b></div><button class="next" id="nx" disabled>Siguiente</button></div></div>
+<div class="dock"><div class="wrap"><div class="t"><small id="totl">Total</small><b id="tot">₡0</b></div><button class="next" id="nx" disabled>Siguiente</button></div></div>
 <footer class="wrap">GlassStudioCR · Pulido de parabrisas y focos a domicilio · Costa Rica</footer>
 
 <script>
 var FBC={apiKey:"AIzaSyCduMQlyx2gEavGERjbGrCv965hrKOrUTA",authDomain:"glassstudiocr-13cf7.firebaseapp.com",projectId:"glassstudiocr-13cf7",storageBucket:"glassstudiocr-13cf7.firebasestorage.app",messagingSenderId:"696611345290",appId:"1:696611345290:web:af55a0a8c492d536d0ee73"};
-/* HORARIO: domingo 8 am a 3 pm; lunes a sábado 6 am a 4 pm. Cada servicio ocupa 2 horas. */
-var HOURS={0:[8,15],1:[6,16],2:[6,16],3:[6,16],4:[6,16],5:[6,16],6:[6,16]},DUR=2,DAYS_AHEAD=21,LEAD_H=2;
+/* HORARIO: domingo 8 am a 3 pm (última cita 1 pm); lunes a sábado 6 am a 6 pm (última cita 4 pm). Cada carro ocupa 2 horas.
+   Varios carros: se apartan 2 horas por carro, seguidas. MAXC = máximo de carros por reserva web. */
+var HOURS={0:[8,15],1:[6,18],2:[6,18],3:[6,18],4:[6,18],5:[6,18],6:[6,18]},DUR=2,DAYS_AHEAD=21,LEAD_H=2,MAXC=3;
 var GLASS=[{id:"pb",n:"Pulido de parabrisas + protección cerámica",s:"Lo más pedido",p:{sedan:20000,suv:25000},ic:"🛡️"},
   {id:"tvc",n:"Todos los vidrios + protección cerámica",s:"Parabrisas, laterales y trasero",p:{sedan:40000,suv:40000},ic:"✨"},
   {id:"tv",n:"Todos los vidrios sin protección",s:"Solo el pulido",p:{sedan:30000,suv:30000},ic:"🪟"},
@@ -261,7 +274,7 @@ var GLASS=[{id:"pb",n:"Pulido de parabrisas + protección cerámica",s:"Lo más 
    Para apagarla: PROMO.on=false, ponerle fecha final en PROMO.end ("2026-12-31"), o guardar promo:false en pub/cfg. */
 var PROMO={on:true,end:"",svc:"pb",n:"🎁 Regalo promo: vidrio trasero + retrovisores"};
 function promoOn(){return PROMO.on&&(!PROMO.end||ymd(new Date())<=PROMO.end)}
-function hasGift(){return promoOn()&&S.gl===PROMO.svc}
+function hasGift(c){c=c||S;return promoOn()&&c.gl===PROMO.svc}
 var FOCOS={id:"fo",n:"Pulido de focos con polímero líquido",s:"El par, quedan transparentes",p:20000,ic:"💡"};
 var SUVRX=["rav ?4","cr-?v","hr-?v","c-?hr","prado","land ?cruiser","fortuner","rush","hilux","tacoma","tundra","4 ?runner","highlander","sequoia","sportage","sorento","seltos","sonet","tucson","santa ?fe","creta","venue","kona","palisade","x-?trail","qashqai","kicks","frontier","navara","pathfinder","montero","outlander","asx","l ?200","pajero","nativa","mu-?x","d-?max","ranger","explorer","escape","ecosport","bronco","everest","cx-?[3589]0?","bt-?50","forester","outback","xv","crosstrek","vitara","jimny","s-?cross","terios","bego","tiguan","t-?cross","t-?roc","touareg","amarok","duster","koleos","captur","oroch","trailblazer","tracker","equinox","colorado","silverado","wrangler","cherokee","compass","renegade","gladiator","x[1-7]","q[2-8]","gl[abce]","ml","rx","nx","ux","gx","lx","xc[469]0","h6","jolion","haval","korando","tivoli","rexton","actyon","musso","partner","l300","hiace","4x4","pick ?up","pickup","camioneta","suv","jeep"];
 var SEDRX=["corolla","yaris","camry","prius","etios","civic","accord","city","fit","jazz","sentra","versa","almera","march","tiida","note","elantra","accent","i10","i20","i30","grand i10","sonata","rio","picanto","k3","k5","cerato","forte","soluto","mazda ?[236]","demio","swift","alto","celerio","ciaz","dzire","baleno","mirage","lancer","attrage","jetta","golf","gol","polo","vento","virtus","spark","sail","aveo","cruze","onix","beat","focus","fiesta","logan","sandero","clase c","model 3","leaf","ioniq","sedan","sed[aá]n","hatchback"];
@@ -282,16 +295,42 @@ var STEPS=["s1","s2","s3","s4","s5"];
 function show(i){S.step=i;STEPS.forEach(function(s,k){$(s).classList.toggle("on",k===i)});$("pt").textContent=i<4?"Paso "+(i+1)+" de 4":"Último paso";$("pb").style.width=((i+1)/5*100)+"%";
   $("nx").textContent=i===4?"Confirmar cita":"Siguiente";err("");upd();window.scrollTo(0,0);if(i===2)loadBusy();if(i===4)renderSum()}
 $("go").onclick=function(){document.body.classList.add("book");history.pushState({b:1},"");show(0)};
-$("bk").onclick=function(){if(S.step===0){document.body.classList.remove("book");return}show(S.step-1)};
-window.addEventListener("popstate",function(){if(document.body.classList.contains("book")){if(S.step>0){history.pushState({b:1},"");show(S.step-1)}else document.body.classList.remove("book")}});
+$("bk").onclick=function(){if(S.step===0&&S.ci>0){loadCar(S.ci-1);show(1);return}if(S.step===0){document.body.classList.remove("book");return}show(S.step-1)};
+window.addEventListener("popstate",function(){if(document.body.classList.contains("book")){if(S.step===0&&S.ci>0){history.pushState({b:1},"");loadCar(S.ci-1);show(1)}else if(S.step>0){history.pushState({b:1},"");show(S.step-1)}else document.body.classList.remove("book")}});
+/* VARIOS CARROS */
+var CARS=[{vt:"",veh:"",gl:"pb",fo:false}];S.ci=0;
+function curCar(){return {vt:S.vt,veh:$("veh").value.trim(),gl:S.gl,fo:S.fo}}
+function allCars(){return CARS.map(function(c,i){return i===S.ci?curCar():c})}
+function saveCar(){CARS[S.ci]=curCar()}
+function loadCar(i){saveCar();S.ci=i;var c=CARS[i];S.vt=c.vt;S.gl=c.gl;S.fo=c.fo;$("veh").value=c.veh;
+  Array.prototype.forEach.call(document.querySelectorAll("[data-vt]"),function(x){x.setAttribute("aria-pressed",x.dataset.vt===S.vt)});$("vw").classList.remove("on");buildSvc();upd()}
+function carTotal(c){var g=GLASS.find(function(x){return x.id===c.gl}),vt=c.vt||"sedan";return (g?g.p[vt]:0)+(c.fo?FOCOS.p:0)}
+function carOk(c){return !!c.vt&&c.veh.length>=3&&carTotal(c)>0}
+function vtN(c){return c.vt==="suv"?"SUV o pick-up":"Sedán o hatchback"}
+function renderCars(){var A=allCars(),n=A.length,h="";
+  if(n>1)h=A.map(function(c,i){return '<button data-ci="'+i+'" aria-pressed="'+(i===S.ci)+'"'+(carOk(c)&&i!==S.ci?' class="ok"':'')+'>🚗 '+(c.veh?esc(c.veh.slice(0,14)):"Carro "+(i+1))+(n>1?'<span class="x" data-cx="'+i+'" aria-label="Quitar carro '+(i+1)+'">✕</span>':'')+'</button>'}).join("");
+  ["ct1","ct2"].forEach(function(id){$(id).innerHTML=h});
+  $("h1t").textContent=n>1?"Carro "+(S.ci+1)+": ¿cuál es?":"¿Qué carro tenés?";
+  $("h2t").textContent=n>1?"Carro "+(S.ci+1)+": ¿qué le hacemos?":"¿Qué le hacemos?";
+  $("more").innerHTML=n<MAXC?'<button id="addcar"><span style="font-size:20px">＋</span> Agregar otro carro</button><small>¿Tenés otro carro? Agendalos juntos en la misma visita. Cada uno con sus propios servicios.</small>':
+    '<small>Máximo '+MAXC+' carros por reserva aquí. ¿Son más? <a href="'+waUrl("Hola GlassStudioCR, quiero agendar más de "+MAXC+" carros")+'" target="_blank" rel="noopener">Escribinos por WhatsApp</a>.</small>';
+  if($("addcar"))$("addcar").onclick=function(){if(!carOk(curCar())){err(!S.vt||$("veh").value.trim().length<3?"Primero completá el tipo y modelo de este carro.":"Elegí al menos un servicio para este carro.");return}
+    saveCar();CARS.push({vt:"",veh:"",gl:"pb",fo:false});loadCar(CARS.length-1);show(0);toast2("Carro "+CARS.length+" agregado 🚗")};
+  Array.prototype.forEach.call(document.querySelectorAll("[data-ci]"),function(b){b.onclick=function(e){var x=e.target.getAttribute("data-cx");
+    if(x!=null){saveCar();var k=+x;CARS.splice(k,1);if(S.ci>=k&&S.ci>0)S.ci--;var c=CARS[S.ci];S.vt=c.vt;S.gl=c.gl;S.fo=c.fo;$("veh").value=c.veh;
+      Array.prototype.forEach.call(document.querySelectorAll("[data-vt]"),function(y){y.setAttribute("aria-pressed",y.dataset.vt===S.vt)});buildSvc();show(S.step>1?1:S.step);return}
+    var i=+b.dataset.ci;if(i===S.ci)return;loadCar(i);show(S.step>1?0:S.step)}})}
+function toast2(m){var t=$("er");t.textContent=m;t.style.background="color-mix(in srgb,var(--ok) 14%,transparent)";t.style.color="var(--ok)";t.classList.add("on");clearTimeout(t._h);t._h=setTimeout(function(){t.classList.remove("on");t.style.background="";t.style.color=""},2200)}
 function err(t){$("er").textContent=t||"";$("er").classList.toggle("on",!!t)}
-function total(){var g=GLASS.find(function(x){return x.id===S.gl}),vt=S.vt||"sedan";return (g?g.p[vt]:0)+(S.fo?FOCOS.p:0)}
-function okStep(){if(S.step===0)return !!S.vt&&$("veh").value.trim().length>=3;if(S.step===1)return total()>0;if(S.step===2)return !!S.day&&S.h!=null;
+function total(){return allCars().reduce(function(a,c){return a+carTotal(c)},0)}
+function okStep(){if(S.step===0)return !!S.vt&&$("veh").value.trim().length>=3;if(S.step===1)return carTotal(curCar())>0;if(S.step===2)return !!S.day&&S.h!=null;
   if(S.step===3)return (S.lat!=null||$("addr").value.trim().length>=10)&&$("cli").value.trim().length>=2&&telOk();return true}
-function upd(){$("tot").textContent=crc(total());$("nx").disabled=!okStep()}
+function upd(){var n=CARS.length;$("tot").textContent=crc(total());$("totl").textContent=n>1?"Total · "+n+" carros":"Total";$("nx").disabled=!okStep();renderCars()}
 function telN(){var n=$("tel").value.replace(/\D/g,"");if(n.length===11&&n.indexOf("506")===0)n=n.slice(3);return n}
 function telOk(){return /^[245678]\d{7}$/.test(telN())}
-$("nx").onclick=function(){if(!okStep()){hintStep();return}if(S.step<4)show(S.step+1);else submit()};
+$("nx").onclick=function(){if(!okStep()){hintStep();return}
+  if(S.step===1){var A=allCars();for(var i=0;i<A.length;i++)if(!carOk(A[i])){loadCar(i);show(carTotal(A[i])>0||!A[i].vt||A[i].veh.length<3?0:1);err("Falta completar el carro "+(i+1)+".");return}saveCar()}
+  if(S.step<4)show(S.step+1);else submit()};
 function hintStep(){if(S.step===0)err(!S.vt?"Elegí si es sedán o SUV.":"Escribí la marca y el modelo del carro.");if(S.step===3)err(S.lat==null&&$("addr").value.trim().length<10?"Mandanos tu ubicación o escribí la dirección.":!telOk()?"Revisá tu número de WhatsApp: son 8 dígitos.":"Escribí tu nombre.")}
 
 /* PASO 1: tipo de carro */
@@ -315,7 +354,7 @@ buildSvc();
 
 /* PASO 3: día y hora */
 function slotsOf(day){var d=pd(day),hh=HOURS[d.getDay()];if(!hh||CFG.off.indexOf(day)>-1)return [];var L=[],now=new Date(),min=new Date(now.getTime()+LEAD_H*36e5);
-  for(var h=hh[0];h+DUR<=hh[1];h++){var t=new Date(d);t.setHours(h,0,0,0);if(t<min)continue;var free=true;for(var k=0;k<DUR;k++)if(BUSY[day+"_"+pad(h+k)])free=false;L.push({h:h,free:free})}return L}
+  var len=DUR*CARS.length;for(var h=hh[0];h+len<=hh[1];h++){var t=new Date(d);t.setHours(h,0,0,0);if(t<min)continue;var free=true;for(var k=0;k<len;k++)if(BUSY[day+"_"+pad(h+k)])free=false;L.push({h:h,free:free})}return L}
 function renderDays(){var h="",first="";for(var i=0;i<DAYS_AHEAD;i++){var d=new Date();d.setDate(d.getDate()+i);var k=ymd(d),L=slotsOf(k),fr=L.filter(function(x){return x.free}).length;if(fr&&!first)first=k;
     h+='<button class="day" data-day="'+k+'" aria-pressed="'+(S.day===k)+'"'+(fr?'':' disabled')+'><small>'+(i===0?"hoy":i===1?"mañana":DS[d.getDay()])+'</small><b>'+d.getDate()+'</b><i>'+(fr?MN[d.getMonth()]:"lleno")+'</i></button>'}
   $("days").innerHTML=h;if(S.day&&!slotsOf(S.day).some(function(x){return x.free})){S.day="";S.h=null}if(!S.day&&first)S.day=first;
@@ -323,7 +362,7 @@ function renderDays(){var h="",first="";for(var i=0;i<DAYS_AHEAD;i++){var d=new 
   var sb=document.querySelector('[data-day="'+S.day+'"]');if(sb&&sb.scrollIntoView)sb.scrollIntoView({block:"nearest",inline:"center"});renderHours()}
 function renderHours(){if(!S.day){$("hl").innerHTML='<div class="hint">No hay horas libres en estas semanas. Escribinos por WhatsApp.</div>';return}
   var L=slotsOf(S.day);if(S.h!=null&&!L.some(function(x){return x.h===S.h&&x.free}))S.h=null;
-  $("hl").innerHTML='<label style="margin-top:6px">Horas libres el '+niceDay(S.day)+'</label><div class="hours">'+L.map(function(x){return '<button class="hr" data-h="'+x.h+'" aria-pressed="'+(S.h===x.h)+'"'+(x.free?'':' disabled')+'>'+fmtH(x.h)+'</button>'}).join("")+'</div><div class="hint">Horario: lunes a sábado de 6 am a 4 pm, domingo de 8 am a 3 pm.</div>';
+  $("hl").innerHTML='<label style="margin-top:6px">Horas libres el '+niceDay(S.day)+'</label><div class="hours">'+L.map(function(x){return '<button class="hr" data-h="'+x.h+'" aria-pressed="'+(S.h===x.h)+'"'+(x.free?'':' disabled')+'>'+fmtH(x.h)+'</button>'}).join("")+'</div><div class="hint">'+(CARS.length>1?'Para '+CARS.length+' carros apartamos '+(DUR*CARS.length)+' horas seguidas: el primero a la hora que elijás y los demás uno después del otro. ':'')+'Horario: lunes a sábado, última cita a las 4 pm. Domingo, última cita a la 1 pm.</div>';
   Array.prototype.forEach.call(document.querySelectorAll("[data-h]"),function(b){b.onclick=function(){S.h=+b.dataset.h;renderHours();upd();setTimeout(function(){$("nx").scrollIntoView&&0},0)}})}
 function loadBusy(){var a=ymd(new Date()),e=new Date();e.setDate(e.getDate()+DAYS_AHEAD);
   if(!DB){renderDays();return Promise.resolve()}
@@ -345,31 +384,38 @@ $("gps").onclick=function(){if(!navigator.geolocation){$("lv").innerHTML='<div c
 ["addr","cli","tel"].forEach(function(i){$(i).addEventListener("input",function(){err("");upd()})});
 
 /* PASO 5: resumen y envío */
-function lines(){var vt=S.vt,L=[],g=GLASS.find(function(x){return x.id===S.gl});if(g&&g.id!=="none")L.push({n:g.n+(g.id==="pb"?" ("+(vt==="suv"?"SUV":"sedán")+")":""),p:g.p[vt]});if(S.fo)L.push({n:FOCOS.n,p:FOCOS.p});if(hasGift())L.push({n:PROMO.n,p:0});return L}
+function lines(c){c=c||curCar();var vt=c.vt,L=[],g=GLASS.find(function(x){return x.id===c.gl});if(g&&g.id!=="none")L.push({n:g.n+(g.id==="pb"?" ("+(vt==="suv"?"SUV":"sedán")+")":""),p:g.p[vt]});if(c.fo)L.push({n:FOCOS.n,p:FOCOS.p});if(hasGift(c))L.push({n:PROMO.n,p:0});return L}
 function mapLink(){return S.lat!=null?"https://www.google.com/maps/search/?api=1&query="+S.lat+","+S.lng:""}
-function renderSum(){var L=lines();$("sum").innerHTML='<div><i>📅</i><span><b>'+niceDay(S.day).replace(/^./,function(c){return c.toUpperCase()})+'</b><br>'+fmtH(S.h)+' a '+fmtH(S.h+DUR)+'</span></div>'+
-  '<div><i>🚗</i><span>'+esc($("veh").value.trim())+' · '+(S.vt==="suv"?"SUV o pick-up":"Sedán o hatchback")+'</span></div>'+
-  L.map(function(l){return l.p?'<div><i>✨</i><span>'+esc(l.n)+'</span><b>'+crc(l.p)+'</b></div>':'<div><i>🎁</i><span>'+esc(l.n.replace(/^🎁 /,""))+'</span><b style="color:var(--ok)">Gratis</b></div>'}).join("")+
+function lineRows(L){return L.map(function(l){return l.p?'<div><i>✨</i><span>'+esc(l.n)+'</span><b>'+crc(l.p)+'</b></div>':'<div><i>🎁</i><span>'+esc(l.n.replace(/^🎁 /,""))+'</span><b style="color:var(--ok)">Gratis</b></div>'}).join("")}
+function renderSum(){var A=allCars(),n=A.length,len=DUR*n;
+  $("sum").innerHTML='<div><i>📅</i><span><b>'+niceDay(S.day).replace(/^./,function(c){return c.toUpperCase()})+'</b><br>'+fmtH(S.h)+' a '+fmtH(S.h+len)+(n>1?' · '+n+' carros':'')+'</span></div>'+
+  A.map(function(c,k){return (n>1?'<div class="carh"><span>🚗 Carro '+(k+1)+' · '+fmtH(S.h+DUR*k)+'</span><b>'+crc(carTotal(c))+'</b></div>':'')+'<div><i>🚗</i><span>'+esc(c.veh)+' · '+vtN(c)+'</span></div>'+lineRows(lines(c))}).join("")+
   '<div><i>📍</i><span>'+(S.lat!=null?'Ubicación enviada'+($("addr").value.trim()?' · '+esc($("addr").value.trim()):''):esc($("addr").value.trim()))+'<br><small style="color:var(--ok);font-weight:600">Domicilio gratis en la GAM</small></span></div>'+
   '<div><i>👤</i><span>'+esc($("cli").value.trim())+' · '+telN().replace(/(\d{4})(\d{4})/,"$1 $2")+'</span></div>'+
-  '<div><i>💰</i><span>Total</span><span class="tot" style="flex:none">'+crc(total())+'</span></div>'}
-function waText(){var L=lines();return "Hola GlassStudioCR 👋 Acabo de agendar mi cita:\n📅 "+niceDay(S.day)+", "+fmtH(S.h)+"\n🚗 "+$("veh").value.trim()+" ("+(S.vt==="suv"?"SUV":"sedán")+")\n✨ "+L.map(function(l){return l.n}).join(" + ")+"\n💰 Total: "+crc(total())+"\n📍 "+(mapLink()||$("addr").value.trim())+(S.lat!=null&&$("addr").value.trim()?"\n   "+$("addr").value.trim():"")+"\n👤 "+$("cli").value.trim()}
+  '<div><i>💰</i><span>Total'+(n>1?' de los '+n+' carros':'')+'</span><span class="tot" style="flex:none">'+crc(total())+'</span></div>'}
+function waText(){var A=allCars(),n=A.length;return "Hola GlassStudioCR 👋 Acabo de agendar "+(n>1?"una cita para "+n+" carros":"mi cita")+":\n📅 "+niceDay(S.day)+", "+fmtH(S.h)+(n>1?" a "+fmtH(S.h+DUR*n):"")+
+  A.map(function(c,k){return "\n🚗 "+(n>1?"Carro "+(k+1)+" ("+fmtH(S.h+DUR*k)+"): ":"")+c.veh+" ("+(c.vt==="suv"?"SUV":"sedán")+")\n✨ "+lines(c).map(function(l){return l.n}).join(" + ")+(n>1?"\n   "+crc(carTotal(c)):"")}).join("")+
+  "\n💰 Total: "+crc(total())+"\n📍 "+(mapLink()||$("addr").value.trim())+(S.lat!=null&&$("addr").value.trim()?"\n   "+$("addr").value.trim():"")+"\n👤 "+$("cli").value.trim()}
 function submit(){var b=$("nx");if(b.disabled)return;err("");
   if($("website").value){done();return}
   if(Date.now()-T0<8000){err("Revisá los datos un momento y tocá Confirmar otra vez.");return}
   if(!DB){err("No hay conexión. Revisá tu internet o escribinos por WhatsApp.");return}
   b.disabled=true;b.textContent="Apartando tu hora…";
-  var id=Date.now()*100+Math.floor(Math.random()*100),sid=String(id),tel=telN(),L=lines(),at=Date.now();
+  var A=allCars(),n=A.length,base=Date.now()*100+Math.floor(Math.random()*90),tel=telN(),at=Date.now();
   var ub=S.lat!=null?S.lat+","+S.lng:$("addr").value.trim();
-  var note=[S.lat!=null&&$("addr").value.trim()?"Señas: "+$("addr").value.trim():"",$("det").value.trim(),S.acc>150?"Ubicación aprox. ±"+S.acc+" m":""].filter(Boolean).join(" · ").slice(0,400);
-  var job={id:id,cli:$("cli").value.trim().slice(0,60),tel:tel,veh:$("veh").value.trim().slice(0,60),vt:S.vt,items:L.map(function(l){return l.n}),lines:L,disc:0,total:total(),date:S.day,time:pad(S.h)+":00",note:note,ubic:ub.slice(0,300),src:$("src").value,st:"Por confirmar",by:"web",web:true,at:at};
-  var bt=DB.batch();bt.set(DB.doc("jobs/"+sid),job);for(var k=0;k<DUR;k++)bt.set(DB.doc("slots/"+S.day+"_"+pad(S.h+k)),{date:S.day,h:S.h+k,job:sid,at:at});bt.set(DB.doc("holds/"+tel),{job:sid,date:S.day,at:at});
-  bt.commit().then(done,function(){loadBusy().then(function(){var taken=false;for(var k=0;k<DUR;k++)if(BUSY[S.day+"_"+pad(S.h+k)])taken=true;b.textContent="Confirmar cita";upd();
+  var note0=[S.lat!=null&&$("addr").value.trim()?"Señas: "+$("addr").value.trim():"",$("det").value.trim(),S.acc>150?"Ubicación aprox. ±"+S.acc+" m":""].filter(Boolean).join(" · ");
+  var bt=DB.batch(),ids=[];
+  A.forEach(function(c,k){var id=base+k,sid=String(id),L=lines(c),h0=S.h+DUR*k;ids.push(sid);
+    var note=((n>1?"🚗 Reserva de "+n+" carros ("+(k+1)+" de "+n+") · ":"")+note0).replace(/ · $/,"").slice(0,400);
+    bt.set(DB.doc("jobs/"+sid),{id:id,cli:$("cli").value.trim().slice(0,60),tel:tel,veh:c.veh.slice(0,60),vt:c.vt,items:L.map(function(l){return l.n}),lines:L,disc:0,total:carTotal(c),date:S.day,time:pad(h0)+":00",note:note,ubic:ub.slice(0,300),src:$("src").value,st:"Por confirmar",by:"web",web:true,at:at});
+    for(var q=0;q<DUR;q++)bt.set(DB.doc("slots/"+S.day+"_"+pad(h0+q)),{date:S.day,h:h0+q,job:sid,at:at})});
+  bt.set(DB.doc("holds/"+tel),{job:ids[0],date:S.day,at:at});
+  bt.commit().then(done,function(){loadBusy().then(function(){var taken=false;for(var k=0;k<DUR*n;k++)if(BUSY[S.day+"_"+pad(S.h+k)])taken=true;b.textContent="Confirmar cita";upd();
       if(taken){S.h=null;show(2);err("Uy, alguien acaba de tomar esa hora. Elegí otra, por favor.")}
       else err("Ya hay una cita pendiente con este número de WhatsApp. Si querés cambiarla o agendar otro carro, escribinos por WhatsApp.")})})}
-function done(){var t=waText();$("wa").href=waUrl(t);$("dt").innerHTML="<b>"+niceDay(S.day)+", "+fmtH(S.h)+"</b><br>"+esc($("veh").value.trim())+" · "+crc(total());
+function done(){var t=waText();$("wa").href=waUrl(t);var A=allCars(),n=A.length;$("dt").innerHTML="<b>"+niceDay(S.day)+", "+fmtH(S.h)+"</b><br>"+(n>1?n+" carros: "+A.map(function(c){return esc(c.veh)}).join(", "):esc(A[0].veh))+" · "+crc(total());
   var d=pd(S.day),f=function(h){return S.day.replace(/-/g,"")+"T"+pad(h)+"0000"};
-  $("cal").href="https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent("GlassStudioCR: pulido a domicilio")+"&dates="+f(S.h)+"/"+f(S.h+DUR)+"&details="+encodeURIComponent(lines().map(function(l){return l.n}).join(" + ")+" · "+crc(total()))+"&location="+encodeURIComponent(mapLink()||$("addr").value.trim());
+  $("cal").href="https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent("GlassStudioCR: pulido a domicilio")+"&dates="+f(S.h)+"/"+f(S.h+DUR*n)+"&details="+encodeURIComponent(A.map(function(c){return c.veh+": "+lines(c).map(function(l){return l.n}).join(" + ")}).join(" | ")+" · "+crc(total()))+"&location="+encodeURIComponent(mapLink()||$("addr").value.trim());
   document.body.classList.remove("book");document.body.classList.add("ok");window.scrollTo(0,0);confetti()}
 function confetti(){if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;var C=["#0d7a85","#3fc1cd","#f2b134","#ffe08a","#1f8a4c"];
   for(var i=0;i<50;i++){var d=document.createElement("i");d.className="cf";d.style.left=Math.random()*100+"vw";d.style.background=C[i%C.length];d.style.setProperty("--dx",(Math.random()*160-80)+"px");d.style.setProperty("--r",(Math.random()*900-450)+"deg");d.style.animationDelay=Math.random()*.4+"s";document.body.appendChild(d);setTimeout(function(x){x.remove()}.bind(null,d),2400)}}
