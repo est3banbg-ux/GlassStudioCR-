@@ -486,6 +486,7 @@ function confetti(){if(window.matchMedia&&matchMedia("(prefers-reduced-motion: r
 function promoUI(){$("promo").hidden=!promoOn();buildSvc()}
 promoUI();
 buildZones();
+(function(){try{var q=location.search,r=document.referrer||"";if(/[?&](fbclid=|utm_source=(facebook|fb|ig|instagram|meta|messenger))/i.test(q)||/facebook\.|instagram\.|messenger\.|fb\.com|m\.me/i.test(r)){var s=$("src");if(s&&!s.value)s.value="Facebook / Instagram"}}catch(e){}})();
 upd();
 </script>
 </body>
