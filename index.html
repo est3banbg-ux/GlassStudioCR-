@@ -552,7 +552,7 @@ function remind(id){
   var diff=Math.round((pd(j.date)-pd(today))/864e5),d=pd(j.date);
   var cuando=diff===0?"hoy":diff===1?"mañana":"el "+DN[d.getDay()]+" "+d.getDate()+" de "+MN[d.getMonth()];
   var nm=String(j.cli||"").trim().split(" ")[0],hasLoc=!!(locOf(j)&&parseLoc(locOf(j))&&(parseLoc(locOf(j)).ll||parseLoc(locOf(j)).url));
-  var t="¡Hola "+nm+"! 👋 Te recordamos tu cita con GlassStudioCR "+cuando+" a las "+fmtT(j.time)+(j.veh?" para tu "+j.veh:"")+".\n\n🚗 Vamos a domicilio: llegamos hasta donde esté el carro"+(hasLoc?".":". Para llegar sin perdernos, mandanos tu ubicación con este enlace (un solo toque) 📍\nhttps://citas.glassstudiocr.com/ubicacion/?t="+n.slice(-8)+(nm?"&n="+encodeURIComponent(nm):""))+"\n\nSi necesitás cambiar la hora, avisanos por aquí. ¡Nos vemos!";
+  var t="¡Hola "+nm+"! 👋 Te saludamos de GlassStudioCR para confirmar tu cita de "+cuando+" a las "+fmtT(j.time)+" ✨\n\n📍 Nosotros llegamos a vos: hacemos el trabajo en tu casa u oficina, sin que tengás que mover el carro."+(j.veh?"\n🚘 Vehículo: "+j.veh:"")+(hasLoc?"":"\n\n📲 Para llegar directo, mandanos tu ubicación con un toque aquí:\nhttps://citas.glassstudiocr.com/ubicacion/?t="+n.slice(-8)+(nm?"&n="+encodeURIComponent(nm):""))+"\n\n¿Todo bien con la hora? Si necesitás cambiarla, respondenos por aquí. ¡Nos vemos pronto!";
   window.open("https://wa.me/"+n+"?text="+encodeURIComponent(t),"_blank");
 }
 
@@ -811,7 +811,7 @@ function renderHero(){today=ymd(new Date());var n=new Date(),h=n.getHours(),g=h<
    '<div class="row">'+(nx&&locOf(nx)?'<a class="sm" target="_blank" rel="noopener" href="'+esc(gmaps(locOf(nx)))+'">'+ICPIN+'Cómo llegar</a>':'')+(nx&&nx.tel?'<button class="sm" data-go="'+nx.id+'">'+ICWA+'Voy en camino</button>':'')+(ru?'<a class="sm" target="_blank" rel="noopener" href="'+esc(ru)+'">Ruta del día</a>':'')+'</div>';
   var hb=$("hb");if(hb)requestAnimationFrame(function(){requestAnimationFrame(function(){hb.style.width=(T.length?done/T.length*100:0)+"%"})});
   bindGo($("hero"))}
-function bindGo(root){Array.prototype.forEach.call(root.querySelectorAll("[data-go]"),function(b){b.onclick=function(){var j=S.jobs.find(function(x){return x.id==b.dataset.go});waTo(j.tel,"Hola "+j.cli+", te escribo de GlassStudioCR. Ya voy en camino para tu cita, llego en unos 20 minutos. ¡Nos vemos!")}})}
+function bindGo(root){Array.prototype.forEach.call(root.querySelectorAll("[data-go]"),function(b){b.onclick=function(){var j=S.jobs.find(function(x){return x.id==b.dataset.go});waTo(j.tel,onWayMsg(j,onWayEta(j)));markOw(j)}})}
 function saveGoal(v){S.goal=v;if(typeof DB!=="undefined"&&DB){DB.doc("settings/goal").set({v:v}).catch(dberr)}else persist()}
 function renderGoal(){var n=new Date(),a=ymd(new Date(n.getFullYear(),n.getMonth(),1)),b=ymd(new Date(n.getFullYear(),n.getMonth()+1,0)),inc=sums(a,b).inc,G=+S.goal||0;
   var C=263.9,pct=G?Math.min(1,inc/G):0,dl=new Date(n.getFullYear(),n.getMonth()+1,0).getDate()-n.getDate()+1;
@@ -1352,7 +1352,7 @@ function tripKm(a,b){return a&&b?Math.round(zkm(a.la,a.lo,b.la,b.lo)*1.35*10)/10
 function tripLvl(km){return km==null?["","Distancia desconocida"]:km<5?["near","Cerca"]:km<15?["mid","Distancia media"]:["far","Lejos"]}
 function tripSheet(j0){var o=document.getElementById("trip");if(o)o.remove();var ra=document.getElementById("revAsk");if(ra)ra.remove();
   var day=j0.date,rest=S.jobs.filter(function(j){return j.date===day&&j.time&&j.id!==j0.id&&!isDone(j)&&tmin(j.time)>=tmin(j0.time)}).sort(function(a,b){return tmin(a.time)-tmin(b.time)});
-  o=document.createElement("div");o.id="trip";o.innerHTML='<div class="tc" role="dialog" aria-label="Siguiente cita"><h3>✅ Terminado: '+esc(j0.cli||"")+'</h3><div class="m" id="trM">'+(rest.length?'Calculando el recorrido…':'')+'</div><div id="trB"></div></div>';
+  o=document.createElement("div");o.id="trip";o.innerHTML='<div class="tc" role="dialog" aria-label="Siguiente cita"><h3>✅ Terminado: '+esc(j0.cli||"")+'</h3><div class="m" id="trM">'+(rest.length?'Calculando el recorrido…':'')+'</div><div id="trN"></div><div id="trB"></div></div>';
   document.body.appendChild(o);o.addEventListener("click",function(e){if(e.target===o)o.remove()});
   var revB=(j0.tel&&!j0.rv)?'<button class="sm wa" id="trRev">⭐ Pedir reseña a '+esc(String(j0.cli||"").split(" ")[0])+'</button>':'';
   function draw(here,src){var b=document.getElementById("trB");if(!b)return;var h="";
@@ -1361,7 +1361,7 @@ function tripSheet(j0){var o=document.getElementById("trip");if(o)o.remove();var
       var stt=eta==null?'':eta<=st-10?'<span class="pill ok">A tiempo · te sobran '+durTxt(st-eta)+'</span>':eta<=st+GRACE?'<span class="pill warn">Justo a tiempo</span>':'<span class="pill bad">'+durTxt(eta-st)+' tarde</span>';
       var loc=locOf(n),gm=loc?gmaps(loc):(pn?"https://www.google.com/maps/search/?api=1&query="+pn.la+","+pn.lo:""),wz=loc?waze(loc):(pn?"https://waze.com/ul?ll="+pn.la+","+pn.lo+"&navigate=yes":"");
       h+='<div class="nx"><div class="m">Siguiente cita · '+fmtT(n.time)+'</div><div class="big">'+esc(n.cli||"")+'</div><div class="m">'+esc((pn&&pn.n)||"Sin ubicación")+(n.veh?' · '+esc(n.veh):'')+'</div>';
-      if(mn!=null)h+='<div style="margin-top:10px"><span class="pill '+lv[0]+'">'+lv[1]+' · '+km+' km</span><span class="pill near">~'+durTxt(mn)+'</span></div><div style="margin-top:8px">Si salís ya, llegás aprox. a las <b>'+hm(eta)+'</b> '+stt+'</div><div class="m" style="margin-top:4px">'+(src==="gps"?'Calculado desde donde estás ahora.':'Calculado desde la cita que terminaste.')+' Aproximado, sin tráfico en vivo.</div>';
+      window.__trEta=eta;if(mn!=null)h+='<div style="margin-top:10px"><span class="pill '+lv[0]+'">'+lv[1]+' · '+km+' km</span><span class="pill near">~'+durTxt(mn)+'</span></div><div style="margin-top:8px">Si salís ya, llegás aprox. a las <b>'+hm(eta)+'</b> '+stt+'</div><div class="m" style="margin-top:4px">'+(src==="gps"?'Calculado desde donde estás ahora.':'Calculado desde la cita que terminaste.')+' Aproximado, sin tráfico en vivo.</div>';
       else h+='<div class="m" style="margin-top:8px">No hay ubicación clara para calcular. Pedile la ubicación o poné la zona en la cita.</div>';
       h+='<div class="bt">'+(wz?'<a class="alt sm" target="_blank" rel="noopener" href="'+esc(wz)+'">Waze</a>':'')+(gm?'<a class="alt sm" target="_blank" rel="noopener" href="'+esc(gm)+'">Maps</a>':'')+(n.tel?'<button class="sm wa" id="trGo">Avisar que vamos</button>':'')+'</div></div>';
       if(rest.length>1){var tot=km||0,tm=mn||0,li="";for(var i=1;i<rest.length;i++){var a=rest[i-1],c=rest[i],pa=jobPos(a),pc=jobPos(c),k=tripKm(pa,pc),t=travelMin(pa,pc),g=(dayLegs(day).legs||{})[c.id]||{};tot+=k||0;tm+=t||0;
@@ -1371,11 +1371,27 @@ function tripSheet(j0){var o=document.getElementById("trip");if(o)o.remove();var
     b.innerHTML=h;var m=document.getElementById("trM");if(m)m.textContent="";
     var x=document.getElementById("trX");if(x)x.onclick=function(){o.remove()};
     var rv=document.getElementById("trRev");if(rv)rv.onclick=function(){revSend(j0);rv.remove()};
-    var go=document.getElementById("trGo");if(go&&rest.length){go.onclick=function(){var n=rest[0],nm=String(n.cli||"").split(" ")[0],t=document.querySelector("#trip b")?document.querySelector("#trip .nx b"):null;
-      waTo(n.tel,"¡Hola"+(nm?" "+nm:"")+"! 👋 Ya vamos en camino 🚗"+(t?" Llegamos aprox. a las "+t.textContent+".":"")+" Nos vemos pronto. — GlassStudioCR")}}}
+    var go=document.getElementById("trGo");if(go&&rest.length){go.onclick=function(){var n=rest[0];waTo(n.tel,onWayMsg(n,window.__trEta));markOw(n)}}}
   draw(null,"cita");
+  /* aviso automático al siguiente cliente (solo hoy, si su cita es en las próximas 3 horas) */
+  var AU=true;try{AU=localStorage.getItem("gsAutoGo")!=="0"}catch(e){}
+  if(rest.length){var nx=rest[0],nowM=new Date().getHours()*60+new Date().getMinutes(),st=tmin(nx.time),ok=day===ymd(new Date())&&nx.tel&&!nx.ow&&st-nowM<=180&&st-nowM>-30,b=document.getElementById("trN");
+    if(ok&&AU){waTo(nx.tel,onWayMsg(nx,onWayEta(nx,j0)));markOw(nx);b.insertAdjacentHTML("afterbegin",'<div class="pill ok" style="display:block;margin-top:10px;padding:8px 12px">✓ Se abrió WhatsApp con el aviso de "vamos en camino" para '+esc(String(nx.cli||"").split(" ")[0])+'. Solo tocá Enviar.</div>')}
+    else if(nx.ow)b.insertAdjacentHTML("afterbegin",'<div class="m" style="margin-top:8px">✓ A '+esc(String(nx.cli||"").split(" ")[0])+' ya se le avisó que van en camino.</div>');
+    var tg=document.createElement("label");tg.className="m";tg.style.cssText="display:flex;gap:8px;align-items:center;margin-top:12px";tg.innerHTML='<input type="checkbox" id="trAuto"'+(AU?' checked':'')+'> Avisar automáticamente al siguiente cliente cuando marco Hecho o Pagado';
+    document.querySelector("#trip .tc").appendChild(tg);document.getElementById("trAuto").onchange=function(){try{localStorage.setItem("gsAutoGo",this.checked?"1":"0")}catch(e){}}}
   if(rest.length&&day===ymd(new Date())&&navigator.geolocation){try{navigator.geolocation.getCurrentPosition(function(p){draw({la:p.coords.latitude,lo:p.coords.longitude,n:zNear(p.coords.latitude,p.coords.longitude)},"gps")},function(){},{enableHighAccuracy:false,timeout:8000,maximumAge:120000})}catch(e){}}
 }
+</script>
+
+<script>
+/* mensaje de "vamos en camino" */
+function onWayEta(j,from){var nowM=new Date().getHours()*60+new Date().getMinutes(),pf=from?jobPos(from):null;
+  if(!pf){var prev=S.jobs.filter(function(x){return x.date===j.date&&x.time&&tmin(x.time)<tmin(j.time)&&x.id!==j.id}).sort(function(a,b){return tmin(b.time)-tmin(a.time)})[0];pf=prev?jobPos(prev):null}
+  var m=travelMin(pf,jobPos(j));return nowM+(m==null?20:m)}
+function onWayMsg(j,eta){var nm=String(j.cli||"").trim().split(" ")[0],r=Math.ceil((eta||0)/5)*5;
+  return "¡Hola "+nm+"! 🚗✨ Ya vamos saliendo hacia tu ubicación."+(eta?" Llegamos aprox. a las "+hm(r)+".":"")+"\n\nSi hay algo que debamos saber para llegar (portón, condominio, parqueo), contanos por aquí.\n\n¡Ya casi dejamos "+(j.veh?"tu "+j.veh:"tus vidrios")+" como "+(j.veh?"nuevo":"nuevos")+"! — GlassStudioCR"}
+function markOw(j){if(!j||j.ow)return;j.ow=1;try{if(DB)DB.doc("jobs/"+j.id).update({ow:1}).catch(function(){})}catch(e){}}
 </script>
 </body>
 </html>
