@@ -589,13 +589,13 @@ function renderAg(){
   $("dh").textContent=(sel===today?"Hoy":DN[sd.getDay()]+" "+sd.getDate()+" "+MN[sd.getMonth()])+" · "+L.length+(L.length===1?" cita":" citas")+(L.length?" · "+crc(tot):"");
   var LK=sel+"|"+wOff;$("dl").classList.toggle("fresh",LK!==LASTK);LASTK=LK;$("dl").innerHTML=L.length?L.map(function(j){
     return '<div class="job'+(j.st==="Por confirmar"?' pc':'')+'"><div class="hr">'+fmtT(j.time)+'</div><div class="jb">'+(j.st==="Por confirmar"?webBox(j):'')+'<div class="n">'+esc(j.cli)+' <span class="m">· '+crc(j.total)+'</span></div><div class="m">'+esc(j.veh)+'</div><div class="m">'+j.items.map(esc).join(", ")+'</div>'+(locOf(j)?mapThumb(locOf(j)):'')+(j.note?'<div class="m">📝 '+esc(j.note)+'</div>':'')+pendNotes(j.cli).map(function(n){return '<div class="cn">📌 '+esc(n.txt)+'</div>'}).join("")+
-    '<div class="acts">'+(locOf(j)?locBtns(locOf(j)):'')+(j.tel?'<a class="alt sm" href="tel:'+esc(j.tel.replace(/[^\d+]/g,""))+'" style="border:1px solid var(--line);color:var(--ink)">Llamar</a><button class="sm wa" data-wa="'+j.id+'">'+ICWA+'Recordar</button>'+(j.st==="Pendiente"?'<button class="alt sm wao" data-go="'+j.id+'">'+ICWA+'En camino</button>':'')+'':'')+(j.tel&&isDone(j)?'<button class="alt sm wao" data-ty="'+j.id+'">'+ICWA+'Agradecer</button>':'')+'<button class="alt sm" data-ed="'+j.id+'">Editar</button><button class="alt sm" data-cal="'+j.id+'">Calendario</button>'+
+    '<div class="acts">'+(locOf(j)?locBtns(locOf(j)):'')+(j.tel?'<a class="alt sm" href="tel:'+esc(j.tel.replace(/[^\d+]/g,""))+'" style="border:1px solid var(--line);color:var(--ink)">Llamar</a><button class="sm wa" data-wa="'+j.id+'">'+ICWA+'Recordar</button>'+(j.st==="Pendiente"?'<button class="alt sm wao" data-go="'+j.id+'">'+ICWA+'En camino</button>':'')+'':'')+(j.tel&&isDone(j)?'<button class="alt sm wao" data-ty="'+j.id+'">'+ICWA+(j.rv?'Reseña ✓':'Pedir reseña')+'</button>':'')+'<button class="alt sm" data-ed="'+j.id+'">Editar</button><button class="alt sm" data-cal="'+j.id+'">Calendario</button>'+
     '<select data-id="'+j.id+'" class="st-'+j.st+'" aria-label="Estado">'+(j.st==="Por confirmar"?["Por confirmar"]:[]).concat(["Pendiente","Hecho","Pagado"]).map(function(s){return "<option"+(s===j.st?" selected":"")+">"+s+"</option>"}).join("")+'</select><button class="alt sm" data-del="'+j.id+'">Borrar</button></div></div></div>'}).join(""):'<div class="empty">No hay citas este día.</div>';
   Array.prototype.forEach.call(document.querySelectorAll("[data-wa]"),function(b){b.onclick=function(){remind(b.dataset.wa)}});
   Array.prototype.forEach.call(document.querySelectorAll("[data-ed]"),function(b){b.onclick=function(){editJob(b.dataset.ed)}});
   Array.prototype.forEach.call(document.querySelectorAll("[data-cal]"),function(b){b.onclick=function(){window.open(calUrl(S.jobs.find(function(x){return x.id==b.dataset.cal})),"_blank")}});
-  Array.prototype.forEach.call(document.querySelectorAll("[data-ty]"),function(b){b.onclick=function(){var j=S.jobs.find(function(x){return x.id==b.dataset.ty});waTo(j.tel,"Hola "+j.cli+", gracias por confiar en GlassStudioCR 🙌 Si algo no te quedó perfecto me avisás. Y si quedaste contento, nos ayudaría muchísimo una reseña en Google (es 1 minuto): https://g.page/r/CZLaHgXQEDONEAI/review ⭐ ¡Saludos!")}});
-  Array.prototype.forEach.call(document.querySelectorAll("select[data-id]"),function(e){e.onchange=function(){if(e.value==="Pagado"){confetti();toast("¡Pagado! 💸")}if(!DB)return;var j0=S.jobs.find(function(x){return x.id==e.dataset.id});j0.st=e.value;DB.doc("jobs/"+j0.id).update({st:e.value}).catch(dberr);renderAg()}});
+  Array.prototype.forEach.call(document.querySelectorAll("[data-ty]"),function(b){b.onclick=function(){var j=S.jobs.find(function(x){return x.id==b.dataset.ty});revSend(j)}});
+  Array.prototype.forEach.call(document.querySelectorAll("select[data-id]"),function(e){e.onchange=function(){if(e.value==="Pagado"){confetti();toast("¡Pagado! 💸")}if(!DB)return;var j0=S.jobs.find(function(x){return x.id==e.dataset.id});j0.st=e.value;DB.doc("jobs/"+j0.id).update({st:e.value}).catch(dberr);renderAg();if((e.value==="Hecho"||e.value==="Pagado")&&j0.tel&&!j0.rv)askRev(j0)}});
   Array.prototype.forEach.call(document.querySelectorAll("[data-del]"),function(b){b.onclick=function(){var j=S.jobs.find(function(x){return x.id==b.dataset.del});if(!j)return;confirmDel({t:"¿Borrar esta cita?",w:esc(j.cli)+' <span class="m">· '+fmtD(j.date)+(j.time?" · "+fmtT(j.time):"")+'</span><div class="m">'+j.items.map(esc).join(", ")+" · "+crc(j.total)+'</div>'},function(){delDocs([["jobs/"+j.id,j]],"Cita borrada")})}});
 }
 $("pw").onclick=function(){wOff--;renderAg()};
@@ -1341,6 +1341,21 @@ function updTravel(){var w=$("trw"),f=$("fecha").value||today,t=$("hora").value,
 $("ubic").addEventListener("input",function(){var u=$("ubic").value,pl=u?parseLoc(u):null;if(pl&&pl.ll){var c=pl.ll.split(",");$("zsel2").value=zNear(+c[0],+c[1])}});
 $("cli").addEventListener("change",function(){if($("zsel2").value)return;var n=$("cli").value.trim().toLowerCase(),j=S.jobs.filter(function(x){return (x.cli||"").trim().toLowerCase()===n}).pop(),p=j&&jobPos(j);if(p){$("zsel2").value=p.n;updTravel()}});
 var _sv=$("save").onclick,ACK=0;$("save").onclick=function(e){updTravel();if(TRACK&&Date.now()-ACK>15000){ACK=Date.now();toast("⚠️ El traslado no da tiempo. Tocá Agendar otra vez para guardar igual.");$("trw").scrollIntoView&&$("trw").scrollIntoView({block:"center",behavior:"smooth"});return}ACK=0;return _sv.call(this,e)};
+</script>
+
+<script>
+/* Reseñas de Google: mensaje y aviso al terminar un trabajo */
+var REVURL="https://g.page/r/CZLaHgXQEDONEAI/review";
+function revMsg(j){var z="";try{var p=jobPos(j);z=p&&p.n?p.n.replace(/\s*\(.*\)/,"").replace(/ centro$/i,""):""}catch(e){}
+  var sv=(j.items&&j.items[0]?String(j.items[0]).split(/[·(]/)[0].trim().toLowerCase():"pulido de parabrisas");
+  var nm=String(j.cli||"").split(" ")[0];
+  return "¡Hola "+nm+"! Gracias por confiar en GlassStudioCR 🙌\n\nSi algo no te quedó perfecto, avisame y lo arreglamos.\n\nY si quedaste contento, ¿nos ayudás con una reseña en Google? Es 1 minuto y nos ayuda muchísimo a que más gente nos encuentre ⭐\n"+REVURL+"\n\nSi podés, contá qué te hicimos"+(z?" y la zona":"")+", por ejemplo: «"+sv+(z?" en "+z:"")+", quedó como nuevo». ¡Muchas gracias!"}
+function revSend(j){if(!j||!j.tel)return;waTo(j.tel,revMsg(j));if(!j.rv){j.rv=1;if(DB)DB.doc("jobs/"+j.id).update({rv:1}).catch(function(){});setTimeout(renderAg,300)}}
+function askRev(j){var o=document.getElementById("revAsk");if(o)o.remove();o=document.createElement("div");o.id="revAsk";
+  o.style.cssText="position:fixed;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:9999;max-width:460px;margin:0 auto;background:var(--card,#fff);color:var(--ink,#111);border:1px solid var(--line,#ddd);border-radius:16px;padding:14px 14px 12px;box-shadow:0 12px 40px rgba(0,0,0,.28);font-size:15px";
+  o.innerHTML='<div style="font-weight:700;margin-bottom:4px">⭐ ¿Le pedís la reseña a '+esc(String(j.cli||"").split(" ")[0])+'?</div><div class="m" style="margin-bottom:10px">Es el mejor momento: acaba de ver el resultado. Cada reseña te sube en Google Maps.</div><div style="display:flex;gap:8px"><button class="sm wa" id="revGo" style="flex:1">'+ICWA+'Pedir reseña</button><button class="alt sm" id="revNo">Ahora no</button></div>';
+  document.body.appendChild(o);document.getElementById("revGo").onclick=function(){o.remove();revSend(j)};document.getElementById("revNo").onclick=function(){o.remove()};
+  setTimeout(function(){if(o.parentNode)o.remove()},20000)}
 </script>
 </body>
 </html>
