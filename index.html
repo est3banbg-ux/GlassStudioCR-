@@ -409,7 +409,7 @@ raf=requestAnimationFrame(frame);
     <div class="two"><div><label for="tel">WhatsApp</label><input id="tel" type="tel"></div><div><label for="veh">Vehículo</label><input id="veh"></div></div>
     <div class="two"><div><label for="fecha">Día</label><input id="fecha" type="date"></div><div><label for="hora">Hora</label><input id="hora" type="time" value="09:00"></div></div>
     <div class="hw hide" id="hw" role="status"></div>
-    <label for="ubic">Ubicación del cliente</label><div class="row" style="margin-top:0"><input id="ubic" placeholder="Pegá el enlace o las coordenadas" autocomplete="off"><button class="alt sm" id="ubp" type="button">Pegar</button></div><div class="m" id="ubm"></div><div id="ubprev"></div>
+    <label for="ubic">Ubicación del cliente</label><div class="row" style="margin-top:0"><input id="ubic" placeholder="Pegá el enlace o las coordenadas" autocomplete="off"><button class="alt sm" id="ubp" type="button">Pegar</button></div><div class="m" id="ubm"></div><button class="sm wa" id="ubask" type="button" style="margin-top:8px;width:100%">📍 Pedirle la ubicación por WhatsApp</button><div class="m" style="margin-top:4px">Le llega un enlace: con un toque te manda su ubicación exacta, y al tocarla en tu WhatsApp se guarda sola en la cita.</div><div id="ubprev"></div>
     <label for="zsel2">Zona del carro</label><select id="zsel2" aria-label="Zona del carro"></select>
     <div class="trw hide" id="trw" role="status"></div>
     <label for="note">Notas (detalles)</label><input id="note">
@@ -500,7 +500,11 @@ raf=requestAnimationFrame(frame);
 </nav>
 
 <script>
-var SERV=[{id:"parabrisas",n:"Pulido de parabrisas",p:25000},{id:"focos",n:"Pulido de focos (par)",p:15000},{id:"hidro",n:"Tratamiento hidrofóbico",p:10000}];
+var SERV=[{id:"ps",n:"Parabrisas sedán + protección cerámica",p:20000,g:1},{id:"pu",n:"Parabrisas SUV + protección cerámica",p:25000,g:1},{id:"tvc",n:"Todos los vidrios + protección cerámica",p:40000,g:1},{id:"tv",n:"Todos los vidrios sin protección",p:30000,g:1},{id:"focos",n:"Pulido de focos con polímero líquido",p:20000},{id:"hidro",n:"Tratamiento hidrofóbico",p:10000}];
+/* familia de un servicio (para metas e insumos, también con nombres viejos o de la web) */
+function sfam(n){n=String(n||"");return /focos/i.test(n)?"focos":/hidrof/i.test(n)?"hidro":/parabrisas|vidrios/i.test(n)?"parabrisas":""}
+/* nombres viejos o de la página de reservas → servicio de la lista */
+function salias(l){var n=String(l.n||"");if(/^Pulido de parabrisas( \+ protección cerámica)?$/.test(n))return (l.p||0)>=25000?"pu":"ps";if(/^Pulido de focos/.test(n))return "focos";return null}
 var DN=["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"],MN=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
 var S={prices:{},jobs:[],exp:[]};
 
@@ -554,8 +558,8 @@ function remind(id){
 /* NUEVA CITA */
 function buildSvcs(){
   $("svcs").innerHTML=SERV.map(function(s){var p=S.prices[s.id]!=null?S.prices[s.id]:s.p;
-    return '<div class="svc"><input type="checkbox" id="c-'+s.id+'"><label for="c-'+s.id+'">'+s.n+'</label><input class="p" type="number" inputmode="numeric" id="p-'+s.id+'" value="'+p+'" aria-label="Precio '+s.n+'"></div>'}).join("");
-  SERV.forEach(function(s){$("c-"+s.id).onchange=calc;$("p-"+s.id).oninput=calc});
+    return (s.id==="focos"?'<div class="m" style="margin:10px 0 2px">Extras</div>':s.id==="ps"?'<div class="m" style="margin:2px 0 2px">Vidrios (elegí uno)</div>':'')+'<div class="svc"><input type="checkbox" id="c-'+s.id+'"><label for="c-'+s.id+'">'+s.n+'</label><input class="p" type="number" inputmode="numeric" id="p-'+s.id+'" value="'+p+'" aria-label="Precio '+s.n+'"></div>'}).join("");
+  SERV.forEach(function(s){$("c-"+s.id).onchange=function(){if(s.g&&this.checked)SERV.forEach(function(o){if(o.g&&o.id!==s.id)$("c-"+o.id).checked=false});calc()};$("p-"+s.id).oninput=calc});
 }
 function picked(){var a=SERV.filter(function(s){return $("c-"+s.id).checked}).map(function(s){return {n:s.n,p:+$("p-"+s.id).value||0}}),oa=+$("ota").value||0;if(oa>0)a.push({n:$("otn").value||"Otro servicio",p:oa});return a}
 function calc(){var t=Math.max(0,picked().reduce(function(a,x){return a+x.p},0)-(+$("desc").value||0));$("tot").textContent=crc(t);return t}
@@ -742,7 +746,7 @@ function editJob(id){var j=S.jobs.find(function(x){return x.id==id});if(!j)retur
   show("new");resetForm();EID=j.id;
   $("cli").value=j.cli;$("tel").value=j.tel||"";$("veh").value=j.veh||"";$("fecha").value=j.date;$("hora").value=j.time||"09:00";$("note").value=j.note||"";$("ubic").value=j.ubic||"";$("src").value=j.src||"";updUbm();$("zsel2").value=(jobPos(j)||{}).n||"";
   var L=j.lines||j.items.map(function(n){return {n:n,p:null}}),ex=[],eam=0,sum=0;
-  L.forEach(function(l){var s=SERV.find(function(x){return x.n===l.n});
+  L.forEach(function(l){var s=SERV.find(function(x){return x.n===l.n});if(!s){var al=salias(l);if(al)s=SERV.find(function(x){return x.id===al})}
     if(s){$("c-"+s.id).checked=true;if(l.p!=null)$("p-"+s.id).value=l.p;sum+=+$("p-"+s.id).value||0}else{ex.push(l.n);eam+=l.p||0}});
   var disc=j.disc||0;
   if(!j.lines){var rest=j.total-sum;if(rest>0){eam=rest;if(!ex.length)ex.push("Ajuste")}else if(rest<0){disc=-rest}}
@@ -781,7 +785,7 @@ function waze(t){var p=parseLoc(t);if(!p)return null;if(p.ll)return "https://waz
 function locBtns(t){var w=waze(t);return (w?'<a class="alt sm" target="_blank" rel="noopener" href="'+esc(w)+'" style="border:1px solid var(--line);color:var(--ink)">Waze</a>':'')}
 function updUbm(){var p=parseLoc($("ubic").value);$("ubprev").innerHTML=p?mapThumb($("ubic").value):"";$("ubm").textContent=!p?"":p.ll?"✓ Coordenadas detectadas: funciona con Maps, Waze y la ruta del día":p.url?"✓ Enlace guardado: abre en Maps. Para ver el mapa real en el cuadrito, pegá las coordenadas":"Se buscará esta dirección en el mapa"}
 $("ubic").oninput=updUbm;
-$("ubp").onclick=function(){try{navigator.clipboard.readText().then(function(t){if(t){$("ubic").value=t;updUbm();toast("Ubicación pegada")}},function(){toast("Mantené presionado el campo y tocá Pegar")})}catch(e){toast("Mantené presionado el campo y tocá Pegar")}};
+$("ubp").onclick=function(){try{navigator.clipboard.readText().then(function(t){if(t){$("ubic").value=cleanLoc(t);updUbm();toast("Ubicación pegada")}},function(){toast("Mantené presionado el campo y tocá Pegar")})}catch(e){toast("Mantené presionado el campo y tocá Pegar")}};
 function fillUbic(){var n=$("cli").value.toLowerCase(),cu=S.jobs.filter(function(j){return j.cli.toLowerCase()===n&&j.ubic}).pop();if(cu&&!$("ubic").value){$("ubic").value=cu.ubic;updUbm()}}
 function toast(m){var t=$("toast");if(!t){t=document.createElement("div");t.id="toast";t.setAttribute("role","status");document.body.appendChild(t)}t.textContent=m;t.classList.add("on");clearTimeout(t._h);t._h=setTimeout(function(){t.classList.remove("on")},2200)}
 function confetti(){if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;var C=["#0d7a85","#3fc1cd","#f2b134","#ffe08a","#1f8a4c","#ffffff"];
@@ -843,7 +847,7 @@ function firstVisit(){var F={};S.jobs.forEach(function(j){if(!isDone(j))return;v
 function metric(t,a,b,g,pk){var D=doneJobs(a,b);
   if(t==="inc")return D.reduce(function(x,j){return x+(+j.total||0)},0);
   if(t==="jobs")return D.length;
-  if(t.indexOf("svc:")===0){var sv=SERV.find(function(s){return "svc:"+s.id===t});return sv?D.filter(function(j){return (j.items||[]).indexOf(sv.n)>-1}).length:0}
+  if(t.indexOf("svc:")===0){var sv=SERV.find(function(s){return "svc:"+s.id===t});var fm=t.slice(4);return D.filter(function(j){return (j.items||[]).some(function(n){return sfam(n)===fm})}).length}
   if(t==="newcli"){var F=firstVisit();return Object.keys(F).filter(function(k){return F[k]>=a&&F[k]<=b}).length}
   if(t==="recover"){var c=0,seen={};D.forEach(function(j){var k=ckey(j);if(seen[k])return;var prev=S.jobs.filter(function(x){return isDone(x)&&ckey(x)===k&&x.date<a}).map(function(x){return x.date}).sort().pop();if(prev&&(pd(a)-pd(prev))/864e5>=150){c++;seen[k]=1}});return c}
   if(t==="ticket")return D.length?D.reduce(function(x,j){return x+(+j.total||0)},0)/D.length:0;
@@ -973,7 +977,7 @@ var _rh=renderHero;renderHero=function(){_rh();var c=urgentCount();if(c){var d=d
 var IEID=null,IOPEN={},QA=["Polish","Pasta pulidora","Pads / esponjas","Discos de lija","Lijas al agua","Cerámico","Hidrofóbico","Cinta de enmascarar","Microfibras","Limpiavidrios"];
 function fmt1(n){return (Math.round(n*10)/10).toLocaleString("es-CR")}
 function pl(n,u){u=u||"unidad";return n===1?u:(/[aeiouáéíóú]$/i.test(u)?u+"s":u+"es")}
-function usesIns(I,j){var sv=I.svc||[];if(!sv.length)return true;var names=SERV.map(function(s){return s.n});return (j.items||[]).some(function(n){return sv.indexOf(n)>-1||(sv.indexOf("__otros")>-1&&names.indexOf(n)<0)})}
+function usesIns(I,j){var sv=I.svc||[];if(!sv.length)return true;var fams=sv.map(sfam);return (j.items||[]).some(function(n){var f=sfam(n);return sv.indexOf(n)>-1||(f&&fams.indexOf(f)>-1)||(sv.indexOf("__otros")>-1&&!f)})}
 function svcTxt(I){var sv=I.svc||[];if(!sv.length)return "Todos los trabajos";return sv.map(function(n){return n==="__otros"?"Otros servicios":n}).join(", ")}
 function dBet(a,b){return Math.round((pd(b)-pd(a))/864e5)}
 function insCalc(I){
@@ -1299,6 +1303,33 @@ function askRev(j){var o=document.getElementById("revAsk");if(o)o.remove();o=doc
   o.innerHTML='<div style="font-weight:700;margin-bottom:4px">⭐ ¿Le pedís la reseña a '+esc(String(j.cli||"").split(" ")[0])+'?</div><div class="m" style="margin-bottom:10px">Es el mejor momento: acaba de ver el resultado. Cada reseña te sube en Google Maps.</div><div style="display:flex;gap:8px"><button class="sm wa" id="revGo" style="flex:1">'+ICWA+'Pedir reseña</button><button class="alt sm" id="revNo">Ahora no</button></div>';
   document.body.appendChild(o);document.getElementById("revGo").onclick=function(){o.remove();revSend(j)};document.getElementById("revNo").onclick=function(){o.remove()};
   setTimeout(function(){if(o.parentNode)o.remove()},20000)}
+</script>
+
+<script>
+/* UBICACIÓN FÁCIL: se le pide al cliente por WhatsApp y vuelve como enlace que se guarda solo */
+function cleanLoc(t){t=String(t||"").trim();var c=t.match(/(-?\d{1,2}\.\d{3,})\s*,\s*(-?\d{1,3}\.\d{3,})/),u=t.match(/https?:\/\/\S+/);
+  if(u&&/citas\.glassstudiocr\.com\/\?loc=/.test(u[0])&&c)return "https://maps.google.com/?q="+c[1]+","+c[2];
+  if(c&&!u)return c[1]+","+c[2];if(u)return u[0].replace(/[).,;]+$/,"");return t}
+(function(){var el=$("ubic");if(!el)return;el.addEventListener("paste",function(){setTimeout(function(){var v=cleanLoc(el.value);if(v!==el.value){el.value=v;updUbm()}},0)})})();
+$("ubask").onclick=function(){var tel=($("tel").value||"").replace(/\D/g,"");if(tel.length<8){toast("Primero poné el WhatsApp del cliente");$("tel").focus();return}
+  var nm=($("cli").value||"").trim().split(" ")[0];
+  waTo(tel,"¡Hola"+(nm?" "+nm:"")+"! 👋 Para llegar sin perdernos, tocá este enlace y después «Enviar mi ubicación» 📍\nhttps://citas.glassstudiocr.com/ubicacion/?t="+tel.slice(-8)+(nm?"&n="+encodeURIComponent(nm):"")+"\n\nSi preferís, también podés mandarla por aquí: 📎 → Ubicación.")};
+/* al abrir un enlace ?loc=lat,lng&t=tel desde WhatsApp, se guarda en la cita de ese cliente */
+(function(){var q=new URLSearchParams(location.search),lc=q.get("loc"),tl=q.get("t");
+  if(lc){try{sessionStorage.setItem("gsLoc",JSON.stringify({loc:lc,t:tl||""}))}catch(e){}try{history.replaceState(null,"",location.pathname)}catch(e){}}
+  var pend=null;try{pend=JSON.parse(sessionStorage.getItem("gsLoc")||"null")}catch(e){}
+  if(!pend)return;var tries=0;
+  var iv=setInterval(function(){tries++;if(tries>240){clearInterval(iv);return}
+    if(!window.DB||!S||!S.jobs||!S.jobs.length||document.body.classList.contains("locked"))return;
+    clearInterval(iv);try{sessionStorage.removeItem("gsLoc")}catch(e){}
+    var m=String(pend.loc).match(/(-?\d{1,2}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)/);if(!m){toast("No se pudo leer la ubicación");return}
+    var url="https://maps.google.com/?q="+m[1]+","+m[2],t8=String(pend.t||"").replace(/\D/g,"").slice(-8),today=ymd(new Date());
+    var c=S.jobs.filter(function(j){return t8&&String(j.tel||"").replace(/\D/g,"").slice(-8)===t8&&j.date>=today&&!isDone(j)}).sort(function(a,b){return (a.date+a.time)<(b.date+b.time)?-1:1});
+    if(c.length){var j=c[0];DB.doc("jobs/"+j.id).update({ubic:url}).then(function(){j.ubic=url;toast("📍 Ubicación guardada en la cita de "+j.cli+" ("+j.date.slice(8)+"/"+j.date.slice(5,7)+" "+j.time+")");try{renderAg()}catch(e){}}).catch(dberr)}
+    else{try{show("new")}catch(e){}$("ubic").value=url;updUbm();
+      if(t8&&!$("tel").value){$("tel").value=t8;var old=S.jobs.filter(function(j){return String(j.tel||"").replace(/\D/g,"").slice(-8)===t8}).pop();if(old&&!$("cli").value)$("cli").value=old.cli}
+      toast("📍 Ubicación lista: completá la cita y guardala")}
+  },250)})();
 </script>
 </body>
 </html>
