@@ -170,6 +170,17 @@ body.locked main>section,body.locked nav{display:none!important}
 @media (prefers-reduced-motion:reduce){#mot .w{opacity:1;transform:none}}
 .hw{font-size:13px;margin-top:6px;color:var(--bad);font-weight:600}
 .hw.ok{color:var(--ok);font-weight:400}
+.trv{font-size:13px;margin:0 0 6px;padding:6px 10px;border-radius:10px;background:var(--bg);color:var(--mute);border:1px solid var(--line)}
+.trv.late{background:color-mix(in srgb,var(--bad) 10%,transparent);color:var(--bad);border-color:var(--bad);font-weight:600}
+.trv.tight{background:color-mix(in srgb,var(--glow) 14%,transparent);color:inherit;border-color:var(--glow)}
+.trv button{margin-left:6px}
+.trw{font-size:13px;margin-top:6px;padding:8px 10px;border-radius:10px;border:1px solid var(--line)}
+.trw.late{background:color-mix(in srgb,var(--bad) 10%,transparent);color:var(--bad);border-color:var(--bad);font-weight:600}
+.trw.ok{color:var(--ok)}
+.rtl{margin:8px 0 0;padding:0;list-style:none}
+.rtl li{display:flex;gap:8px;padding:6px 0;border-top:1px solid rgba(255,255,255,.15);font-size:13px}
+.rtl li:first-child{border-top:0}
+.rtl b{min-width:58px}
 #save:disabled{opacity:.6}
 .nt code{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:3px 7px;font-size:14px;word-break:break-all}
 .nt ol{margin:8px 0;padding-left:20px;font-size:14px}.nt li{margin:4px 0}
@@ -456,6 +467,8 @@ addEventListener("resize",function(){if(!done){setup();lastU=0}});
     <div class="two"><div><label for="fecha">Día</label><input id="fecha" type="date"></div><div><label for="hora">Hora</label><input id="hora" type="time" value="09:00"></div></div>
     <div class="hw hide" id="hw" role="status"></div>
     <label for="ubic">Ubicación del cliente</label><div class="row" style="margin-top:0"><input id="ubic" placeholder="Pegá el enlace o las coordenadas" autocomplete="off"><button class="alt sm" id="ubp" type="button">Pegar</button></div><div class="m" id="ubm"></div><div id="ubprev"></div>
+    <label for="zsel2">Zona del carro</label><select id="zsel2" aria-label="Zona del carro"></select>
+    <div class="trw hide" id="trw" role="status"></div>
     <label for="note">Notas (detalles)</label><input id="note">
     <label for="src">¿Cómo nos conoció?</label><select id="src"><option value="">—</option><option>Facebook / Instagram</option><option>WhatsApp</option><option>Recomendación</option><option>Google</option><option>Cliente que vuelve</option><option>Otro</option></select>
     <div style="margin-top:10px" id="svcs"></div>
@@ -627,7 +640,7 @@ $("save").onclick=function(){
   var chk=t?DB.collection("jobs").where("date","==",f).get({source:"server"}).then(function(sn){return sn.docs.map(function(d){return d.data()})},function(){return null}):Promise.resolve(null);
   chk.then(function(L){b.disabled=false;if(EID!==id)return;
     var c2=L&&clash(f,t,id,L);if(c2){toast(clashMsg(c2));updClash();return}
-    var nj={cli:$("cli").value,tel:$("tel").value,veh:$("veh").value,items:it.map(function(x){return x.n}),lines:it,disc:+$("desc").value||0,total:calc(),date:f,time:t,note:$("note").value,ubic:$("ubic").value,src:$("src").value},oj=null;
+    var nj={zone:$("zsel2").value,cli:$("cli").value,tel:$("tel").value,veh:$("veh").value,items:it.map(function(x){return x.n}),lines:it,disc:+$("desc").value||0,total:calc(),date:f,time:t,note:$("note").value,ubic:$("ubic").value,src:$("src").value},oj=null;
     if(EID){nj.id=EID;oj=S.jobs.find(function(x){return x.id==EID});nj.st=oj?oj.st:"Pendiente";nj.by=oj&&oj.by||myEmail()}else{nj.id=Date.now();nj.st="Pendiente";nj.by=myEmail()}
     DB.doc("jobs/"+nj.id).set(nj).catch(dberr);if(!EID)S.jobs.push(nj);
     var cu=fmtD(f)+(t?" · "+fmtT(t):"");
@@ -781,10 +794,10 @@ async function importData(d){try{var n=0,i,j;for(i=0;i<(d.jobs||[]).length;i++){
   for(i=0;i<(d.exp||[]).length;i++)await DB.doc("exp/"+d.exp[i].id).set(d.exp[i]);
   if(d.prices&&Object.keys(d.prices).length)await DB.doc("settings/prices").set(d.prices);toast("Importado: "+n+" citas.")}catch(e){dberr(e)}}
 var EID=null;
-function resetForm(){EID=null;["cli","tel","veh","note","otn","ota","ubic","src"].forEach(function(i){$(i).value=""});$("desc").value=0;SERV.forEach(function(s){$("c-"+s.id).checked=false;$("p-"+s.id).value=S.prices[s.id]!=null?S.prices[s.id]:s.p});$("save").textContent="Agendar cita";$("nh").textContent="Nueva cita";$("cx").classList.add("hide");calc();updUbm()}
+function resetForm(){EID=null;if($("zsel2"))$("zsel2").value="";TRACK=false;["cli","tel","veh","note","otn","ota","ubic","src"].forEach(function(i){$(i).value=""});$("desc").value=0;SERV.forEach(function(s){$("c-"+s.id).checked=false;$("p-"+s.id).value=S.prices[s.id]!=null?S.prices[s.id]:s.p});$("save").textContent="Agendar cita";$("nh").textContent="Nueva cita";$("cx").classList.add("hide");calc();updUbm()}
 function editJob(id){var j=S.jobs.find(function(x){return x.id==id});if(!j)return;
   show("new");resetForm();EID=j.id;
-  $("cli").value=j.cli;$("tel").value=j.tel||"";$("veh").value=j.veh||"";$("fecha").value=j.date;$("hora").value=j.time||"09:00";$("note").value=j.note||"";$("ubic").value=j.ubic||"";$("src").value=j.src||"";updUbm();
+  $("cli").value=j.cli;$("tel").value=j.tel||"";$("veh").value=j.veh||"";$("fecha").value=j.date;$("hora").value=j.time||"09:00";$("note").value=j.note||"";$("ubic").value=j.ubic||"";$("src").value=j.src||"";updUbm();$("zsel2").value=(jobPos(j)||{}).n||"";
   var L=j.lines||j.items.map(function(n){return {n:n,p:null}}),ex=[],eam=0,sum=0;
   L.forEach(function(l){var s=SERV.find(function(x){return x.n===l.n});
     if(s){$("c-"+s.id).checked=true;if(l.p!=null)$("p-"+s.id).value=l.p;sum+=+$("p-"+s.id).value||0}else{ex.push(l.n);eam+=l.p||0}});
@@ -1231,11 +1244,11 @@ var _ra2=renderAg;renderAg=function(){_ra2();bindWeb($("dl"))};
 var _rh2=renderHero;renderHero=function(){_rh2();var P=S.jobs.filter(function(j){return j.st==="Por confirmar"}).sort(function(a,b){return (a.date+a.time)<(b.date+b.time)?-1:1});
   if(P.length){var d=document.createElement("button");d.className="sm hnote";d.textContent="🌐 "+P.length+(P.length===1?" reserva web por confirmar":" reservas web por confirmar")+" ›";
     d.onclick=function(){sel=P[0].date;wOff=Math.round((monday(pd(sel))-monday(new Date()))/6048e5);renderAg();$("dl").scrollIntoView({behavior:"smooth"})};$("hero").appendChild(d)}};
-function wantLocks(){var W={};S.jobs.forEach(function(j){if(!j.time||!j.date||j.date<today)return;var p=j.time.split(":"),m=(+p[0])*60+(+p[1]||0),e=m+120;
-  for(var h=Math.floor(m/60);h*60<e&&h<24;h++)W[j.date+"_"+pad(h)]={date:j.date,h:h,job:String(j.id)}});return W}
+function wantLocks(){var W={};S.jobs.forEach(function(j){if(!j.time||!j.date||j.date<today)return;var p=j.time.split(":"),m=(+p[0])*60+(+p[1]||0),e=m+120,zp=jobPos(j);
+  for(var h=Math.floor(m/60);h*60<e&&h<24;h++)W[j.date+"_"+pad(h)]={date:j.date,h:h,job:String(j.id),z:zp?zp.n:""}});return W}
 function reconcile(){clearTimeout(RCT);RCT=setTimeout(function(){if(!DB||!OWN||!JOBS_READY||!SLOTS_READY)return;
   var W=wantLocks(),have={},ids={},now=Date.now();SLOTS.forEach(function(x){have[x.id]=x});S.jobs.forEach(function(j){ids[String(j.id)]=j});
-  Object.keys(W).forEach(function(k){var h=have[k];if(!h||h.job!==W[k].job)DB.doc("slots/"+k).set({date:W[k].date,h:W[k].h,job:W[k].job,at:now}).catch(function(){})});
+  Object.keys(W).forEach(function(k){var h=have[k];if(!h||h.job!==W[k].job)DB.doc("slots/"+k).set({date:W[k].date,h:W[k].h,job:W[k].job,at:now}).catch(function(){});else if(W[k].z&&h.z!==W[k].z)DB.doc("slots/"+k).update({z:W[k].z}).catch(function(){})});
   SLOTS.forEach(function(x){if(W[x.id])return;if(x.date>=today&&!ids[x.job]&&now-(x.at||0)<120000)return;DB.doc("slots/"+x.id).delete().catch(function(){})});
   HOLDS.forEach(function(x){var j=ids[x.job];if(!j&&now-(x.at||0)<120000)return;if(!j||j.st!=="Por confirmar"||j.date<today)DB.doc("holds/"+x.id).delete().catch(function(){})});
   if(BOSS){var seen={};S.jobs.forEach(function(j){if(!(j.web&&!j.ntf&&j.st==="Por confirmar"))return;var G=webGroup(j),gk=j.tel+"|"+j.at;if(seen[gk])return;seen[gk]=1;
@@ -1267,6 +1280,67 @@ function renderRv(){var el=$("rvb");if(!el)return;var P=PUB||{},wa=String(P.wa||
 var _rn2=renderNum;renderNum=function(){_rn2();renderRv()};
 
 buildSvcs();calc();show("ag");initDb();
+
+/* ===== RUTA Y TIEMPOS DE TRASLADO ===== */
+var ZPL=[
+ ["San José centro",9.9333,-84.0833,"free","San José"],["Escazú",9.9189,-84.1390,"free","San José"],["Santa Ana",9.9320,-84.1830,"free","San José"],["Pavas",9.9480,-84.1350,"free","San José"],["La Uruca",9.9530,-84.1080,"free","San José"],["Desamparados",9.8970,-84.0630,"free","San José"],["Aserrí",9.8590,-84.0910,"free","San José"],["Alajuelita",9.9010,-84.1000,"free","San José"],["Ciudad Colón (Mora)",9.9130,-84.2420,"free","San José"],["Guadalupe (Goicoechea)",9.9500,-84.0500,"free","San José"],["Tibás",9.9590,-84.0790,"free","San José"],["Moravia",9.9620,-84.0480,"free","San José"],["San Pedro (Montes de Oca)",9.9350,-84.0510,"free","San José"],["Curridabat",9.9150,-84.0350,"free","San José"],["Coronado",9.9780,-84.0040,"free","San José"],["Acosta",9.7980,-84.1600,"f5","San José"],["Puriscal",9.8480,-84.3110,"f10","San José"],
+ ["Heredia centro",9.9980,-84.1170,"free","Heredia"],["Barva",10.0210,-84.1230,"free","Heredia"],["Santo Domingo",9.9810,-84.0890,"free","Heredia"],["Santa Bárbara",10.0390,-84.1570,"free","Heredia"],["San Rafael de Heredia",10.0130,-84.0990,"free","Heredia"],["San Isidro de Heredia",10.0170,-84.0560,"free","Heredia"],["Belén",9.9800,-84.1830,"free","Heredia"],["Flores",9.9980,-84.1600,"free","Heredia"],["San Pablo",9.9950,-84.0960,"free","Heredia"],
+ ["Alajuela centro",10.0160,-84.2110,"free","Alajuela"],["Río Segundo / Aeropuerto",10.0000,-84.1950,"free","Alajuela"],["San Rafael de Alajuela",9.9930,-84.2420,"free","Alajuela"],["La Guácima",9.9620,-84.2560,"free","Alajuela"],["Poás",10.0700,-84.2380,"free","Alajuela"],["Grecia",10.0730,-84.3110,"f5","Alajuela"],["Sarchí",10.0890,-84.3480,"f5","Alajuela"],["Naranjo",10.0990,-84.3780,"f5","Alajuela"],["Palmares",10.0570,-84.4340,"f5","Alajuela"],["Atenas",9.9780,-84.3790,"f5","Alajuela"],["San Ramón",10.0870,-84.4700,"f10","Alajuela"],["Zarcero",10.1860,-84.3920,"f10","Alajuela"],["Orotina",9.9120,-84.5240,"f10","Alajuela"],
+ ["Cartago centro",9.8640,-83.9190,"f5","Cartago"],["Tres Ríos (La Unión)",9.9030,-83.9890,"f5","Cartago"],["San Rafael de Oreamuno",9.8780,-83.9050,"f5","Cartago"],["Tejar (El Guarco)",9.8480,-83.9420,"f5","Cartago"],
+ ["Paraíso",9.8380,-83.8650,"no","Cartago"],["Orosi",9.7960,-83.8550,"no","Cartago"],["Pacayas",9.9160,-83.8100,"no","Cartago"],["Juan Viñas",9.8920,-83.7480,"no","Cartago"],["Turrialba",9.9040,-83.6830,"no","Cartago"],
+ ["Los Santos (Tarrazú, Dota)",9.6560,-84.0220,"no","Lejos"],["Pérez Zeledón",9.3740,-83.7030,"no","Lejos"],["San Vito (Coto Brus)",8.8210,-82.9710,"no","Lejos"],["Buenos Aires",9.1680,-83.3330,"no","Lejos"],["Ciudad Neily / Golfito",8.6450,-82.9400,"no","Lejos"],
+ ["San Carlos (Ciudad Quesada)",10.3240,-84.4270,"no","Lejos"],["Aguas Zarcas / Venecia",10.3830,-84.3300,"no","Lejos"],["La Fortuna",10.4680,-84.6430,"no","Lejos"],["Los Chiles",11.0330,-84.7130,"no","Lejos"],["Upala / Guatuso",10.8970,-85.0160,"no","Lejos"],["Sarapiquí",10.4550,-84.0180,"no","Lejos"],
+ ["Guanacaste (Liberia)",10.6350,-85.4380,"no","Lejos"],["Nicoya / Santa Cruz",10.1480,-85.4520,"no","Lejos"],["Cañas / Tilarán",10.4300,-85.0920,"no","Lejos"],
+ ["Puntarenas",9.9760,-84.8380,"no","Lejos"],["Esparza",9.9940,-84.6640,"no","Lejos"],["Jacó / Garabito",9.6150,-84.6290,"no","Lejos"],["Quepos",9.4310,-84.1620,"no","Lejos"],
+ ["Limón",9.9900,-83.0300,"no","Lejos"],["Guápiles",10.2150,-83.7870,"no","Lejos"],["Siquirres",10.0980,-83.5070,"no","Lejos"]];
+var JOBMIN=120,GRACE=10,TRACK=false;
+function zkm(a,b,c,d){var r=Math.PI/180,x=(d-b)*r*Math.cos((a+c)/2*r),y=(c-a)*r;return Math.sqrt(x*x+y*y)*6371}
+function znorm(t){return (t||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")}
+function zByName(n){n=znorm(n).trim();if(!n)return null;var p=ZPL.find(function(x){return znorm(x[0])===n})||ZPL.find(function(x){return n.indexOf(znorm(x[0]).split(" (")[0])===0});return p?{la:p[1],lo:p[2],n:p[0]}:null}
+function zNear(la,lo){var b=null,bd=1e9;ZPL.forEach(function(p){var d=zkm(la,lo,p[1],p[2]);if(d<bd){bd=d;b=p}});return b?b[0]:""}
+function zText(t){t=" "+znorm(t)+" ";var best=null;ZPL.forEach(function(p){var keys=[p[0]].concat((p[0].match(/\(([^)]+)\)/)||[])[1]?[(p[0].match(/\(([^)]+)\)/))[1]]:[]).concat([p[0].split(" (")[0]]);
+  keys.forEach(function(k){k=znorm(k).replace(/ centro$/,"");if(k.length>=4&&new RegExp("[^a-z]"+k.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"[^a-z]").test(t)&&(!best||k.length>best.k))best={p:p,k:k.length}})});return best?{la:best.p[1],lo:best.p[2],n:best.p[0]}:null}
+/* Dónde es una cita: coordenadas del enlace, la zona elegida, "Zona: X" de la web, o un lugar conocido escrito en la ubicación o la nota */
+function jobPos(j){var u=locOf(j),pl=u?parseLoc(u):null;if(pl&&pl.ll){var c=pl.ll.split(",");return {la:+c[0],lo:+c[1],n:zNear(+c[0],+c[1]),gps:1}}
+  if(j.zone){var z=zByName(j.zone);if(z)return z}var m=(j.note||"").match(/Zona: ([^(·]+)/);if(m){var z2=zByName(m[1]);if(z2)return z2}
+  return zText((u||"")+" "+(j.note||""))}
+function travelMin(a,b){if(!a||!b)return null;var d=zkm(a.la,a.lo,b.la,b.lo)*1.35;if(d<1.5)return 5;var v=d<8?24:d<25?32:45;return Math.round(d/v*60+8)}
+function tmin(t){var p=(t||"0:0").split(":");return (+p[0])*60+(+p[1]||0)}
+function hm(m){m=Math.round(m);var h=Math.floor(m/60),mi=m%60;return fmtT(pad(h)+":"+pad(mi))}
+function durTxt(m){return m>=60?Math.floor(m/60)+" h"+(m%60?" "+(m%60)+" min":""):m+" min"}
+/* Tramos del día: de cada cita a la siguiente */
+function dayLegs(date,extra,skip){var L=S.jobs.filter(function(j){return j.date===date&&j.time&&j.id!=skip}).slice();if(extra)L.push(extra);L.sort(function(a,b){return tmin(a.time)-tmin(b.time)});
+  var out={};for(var i=1;i<L.length;i++){var a=L[i-1],b=L[i],pa=a._pos||jobPos(a),pb=b._pos||jobPos(b),end=tmin(a.time)+JOBMIN,start=tmin(b.time),tm=travelMin(pa,pb),arr=tm==null?null:end+tm;
+    out[b.id]={from:a,fromN:pa?pa.n:"",toN:pb?pb.n:"",min:tm,arr:arr,late:arr!=null&&arr>start+GRACE?Math.round(arr-start):0,tight:arr!=null&&arr>start-10&&arr<=start+GRACE,unk:tm==null}}
+  return {list:L,legs:out}}
+function legHtml(g,j){if(!g)return "";if(g.unk)return '<div class="trv">🚗 Sin ubicación clara '+(g.fromN?'':'en la cita anterior ')+'para calcular el traslado. Poné la zona al editar la cita.</div>';
+  var t='🚗 ~'+durTxt(g.min)+' desde '+esc(g.fromN||"la cita anterior")+' · llegada aprox. '+hm(g.arr);
+  if(g.late)return '<div class="trv late">⚠️ '+t+' · <b>'+durTxt(g.late)+' tarde</b>'+(j.tel?'<button class="sm wa" data-late="'+j.id+'" data-arr="'+Math.round(g.arr)+'">Avisar atraso</button>':'')+'</div>';
+  return '<div class="trv'+(g.tight?' tight':'')+'">'+t+(g.tight?' · justo a tiempo':' ✓')+'</div>'}
+var _ra3=renderAg;renderAg=function(){_ra3();var D=dayLegs(sel);Array.prototype.forEach.call(document.querySelectorAll("#dl .job"),function(c){var e=c.querySelector("[data-ed]");if(!e)return;var j=S.jobs.find(function(x){return x.id==e.dataset.ed});if(!j)return;var h=legHtml(D.legs[j.id],j);if(!h)return;var jb=c.querySelector(".jb")||c;jb.insertAdjacentHTML("afterbegin",h)});
+  Array.prototype.forEach.call(document.querySelectorAll("[data-late]"),function(b){b.onclick=function(){var j=S.jobs.find(function(x){return x.id==b.dataset.late});if(!j)return;var a=+b.dataset.arr,mins=Math.max(5,Math.round((a-tmin(j.time))/5)*5);
+    waTo(j.tel,"Hola "+j.cli+" 👋 Te escribimos de GlassStudioCR. Vamos con un atraso de unos "+durTxt(mins)+" por la cita anterior: llegaríamos aproximadamente a las "+hm(a)+". Disculpá la molestia. Si esa hora no te sirve, avisanos y la movemos.")}})};
+var _rh3=renderHero;renderHero=function(){_rh3();var D=dayLegs(today),late=D.list.filter(function(j){return D.legs[j.id]&&D.legs[j.id].late}),unk=D.list.filter(function(j){return D.legs[j.id]&&D.legs[j.id].unk}).length;
+  if(D.list.length<2)return;var box=document.createElement("div");box.className="rtbx";
+  box.innerHTML='<div style="margin-top:10px;font-weight:700">'+(late.length?'⚠️ '+late.length+(late.length===1?' traslado no da tiempo hoy':' traslados no dan tiempo hoy'):'🧭 Ruta de hoy: los traslados dan tiempo')+(unk?' · '+unk+' sin ubicación':'')+'</div><ul class="rtl">'+
+    D.list.map(function(j){var g=D.legs[j.id],p=jobPos(j);return '<li><b>'+fmtT(j.time)+'</b><span>'+esc(j.cli)+(p?' · '+esc(p.n):'')+(g&&!g.unk?(g.late?' · <span style="color:#ffb4ad">llegás ~'+hm(g.arr)+' ('+durTxt(g.late)+' tarde)</span>':' · ~'+durTxt(g.min)+' de viaje'):'')+'</span></li>'}).join("")+'</ul>';
+  $("hero").appendChild(box)};
+/* Nueva cita: zona y aviso de traslado antes de guardar */
+(function(){var z=$("zsel2");if(!z)return;var G={};ZPL.forEach(function(p){(G[p[4]]=G[p[4]]||[]).push(p)});
+  z.innerHTML='<option value="">Sin zona (se toma del enlace de ubicación)</option>'+["San José","Heredia","Alajuela","Cartago","Lejos"].map(function(g){return '<optgroup label="'+(g==="Lejos"?"Lejos":g)+'">'+G[g].map(function(p){return '<option value="'+esc(p[0])+'">'+esc(p[0])+'</option>'}).join("")+'</optgroup>'}).join("")})();
+function candPos(){var u=$("ubic").value,pl=u?parseLoc(u):null;if(pl&&pl.ll){var c=pl.ll.split(",");return {la:+c[0],lo:+c[1],n:zNear(+c[0],+c[1])}}var z=zByName($("zsel2").value);if(z)return z;return zText(u+" "+$("note").value)}
+function updTravel(){var w=$("trw"),f=$("fecha").value||today,t=$("hora").value,p=candPos();TRACK=false;
+  if(!t){w.className="trw hide";return}
+  if(!p){w.className="trw";w.textContent="Elegí la zona o pegá la ubicación para revisar si el traslado da tiempo.";return}
+  var me={id:"__new",time:t,_pos:p,cli:$("cli").value||"esta cita"},D=dayLegs(f,me,EID),i=D.list.indexOf(me),prev=D.legs["__new"],nx=D.list[i+1],gn=nx?D.legs[nx.id]:null,msg=[];
+  if(prev&&prev.late)msg.push("Venís de "+fmtT(prev.from.time)+" en "+(prev.fromN||"otra zona")+": llegarías a las "+hm(prev.arr)+" ("+durTxt(prev.late)+" tarde). La primera hora que da es "+hm(tmin(prev.from.time)+JOBMIN+prev.min)+".");
+  if(gn&&gn.late)msg.push("Después tenés a "+nx.cli+" a las "+fmtT(nx.time)+" en "+(gn.toN||"otra zona")+": llegarías "+durTxt(gn.late)+" tarde.");
+  if(msg.length){w.className="trw late";w.textContent="⚠️ "+msg.join(" ");TRACK=true}
+  else{w.className="trw ok";w.textContent="✓ "+esc(p.n)+(prev&&!prev.unk?": desde "+(prev.fromN||"la cita anterior")+" son ~"+durTxt(prev.min)+", da tiempo.":": no hay choques de traslado ese día.")}}
+["fecha","hora","ubic","note"].forEach(function(i){$(i).addEventListener("input",updTravel)});$("zsel2").addEventListener("change",updTravel);
+$("ubic").addEventListener("input",function(){var u=$("ubic").value,pl=u?parseLoc(u):null;if(pl&&pl.ll){var c=pl.ll.split(",");$("zsel2").value=zNear(+c[0],+c[1])}});
+$("cli").addEventListener("change",function(){if($("zsel2").value)return;var n=$("cli").value.trim().toLowerCase(),j=S.jobs.filter(function(x){return (x.cli||"").trim().toLowerCase()===n}).pop(),p=j&&jobPos(j);if(p){$("zsel2").value=p.n;updTravel()}});
+var _sv=$("save").onclick,ACK=0;$("save").onclick=function(e){updTravel();if(TRACK&&Date.now()-ACK>15000){ACK=Date.now();toast("⚠️ El traslado no da tiempo. Tocá Agendar otra vez para guardar igual.");$("trw").scrollIntoView&&$("trw").scrollIntoView({block:"center",behavior:"smooth"});return}ACK=0;return _sv.call(this,e)};
 </script>
 </body>
 </html>
