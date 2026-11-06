@@ -542,7 +542,7 @@ function renderAg(){
   Array.prototype.forEach.call(document.querySelectorAll("[data-ed]"),function(b){b.onclick=function(){editJob(b.dataset.ed)}});
   Array.prototype.forEach.call(document.querySelectorAll("[data-cal]"),function(b){b.onclick=function(){window.open(calUrl(S.jobs.find(function(x){return x.id==b.dataset.cal})),"_blank")}});
   Array.prototype.forEach.call(document.querySelectorAll("[data-ty]"),function(b){b.onclick=function(){var j=S.jobs.find(function(x){return x.id==b.dataset.ty});revSend(j)}});
-  Array.prototype.forEach.call(document.querySelectorAll("select[data-id]"),function(e){e.onchange=function(){if(e.value==="Pagado"){confetti();toast("¡Pagado! 💸")}if(!DB)return;var j0=S.jobs.find(function(x){return x.id==e.dataset.id});j0.st=e.value;DB.doc("jobs/"+j0.id).update({st:e.value}).catch(dberr);renderAg();if((e.value==="Hecho"||e.value==="Pagado")&&j0.tel&&!j0.rv)askRev(j0)}});
+  Array.prototype.forEach.call(document.querySelectorAll("select[data-id]"),function(e){e.onchange=function(){if(e.value==="Pagado"){confetti();toast("¡Pagado! 💸")}if(!DB)return;var j0=S.jobs.find(function(x){return x.id==e.dataset.id});j0.st=e.value;DB.doc("jobs/"+j0.id).update({st:e.value}).catch(dberr);renderAg();if(e.value==="Hecho"||e.value==="Pagado")tripSheet(j0)}});
   Array.prototype.forEach.call(document.querySelectorAll("[data-del]"),function(b){b.onclick=function(){var j=S.jobs.find(function(x){return x.id==b.dataset.del});if(!j)return;confirmDel({t:"¿Borrar esta cita?",w:esc(j.cli)+' <span class="m">· '+fmtD(j.date)+(j.time?" · "+fmtT(j.time):"")+'</span><div class="m">'+j.items.map(esc).join(", ")+" · "+crc(j.total)+'</div>'},function(){delDocs([["jobs/"+j.id,j]],"Cita borrada")})}});
 }
 $("pw").onclick=function(){wOff--;renderAg()};
@@ -1330,6 +1330,51 @@ $("ubask").onclick=function(){var tel=($("tel").value||"").replace(/\D/g,"");if(
       if(t8&&!$("tel").value){$("tel").value=t8;var old=S.jobs.filter(function(j){return String(j.tel||"").replace(/\D/g,"").slice(-8)===t8}).pop();if(old&&!$("cli").value)$("cli").value=old.cli}
       toast("📍 Ubicación lista: completá la cita y guardala")}
   },250)})();
+</script>
+
+<style>
+#trip{position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;padding:12px;padding-bottom:calc(12px + env(safe-area-inset-bottom))}
+#trip .tc{width:100%;max-width:480px;max-height:86vh;overflow:auto;background:var(--card,#fff);color:var(--ink,#111);border-radius:20px;padding:16px 16px 14px;box-shadow:0 18px 50px rgba(0,0,0,.35);animation:tripUp .28s ease-out}
+@keyframes tripUp{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+#trip h3{margin:0 0 2px;font-size:18px}
+#trip .nx{border:1px solid var(--line,#ddd);border-radius:14px;padding:12px;margin:12px 0}
+#trip .big{font-size:26px;font-weight:800;line-height:1.1}
+#trip .pill{display:inline-block;padding:3px 10px;border-radius:99px;font-size:13px;font-weight:700;margin-right:6px}
+#trip .ok{background:#d9f7e4;color:#0c6b35}#trip .warn{background:#fff1cc;color:#7a5200}#trip .bad{background:#ffe0dc;color:#9b1c10}
+#trip .near{background:#d9f3f5;color:#0b5560}#trip .mid{background:#e8eefc;color:#2b4a9b}#trip .far{background:#f3e3fb;color:#6c2a8c}
+#trip .bt{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}#trip .bt>*{flex:1 1 auto;text-align:center;text-decoration:none}
+#trip ol{margin:6px 0 0;padding-left:20px}#trip li{margin:6px 0;font-size:14px}
+</style>
+<script>
+/* AL TERMINAR UNA CITA: cuánto falta para la siguiente, si estás cerca o lejos, y la ruta que queda del día */
+function tripKm(a,b){return a&&b?Math.round(zkm(a.la,a.lo,b.la,b.lo)*1.35*10)/10:null}
+function tripLvl(km){return km==null?["","Distancia desconocida"]:km<5?["near","Cerca"]:km<15?["mid","Distancia media"]:["far","Lejos"]}
+function tripSheet(j0){var o=document.getElementById("trip");if(o)o.remove();var ra=document.getElementById("revAsk");if(ra)ra.remove();
+  var day=j0.date,rest=S.jobs.filter(function(j){return j.date===day&&j.time&&j.id!==j0.id&&!isDone(j)&&tmin(j.time)>=tmin(j0.time)}).sort(function(a,b){return tmin(a.time)-tmin(b.time)});
+  o=document.createElement("div");o.id="trip";o.innerHTML='<div class="tc" role="dialog" aria-label="Siguiente cita"><h3>✅ Terminado: '+esc(j0.cli||"")+'</h3><div class="m" id="trM">'+(rest.length?'Calculando el recorrido…':'')+'</div><div id="trB"></div></div>';
+  document.body.appendChild(o);o.addEventListener("click",function(e){if(e.target===o)o.remove()});
+  var revB=(j0.tel&&!j0.rv)?'<button class="sm wa" id="trRev">⭐ Pedir reseña a '+esc(String(j0.cli||"").split(" ")[0])+'</button>':'';
+  function draw(here,src){var b=document.getElementById("trB");if(!b)return;var h="";
+    if(!rest.length){h='<p class="big" style="margin:12px 0">🎉 No hay más citas '+(day===ymd(new Date())?'hoy':'ese día')+'</p>'}
+    else{var n=rest[0],pn=jobPos(n),from=here||jobPos(j0),km=tripKm(from,pn),mn=travelMin(from,pn),now=new Date(),nowM=day===ymd(now)?now.getHours()*60+now.getMinutes():tmin(j0.time)+(typeof JOBMIN!=="undefined"?JOBMIN:120),eta=mn==null?null:nowM+mn,st=tmin(n.time),lv=tripLvl(km);
+      var stt=eta==null?'':eta<=st-10?'<span class="pill ok">A tiempo · te sobran '+durTxt(st-eta)+'</span>':eta<=st+GRACE?'<span class="pill warn">Justo a tiempo</span>':'<span class="pill bad">'+durTxt(eta-st)+' tarde</span>';
+      var loc=locOf(n),gm=loc?gmaps(loc):(pn?"https://www.google.com/maps/search/?api=1&query="+pn.la+","+pn.lo:""),wz=loc?waze(loc):(pn?"https://waze.com/ul?ll="+pn.la+","+pn.lo+"&navigate=yes":"");
+      h+='<div class="nx"><div class="m">Siguiente cita · '+fmtT(n.time)+'</div><div class="big">'+esc(n.cli||"")+'</div><div class="m">'+esc((pn&&pn.n)||"Sin ubicación")+(n.veh?' · '+esc(n.veh):'')+'</div>';
+      if(mn!=null)h+='<div style="margin-top:10px"><span class="pill '+lv[0]+'">'+lv[1]+' · '+km+' km</span><span class="pill near">~'+durTxt(mn)+'</span></div><div style="margin-top:8px">Si salís ya, llegás aprox. a las <b>'+hm(eta)+'</b> '+stt+'</div><div class="m" style="margin-top:4px">'+(src==="gps"?'Calculado desde donde estás ahora.':'Calculado desde la cita que terminaste.')+' Aproximado, sin tráfico en vivo.</div>';
+      else h+='<div class="m" style="margin-top:8px">No hay ubicación clara para calcular. Pedile la ubicación o poné la zona en la cita.</div>';
+      h+='<div class="bt">'+(wz?'<a class="alt sm" target="_blank" rel="noopener" href="'+esc(wz)+'">Waze</a>':'')+(gm?'<a class="alt sm" target="_blank" rel="noopener" href="'+esc(gm)+'">Maps</a>':'')+(n.tel?'<button class="sm wa" id="trGo">Avisar que vamos</button>':'')+'</div></div>';
+      if(rest.length>1){var tot=km||0,tm=mn||0,li="";for(var i=1;i<rest.length;i++){var a=rest[i-1],c=rest[i],pa=jobPos(a),pc=jobPos(c),k=tripKm(pa,pc),t=travelMin(pa,pc),g=(dayLegs(day).legs||{})[c.id]||{};tot+=k||0;tm+=t||0;
+          li+='<li><b>'+fmtT(c.time)+'</b> '+esc(c.cli||"")+' · '+(k!=null?tripLvl(k)[1].toLowerCase()+', '+k+' km, ~'+durTxt(t):'sin ubicación')+(g.late?' · <span style="color:#c0392b;font-weight:700">'+durTxt(g.late)+' tarde</span>':g.tight?' · justo':k!=null?' ✓':'')+'</li>'}
+        h+='<div class="m"><b>Lo que queda del día</b> ('+rest.length+' citas · ~'+Math.round(tot)+' km · ~'+durTxt(tm)+' manejando)</div><ol><li><b>'+fmtT(n.time)+'</b> '+esc(n.cli||"")+' · la siguiente</li>'+li+'</ol>'}}
+    h+='<div class="bt" style="margin-top:14px">'+revB+'<button class="alt sm" id="trX">Cerrar</button></div>';
+    b.innerHTML=h;var m=document.getElementById("trM");if(m)m.textContent="";
+    var x=document.getElementById("trX");if(x)x.onclick=function(){o.remove()};
+    var rv=document.getElementById("trRev");if(rv)rv.onclick=function(){revSend(j0);rv.remove()};
+    var go=document.getElementById("trGo");if(go&&rest.length){go.onclick=function(){var n=rest[0],nm=String(n.cli||"").split(" ")[0],t=document.querySelector("#trip b")?document.querySelector("#trip .nx b"):null;
+      waTo(n.tel,"¡Hola"+(nm?" "+nm:"")+"! 👋 Ya vamos en camino 🚗"+(t?" Llegamos aprox. a las "+t.textContent+".":"")+" Nos vemos pronto. — GlassStudioCR")}}}
+  draw(null,"cita");
+  if(rest.length&&day===ymd(new Date())&&navigator.geolocation){try{navigator.geolocation.getCurrentPosition(function(p){draw({la:p.coords.latitude,lo:p.coords.longitude,n:zNear(p.coords.latitude,p.coords.longitude)},"gps")},function(){},{enableHighAccuracy:false,timeout:8000,maximumAge:120000})}catch(e){}}
+}
 </script>
 </body>
 </html>
