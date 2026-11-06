@@ -188,6 +188,7 @@ body.ok .dock{display:none}
 footer{color:var(--mute);font-size:12px;text-align:center;margin:26px 0 10px}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
+<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1186226080348335');fbq('track','PageView');</script>
 </head>
 <body>
 <section id="land">
@@ -315,7 +316,7 @@ function waUrl(t){return "https://wa.me/"+CFG.wa+"?text="+encodeURIComponent(t)}
 var STEPS=["s1","s2","s4","s3","s4b","s5"];
 function show(i){S.step=i;STEPS.forEach(function(s,k){$(s).classList.toggle("on",k===i)});$("pt").textContent=i<5?"Paso "+(i+1)+" de 5":"Último paso";$("pb").style.width=((i+1)/6*100)+"%";
   $("nx").textContent=i===5?"Confirmar cita":"Siguiente";err("");upd();window.scrollTo(0,0);if(i===3)loadBusy();if(i===5)renderSum()}
-$("go").onclick=function(){document.body.classList.add("book");history.pushState({b:1},"");show(0)};
+$("go").onclick=function(){try{fbq("track","InitiateCheckout")}catch(e){}document.body.classList.add("book");history.pushState({b:1},"");show(0)};
 $("bk").onclick=function(){if(S.step===0&&S.ci>0){loadCar(S.ci-1);show(1);return}if(S.step===0){document.body.classList.remove("book");return}show(S.step-1)};
 window.addEventListener("popstate",function(){if(document.body.classList.contains("book")){if(S.step===0&&S.ci>0){history.pushState({b:1},"");loadCar(S.ci-1);show(1)}else if(S.step>0){history.pushState({b:1},"");show(S.step-1)}else document.body.classList.remove("book")}});
 /* VARIOS CARROS */
@@ -477,7 +478,7 @@ function submit(){var b=$("nx");if(b.disabled)return;err("");
   bt.commit().then(done,function(){loadBusy().then(function(){var taken=false;for(var k=0;k<DUR*n;k++)if(BUSY[S.day+"_"+pad(S.h+k)])taken=true;b.textContent="Confirmar cita";upd();
       if(taken){S.h=null;show(3);err("Uy, alguien acaba de tomar esa hora. Elegí otra, por favor.")}
       else err("Ya hay una cita pendiente con este número de WhatsApp. Si querés cambiarla o agendar otro carro, escribinos por WhatsApp.")})})}
-function done(){var t=waText();$("wa").href=waUrl(t);var A=allCars(),n=A.length;$("dt").innerHTML="<b>"+niceDay(S.day)+", "+fmtH(S.h)+"</b><br>"+(n>1?n+" carros: "+A.map(function(c){return esc(c.veh)}).join(", "):esc(A[0].veh))+" · "+crc(total());
+function done(){try{var _v=total(),_n=allCars().length;fbq("track","Schedule",{value:_v,currency:"CRC",num_items:_n});fbq("track","Lead",{value:_v,currency:"CRC"})}catch(e){}var t=waText();$("wa").href=waUrl(t);var A=allCars(),n=A.length;$("dt").innerHTML="<b>"+niceDay(S.day)+", "+fmtH(S.h)+"</b><br>"+(n>1?n+" carros: "+A.map(function(c){return esc(c.veh)}).join(", "):esc(A[0].veh))+" · "+crc(total());
   var d=pd(S.day),f=function(h){return S.day.replace(/-/g,"")+"T"+pad(h)+"0000"};
   $("cal").href="https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent("GlassStudioCR: pulido a domicilio")+"&dates="+f(S.h)+"/"+f(S.h+DUR*n)+"&details="+encodeURIComponent(A.map(function(c){return c.veh+": "+lines(c).map(function(l){return l.n}).join(" + ")}).join(" | ")+" · "+crc(total()))+"&location="+encodeURIComponent(mapLink()||$("addr").value.trim());
   document.body.classList.remove("book");document.body.classList.add("ok");window.scrollTo(0,0);confetti()}
