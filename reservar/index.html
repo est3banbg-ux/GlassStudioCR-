@@ -122,6 +122,19 @@ body.book #wiz{display:block}
 @keyframes drop{from{transform:translate(-50%,-190%);opacity:0}}
 .map .cap{position:absolute;left:0;right:0;bottom:0;padding:16px 10px 7px;background:linear-gradient(transparent,rgba(0,0,0,.6));color:#fff;font-size:13px;font-weight:600}
 .map .osm{position:absolute;right:4px;top:3px;font-size:9px;color:#333;background:rgba(255,255,255,.8);padding:0 4px;border-radius:4px}
+.zc{margin-top:10px;border-radius:16px;padding:12px 14px;font-size:15px;border:1.5px solid;animation:in .3s}
+.zc b{display:block;font-size:16px}
+.zc small{display:block;font-size:13px;margin-top:3px;opacity:.9}
+.zc.free{background:color-mix(in srgb,var(--ok) 12%,transparent);border-color:var(--ok)}
+.zc.fee{background:color-mix(in srgb,var(--glow) 16%,transparent);border-color:var(--glow)}
+.zc.no{background:color-mix(in srgb,var(--bad) 10%,transparent);border-color:var(--bad)}
+.zc a{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;background:#1e9e57;color:#fff;font-weight:700;border-radius:12px;padding:12px;text-decoration:none}
+.zc button{margin-top:8px;font-weight:700;color:var(--acc);text-decoration:underline;padding:0}
+.zones{background:var(--card);border-radius:18px;box-shadow:var(--sh);overflow:hidden;margin-top:10px}
+.zones div{padding:12px 16px;border-top:1px solid var(--line);font-size:14px}
+.zones div:first-child{border-top:0}
+.zones b{display:flex;justify-content:space-between;gap:10px;font-size:15px}
+.zones small{display:block;color:var(--mute);font-size:13px;margin-top:2px}
 .locok{margin-top:8px;font-size:14px;color:var(--ok);font-weight:600}
 .locbad{margin-top:8px;font-size:14px;color:var(--bad);font-weight:600}
 .or{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:13px;margin:14px 0 0}
@@ -181,7 +194,7 @@ footer{color:var(--mute);font-size:12px;text-align:center;margin:26px 0 10px}
   <div class="hero"><div class="wrap">
     <div class="brand"><svg width="34" height="34" viewBox="0 0 48 48" aria-hidden="true"><path d="M9 14Q24 8 39 14L44 34Q24 39 4 34Z" fill="rgba(255,255,255,.18)" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/><circle cx="30" cy="25" r="7" fill="#fff"/><circle cx="30" cy="25" r="2.4" fill="#0b5d66"/><path d="M35 30l7 7" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg><span style="color:#fff">Glass<span>Studio</span>CR</span></div>
     <h1>Vidrios como nuevos, <em>sin salir de casa</em></h1>
-    <p>Pulido de parabrisas y focos a domicilio. Llegamos <b>gratis</b> a cualquier punto de la GAM: San José, Heredia y Alajuela.</p>
+    <p>Pulido de parabrisas y focos a domicilio. Llegamos <b>gratis</b> a San José, Heredia y Alajuela, y con un pequeño costo a Cartago, Grecia, San Ramón y alrededores.</p>
     <div class="promo" id="promo" hidden><i>🎁</i><span><b>Promo: agendá aquí y te regalamos el vidrio trasero y los retrovisores</b><small>Al agendar el pulido de parabrisas desde esta página. Sedán o SUV, mismo regalo.</small></span></div>
     <div class="chips"><span>🚗 Vamos donde estés</span><span>🚙🚗 ¿Varios carros? Agendalos juntos</span><span>🛡️ Protección cerámica incluida</span><span>⏱️ Agendás en 1 minuto</span></div>
     <button class="cta" id="go">Agendar mi cita <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
@@ -196,6 +209,7 @@ footer{color:var(--mute);font-size:12px;text-align:center;margin:26px 0 10px}
       <div><span>Pulido de focos con polímero líquido<small>El par</small></span><b>₡20 000</b></div>
       <div><span>Servicio a domicilio en la GAM</span><b style="color:var(--ok)">Gratis</b></div>
     </div></div>
+    <div class="sec"><h2>¿Hasta dónde llegamos?</h2><div class="zones" id="zlist"></div></div>
   </div>
 </section>
 
@@ -230,8 +244,11 @@ footer{color:var(--mute);font-size:12px;text-align:center;margin:26px 0 10px}
       <h2>¿Dónde está el carro?</h2><p class="sub">Llegamos a tu casa, trabajo o donde lo tengás parqueado.</p>
       <button class="gps" id="gps"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.6" fill="currentColor"/></svg>Enviar mi ubicación actual</button>
       <div id="lv"></div>
-      <div class="or">o escribí la dirección</div>
-      <textarea id="addr" rows="2" maxlength="250" placeholder="Ej: Heredia, San Pablo, del Más x Menos 200 m sur, casa verde"></textarea>
+      <div class="or">o elegí la zona</div>
+      <select id="zsel" aria-label="Zona donde está el carro"></select>
+      <div id="zv"></div>
+      <label for="addr">Dirección y señas</label>
+      <textarea id="addr" rows="2" maxlength="250" placeholder="Ej: San Pablo, del Más x Menos 200 m sur, casa verde"></textarea>
       <label for="cli">Tu nombre</label><input id="cli" autocomplete="name" autocapitalize="words" maxlength="60" placeholder="Nombre y apellido">
       <label for="tel">Tu WhatsApp</label><input id="tel" type="tel" inputmode="tel" autocomplete="tel" maxlength="16" placeholder="8888 8888">
       <label for="det">Algo que debamos saber (opcional)</label><input id="det" maxlength="140" placeholder="Ej: portón negro, preguntar por Ana">
@@ -322,16 +339,16 @@ function renderCars(){var A=allCars(),n=A.length,h="";
     var i=+b.dataset.ci;if(i===S.ci)return;loadCar(i);show(S.step>1?0:S.step)}})}
 function toast2(m){var t=$("er");t.textContent=m;t.style.background="color-mix(in srgb,var(--ok) 14%,transparent)";t.style.color="var(--ok)";t.classList.add("on");clearTimeout(t._h);t._h=setTimeout(function(){t.classList.remove("on");t.style.background="";t.style.color=""},2200)}
 function err(t){$("er").textContent=t||"";$("er").classList.toggle("on",!!t)}
-function total(){return allCars().reduce(function(a,c){return a+carTotal(c)},0)}
+function total(){return allCars().reduce(function(a,c){return a+carTotal(c)},0)+feeAmt()}
 function okStep(){if(S.step===0)return !!S.vt&&$("veh").value.trim().length>=3;if(S.step===1)return carTotal(curCar())>0;if(S.step===2)return !!S.day&&S.h!=null;
-  if(S.step===3)return (S.lat!=null||$("addr").value.trim().length>=10)&&$("cli").value.trim().length>=2&&telOk();return true}
+  if(S.step===3)return zoneOk()&&(S.lat!=null||$("addr").value.trim().length>=10)&&$("cli").value.trim().length>=2&&telOk();return true}
 function upd(){var n=CARS.length;$("tot").textContent=crc(total());$("totl").textContent=n>1?"Total · "+n+" carros":"Total";$("nx").disabled=!okStep();renderCars()}
 function telN(){var n=$("tel").value.replace(/\D/g,"");if(n.length===11&&n.indexOf("506")===0)n=n.slice(3);return n}
 function telOk(){return /^[245678]\d{7}$/.test(telN())}
 $("nx").onclick=function(){if(!okStep()){hintStep();return}
   if(S.step===1){var A=allCars();for(var i=0;i<A.length;i++)if(!carOk(A[i])){loadCar(i);show(carTotal(A[i])>0||!A[i].vt||A[i].veh.length<3?0:1);err("Falta completar el carro "+(i+1)+".");return}saveCar()}
   if(S.step<4)show(S.step+1);else submit()};
-function hintStep(){if(S.step===0)err(!S.vt?"Elegí si es sedán o SUV.":"Escribí la marca y el modelo del carro.");if(S.step===3)err(S.lat==null&&$("addr").value.trim().length<10?"Mandanos tu ubicación o escribí la dirección.":!telOk()?"Revisá tu número de WhatsApp: son 8 dígitos.":"Escribí tu nombre.")}
+function hintStep(){if(S.step===0)err(!S.vt?"Elegí si es sedán o SUV.":"Escribí la marca y el modelo del carro.");if(S.step===3)err(!S.zone?"Mandanos tu ubicación o elegí la zona donde está el carro.":S.zone.z==="no"?"No llegamos a esa zona por la web. Escribinos por WhatsApp para un pedido especial.":S.lat==null&&$("addr").value.trim().length<10?"Escribí la dirección con algunas señas.":!telOk()?"Revisá tu número de WhatsApp: son 8 dígitos.":"Escribí tu nombre.")}
 
 /* PASO 1: tipo de carro */
 Array.prototype.forEach.call(document.querySelectorAll("[data-vt]"),function(b){b.onclick=function(){S.vt=b.dataset.vt;Array.prototype.forEach.call(document.querySelectorAll("[data-vt]"),function(x){x.setAttribute("aria-pressed",x===b)});chkModel();buildSvc();upd()}});
@@ -372,14 +389,49 @@ function loadBusy(){var a=ymd(new Date()),e=new Date();e.setDate(e.getDate()+DAY
 function tiles(la,lo){var z=17,n=Math.pow(2,z),xf=(lo+180)/360*n,r=la*Math.PI/180,yf=(1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*n,x=Math.floor(xf),y=Math.floor(yf),h="";
   for(var b=-1;b<=1;b++)for(var a=-1;a<=1;a++)h+='<img alt="" src="https://tile.openstreetmap.org/'+z+'/'+(x+a)+'/'+(y+b)+'.png" style="left:'+((a+1)*256)+'px;top:'+((b+1)*256)+'px">';
   return '<div class="tl" style="margin-left:'+(-(256+(xf-x)*256)).toFixed(1)+'px;margin-top:'+(-(256+(yf-y)*256)).toFixed(1)+'px">'+h+'</div><span class="osm">© OpenStreetMap</span>'}
-function inGAM(la,lo){return la>9.7&&la<10.2&&lo>-84.5&&lo<-83.75}
-$("gps").onclick=function(){if(!navigator.geolocation){$("lv").innerHTML='<div class="locbad">Tu celular no permite compartir la ubicación desde aquí. Escribí la dirección abajo.</div>';return}
+/* ZONAS DE DOMICILIO
+   free = gratis · f5 = ₡5 000 · f10 = ₡10 000 · no = no se agenda por la web (pedidos de 5+ carros por WhatsApp).
+   Con GPS se toma el lugar de la lista más cercano. Si queda a más de MAXKM de cualquiera, se trata como "no". */
+var ZF={free:0,f5:5000,f10:10000},MAXKM=10,BIGORDER=5;
+var PL=[
+ ["San José centro",9.9333,-84.0833,"free","San José"],["Escazú",9.9189,-84.1390,"free","San José"],["Santa Ana",9.9320,-84.1830,"free","San José"],["Pavas",9.9480,-84.1350,"free","San José"],["La Uruca",9.9530,-84.1080,"free","San José"],["Desamparados",9.8970,-84.0630,"free","San José"],["Aserrí",9.8590,-84.0910,"free","San José"],["Alajuelita",9.9010,-84.1000,"free","San José"],["Ciudad Colón (Mora)",9.9130,-84.2420,"free","San José"],["Guadalupe (Goicoechea)",9.9500,-84.0500,"free","San José"],["Tibás",9.9590,-84.0790,"free","San José"],["Moravia",9.9620,-84.0480,"free","San José"],["San Pedro (Montes de Oca)",9.9350,-84.0510,"free","San José"],["Curridabat",9.9150,-84.0350,"free","San José"],["Coronado",9.9780,-84.0040,"free","San José"],["Acosta",9.7980,-84.1600,"f5","San José"],["Puriscal",9.8480,-84.3110,"f10","San José"],
+ ["Heredia centro",9.9980,-84.1170,"free","Heredia"],["Barva",10.0210,-84.1230,"free","Heredia"],["Santo Domingo",9.9810,-84.0890,"free","Heredia"],["Santa Bárbara",10.0390,-84.1570,"free","Heredia"],["San Rafael de Heredia",10.0130,-84.0990,"free","Heredia"],["San Isidro de Heredia",10.0170,-84.0560,"free","Heredia"],["Belén",9.9800,-84.1830,"free","Heredia"],["Flores",9.9980,-84.1600,"free","Heredia"],["San Pablo",9.9950,-84.0960,"free","Heredia"],
+ ["Alajuela centro",10.0160,-84.2110,"free","Alajuela"],["Río Segundo / Aeropuerto",10.0000,-84.1950,"free","Alajuela"],["San Rafael de Alajuela",9.9930,-84.2420,"free","Alajuela"],["La Guácima",9.9620,-84.2560,"free","Alajuela"],["Poás",10.0700,-84.2380,"free","Alajuela"],["Grecia",10.0730,-84.3110,"f5","Alajuela"],["Sarchí",10.0890,-84.3480,"f5","Alajuela"],["Naranjo",10.0990,-84.3780,"f5","Alajuela"],["Palmares",10.0570,-84.4340,"f5","Alajuela"],["Atenas",9.9780,-84.3790,"f5","Alajuela"],["San Ramón",10.0870,-84.4700,"f10","Alajuela"],["Zarcero",10.1860,-84.3920,"f10","Alajuela"],["Orotina",9.9120,-84.5240,"f10","Alajuela"],
+ ["Cartago centro",9.8640,-83.9190,"f5","Cartago"],["Tres Ríos (La Unión)",9.9030,-83.9890,"f5","Cartago"],["San Rafael de Oreamuno",9.8780,-83.9050,"f5","Cartago"],["Tejar (El Guarco)",9.8480,-83.9420,"f5","Cartago"],
+ ["Paraíso",9.8380,-83.8650,"no","Cartago"],["Orosi",9.7960,-83.8550,"no","Cartago"],["Pacayas",9.9160,-83.8100,"no","Cartago"],["Juan Viñas",9.8920,-83.7480,"no","Cartago"],["Turrialba",9.9040,-83.6830,"no","Cartago"],
+ ["Los Santos (Tarrazú, Dota)",9.6560,-84.0220,"no","Lejos"],["Pérez Zeledón",9.3740,-83.7030,"no","Lejos"],["San Vito (Coto Brus)",8.8210,-82.9710,"no","Lejos"],["Buenos Aires",9.1680,-83.3330,"no","Lejos"],["Ciudad Neily / Golfito",8.6450,-82.9400,"no","Lejos"],
+ ["San Carlos (Ciudad Quesada)",10.3240,-84.4270,"no","Lejos"],["Aguas Zarcas / Venecia",10.3830,-84.3300,"no","Lejos"],["La Fortuna",10.4680,-84.6430,"no","Lejos"],["Los Chiles",11.0330,-84.7130,"no","Lejos"],["Upala / Guatuso",10.8970,-85.0160,"no","Lejos"],["Sarapiquí",10.4550,-84.0180,"no","Lejos"],
+ ["Guanacaste (Liberia)",10.6350,-85.4380,"no","Lejos"],["Nicoya / Santa Cruz",10.1480,-85.4520,"no","Lejos"],["Cañas / Tilarán",10.4300,-85.0920,"no","Lejos"],
+ ["Puntarenas",9.9760,-84.8380,"no","Lejos"],["Esparza",9.9940,-84.6640,"no","Lejos"],["Jacó / Garabito",9.6150,-84.6290,"no","Lejos"],["Quepos",9.4310,-84.1620,"no","Lejos"],
+ ["Limón",9.9900,-83.0300,"no","Lejos"],["Guápiles",10.2150,-83.7870,"no","Lejos"],["Siquirres",10.0980,-83.5070,"no","Lejos"]];
+function km(a,b,c,d){var r=Math.PI/180,x=(d-b)*r*Math.cos((a+c)/2*r),y=(c-a)*r;return Math.sqrt(x*x+y*y)*6371}
+function classify(la,lo){var best=null,bd=1e9;PL.forEach(function(p){var d=km(la,lo,p[1],p[2]);if(d<bd){bd=d;best=p}});
+  if(bd>MAXKM&&best[3]!=="no")return {n:"esa ubicación",z:"no",src:"gps",far:1,near:best[0],km:Math.round(bd)};return {n:best[0],z:best[3],src:"gps",km:Math.round(bd)}}
+function feeAmt(){return S.zone&&S.zone.z!=="no"?ZF[S.zone.z]:0}
+function zoneOk(){return !!S.zone&&S.zone.z!=="no"}
+function feeLine(){return {n:"🚗 Domicilio a "+S.zone.n,p:feeAmt()}}
+function zoneCard(){var z=S.zone,el=$("zv");if(!z){el.innerHTML="";return}
+  var mis=S.gpsZone&&z.src==="sel"&&S.gpsZone.n!==z.n?'<small>Tu GPS marca cerca de '+esc(S.gpsZone.n)+'. Si el carro está en otro lugar, está bien: llegamos a donde esté el carro.</small>':'';
+  if(z.z==="no"){el.innerHTML='<div class="zc no"><b>😔 '+(z.far?'Esa ubicación queda fuera de nuestras zonas':'Por ahora no llegamos a '+esc(z.n))+'</b><small>'+(z.far?'Está a unos '+z.km+' km de '+esc(z.near)+', la zona más cercana donde trabajamos. ':'Por la distancia, esa zona no se puede agendar aquí. ')+'Si son '+BIGORDER+' carros o más, escribinos y lo coordinamos como pedido especial.</small>'+mis+
+    '<a href="'+waUrl("Hola GlassStudioCR 👋 Quiero consultar un pedido especial"+(z.far?"":" en "+z.n)+". Cantidad de carros: ")+'" target="_blank" rel="noopener">Escribinos por WhatsApp</a>'+
+    (z.src==="gps"?'<button type="button" id="zfix">¿El carro está en otro lugar? Elegí la zona arriba</button>':'')+'</div>';if($("zfix"))$("zfix").onclick=function(){$("zsel").focus()};return}
+  el.innerHTML=z.z==="free"?'<div class="zc free"><b>✓ '+esc(z.n)+': domicilio gratis</b><small>Llegamos sin costo extra.</small>'+mis+'</div>':
+    '<div class="zc fee"><b>🚗 '+esc(z.n)+': domicilio '+crc(ZF[z.z])+'</b><small>Por la distancia se suma una sola vez al total, aunque sean varios carros.</small>'+mis+'</div>'}
+function buildZones(){var G={};PL.forEach(function(p,i){(G[p[4]]=G[p[4]]||[]).push(i)});
+  $("zsel").innerHTML='<option value="">Elegí dónde está el carro…</option>'+["San José","Heredia","Alajuela","Cartago","Lejos"].map(function(g){return '<optgroup label="'+(g==="Lejos"?"Otras zonas (sin servicio por la web)":g)+'">'+G[g].map(function(i){var p=PL[i];return '<option value="'+i+'">'+esc(p[0])+' · '+(p[3]==="free"?"gratis":p[3]==="no"?"no llegamos":crc(ZF[p[3]]))+'</option>'}).join("")+'</optgroup>'}).join("")+'<option value="x">Otro lugar fuera de esta lista</option>';
+  $("zsel").onchange=function(){var v=this.value;if(v===""){S.zone=S.gpsZone||null}else if(v==="x"){S.zone={n:"ese lugar",z:"no",src:"sel"}}else{var p=PL[+v];S.zone={n:p[0],z:p[3],src:"sel"}}err("");zoneCard();upd()};
+  var by=function(z){return PL.filter(function(p){return p[3]===z&&p[4]!=="Lejos"}).map(function(p){return p[0].replace(/ \(.+\)$/,"")})};
+  $("zlist").innerHTML='<div><b><span>San José, Heredia y Alajuela (GAM)</span><span style="color:var(--ok)">Gratis</span></b><small>'+by("free").slice(0,12).join(", ")+' y alrededores</small></div>'+
+    '<div><b><span>Zonas cercanas</span><span>'+crc(ZF.f5)+'</span></b><small>'+by("f5").join(", ")+'</small></div>'+
+    '<div><b><span>Zonas más lejanas</span><span>'+crc(ZF.f10)+'</span></b><small>'+by("f10").join(", ")+'</small></div>'+
+    '<div><b><span>Más lejos</span><span style="color:var(--bad)">Solo por WhatsApp</span></b><small>San Carlos, zona norte, Guanacaste, Puntarenas, Pérez Zeledón, zona sur, Limón, Turrialba, Paraíso y Orosi: atendemos solo pedidos especiales de '+BIGORDER+' carros o más.</small></div>'}
+$("gps").onclick=function(){if(!navigator.geolocation){$("lv").innerHTML='<div class="locbad">Tu celular no permite compartir la ubicación desde aquí. Elegí la zona y escribí la dirección abajo.</div>';return}
   var b=this;b.disabled=true;b.lastChild.textContent="Buscando tu ubicación…";
   navigator.geolocation.getCurrentPosition(function(p){b.disabled=false;b.lastChild.textContent="Actualizar mi ubicación";S.lat=+p.coords.latitude.toFixed(6);S.lng=+p.coords.longitude.toFixed(6);S.acc=Math.round(p.coords.accuracy||0);
-      var g=inGAM(S.lat,S.lng);$("lv").innerHTML='<div class="map">'+tiles(S.lat,S.lng)+'<svg class="pin" viewBox="0 0 30 38"><path d="M15 37S28 24.5 28 14A13 13 0 0 0 2 14c0 10.5 13 23 13 23z" fill="#e5484d" stroke="#fff" stroke-width="2"/><circle cx="15" cy="14" r="5" fill="#fff"/></svg><div class="cap">📍 Tu ubicación'+(S.acc?' · precisión ±'+S.acc+' m':'')+'</div></div>'+
-        (g?'<div class="locok">✓ Ubicación lista. Estás dentro de la GAM: el domicilio es gratis.</div>':'<div class="locbad">Parece que estás fuera de la GAM. Podés agendar igual y te confirmamos si llegamos y el costo del traslado.</div>')+
+      S.gpsZone=classify(S.lat,S.lng);if(!S.zone||S.zone.src!=="sel"){S.zone=S.gpsZone;var ix=PL.findIndex(function(p){return p[0]===S.gpsZone.n});$("zsel").value=ix>-1?String(ix):""}zoneCard();$("lv").innerHTML='<div class="map">'+tiles(S.lat,S.lng)+'<svg class="pin" viewBox="0 0 30 38"><path d="M15 37S28 24.5 28 14A13 13 0 0 0 2 14c0 10.5 13 23 13 23z" fill="#e5484d" stroke="#fff" stroke-width="2"/><circle cx="15" cy="14" r="5" fill="#fff"/></svg><div class="cap">📍 Tu ubicación'+(S.acc?' · precisión ±'+S.acc+' m':'')+'</div></div>'+
+        '<div class="locok">✓ Ubicación lista</div>'+
         (S.acc>150?'<div class="hint">La ubicación salió poco precisa. Agregá unas señas en la dirección para encontrarte rápido.</div>':'');upd()},
-    function(e){b.disabled=false;b.lastChild.textContent="Enviar mi ubicación actual";$("lv").innerHTML='<div class="locbad">'+(e.code===1?"No diste permiso para ver la ubicación. Tocá el candado de arriba y permitila, o escribí la dirección abajo.":"No pudimos obtener tu ubicación. Probá de nuevo o escribí la dirección.")+'</div>'},
+    function(e){b.disabled=false;b.lastChild.textContent="Enviar mi ubicación actual";$("lv").innerHTML='<div class="locbad">'+(e.code===1?"No diste permiso para ver la ubicación. Tocá el candado de arriba y permitila, o elegí la zona y escribí la dirección.":"No pudimos obtener tu ubicación. Probá de nuevo o elegí la zona.")+'</div>'},
     {enableHighAccuracy:true,timeout:15000,maximumAge:0})};
 ["addr","cli","tel"].forEach(function(i){$(i).addEventListener("input",function(){err("");upd()})});
 
@@ -390,12 +442,12 @@ function lineRows(L){return L.map(function(l){return l.p?'<div><i>✨</i><span>'
 function renderSum(){var A=allCars(),n=A.length,len=DUR*n;
   $("sum").innerHTML='<div><i>📅</i><span><b>'+niceDay(S.day).replace(/^./,function(c){return c.toUpperCase()})+'</b><br>'+fmtH(S.h)+' a '+fmtH(S.h+len)+(n>1?' · '+n+' carros':'')+'</span></div>'+
   A.map(function(c,k){return (n>1?'<div class="carh"><span>🚗 Carro '+(k+1)+' · '+fmtH(S.h+DUR*k)+'</span><b>'+crc(carTotal(c))+'</b></div>':'')+'<div><i>🚗</i><span>'+esc(c.veh)+' · '+vtN(c)+'</span></div>'+lineRows(lines(c))}).join("")+
-  '<div><i>📍</i><span>'+(S.lat!=null?'Ubicación enviada'+($("addr").value.trim()?' · '+esc($("addr").value.trim()):''):esc($("addr").value.trim()))+'<br><small style="color:var(--ok);font-weight:600">Domicilio gratis en la GAM</small></span></div>'+
+  '<div><i>📍</i><span>'+(S.lat!=null?'Ubicación enviada'+($("addr").value.trim()?' · '+esc($("addr").value.trim()):''):esc($("addr").value.trim()))+'<br><small style="color:'+(feeAmt()?'inherit':'var(--ok)')+';font-weight:600">'+(S.zone?esc(S.zone.n)+(feeAmt()?'':' · domicilio gratis'):'')+'</small></span></div>'+(feeAmt()?'<div><i>🚗</i><span>Domicilio a '+esc(S.zone.n)+'</span><b>'+crc(feeAmt())+'</b></div>':'')+
   '<div><i>👤</i><span>'+esc($("cli").value.trim())+' · '+telN().replace(/(\d{4})(\d{4})/,"$1 $2")+'</span></div>'+
   '<div><i>💰</i><span>Total'+(n>1?' de los '+n+' carros':'')+'</span><span class="tot" style="flex:none">'+crc(total())+'</span></div>'}
 function waText(){var A=allCars(),n=A.length;return "Hola GlassStudioCR 👋 Acabo de agendar "+(n>1?"una cita para "+n+" carros":"mi cita")+":\n📅 "+niceDay(S.day)+", "+fmtH(S.h)+(n>1?" a "+fmtH(S.h+DUR*n):"")+
   A.map(function(c,k){return "\n🚗 "+(n>1?"Carro "+(k+1)+" ("+fmtH(S.h+DUR*k)+"): ":"")+c.veh+" ("+(c.vt==="suv"?"SUV":"sedán")+")\n✨ "+lines(c).map(function(l){return l.n}).join(" + ")+(n>1?"\n   "+crc(carTotal(c)):"")}).join("")+
-  "\n💰 Total: "+crc(total())+"\n📍 "+(mapLink()||$("addr").value.trim())+(S.lat!=null&&$("addr").value.trim()?"\n   "+$("addr").value.trim():"")+"\n👤 "+$("cli").value.trim()}
+  (feeAmt()?"\n🚗 Domicilio a "+S.zone.n+": "+crc(feeAmt()):"")+"\n💰 Total: "+crc(total())+"\n📍 "+(S.zone?S.zone.n+" · ":"")+(mapLink()||$("addr").value.trim())+(S.lat!=null&&$("addr").value.trim()?"\n   "+$("addr").value.trim():"")+"\n👤 "+$("cli").value.trim()}
 function submit(){var b=$("nx");if(b.disabled)return;err("");
   if($("website").value){done();return}
   if(Date.now()-T0<8000){err("Revisá los datos un momento y tocá Confirmar otra vez.");return}
@@ -403,11 +455,11 @@ function submit(){var b=$("nx");if(b.disabled)return;err("");
   b.disabled=true;b.textContent="Apartando tu hora…";
   var A=allCars(),n=A.length,base=Date.now()*100+Math.floor(Math.random()*90),tel=telN(),at=Date.now();
   var ub=S.lat!=null?S.lat+","+S.lng:$("addr").value.trim();
-  var note0=[S.lat!=null&&$("addr").value.trim()?"Señas: "+$("addr").value.trim():"",$("det").value.trim(),S.acc>150?"Ubicación aprox. ±"+S.acc+" m":""].filter(Boolean).join(" · ");
+  var note0=["Zona: "+S.zone.n+(feeAmt()?" (domicilio "+crc(feeAmt())+")":" (domicilio gratis)")+(S.gpsZone&&S.zone.src==="sel"&&S.gpsZone.n!==S.zone.n?" · GPS cerca de "+S.gpsZone.n:""),S.lat!=null&&$("addr").value.trim()?"Señas: "+$("addr").value.trim():"",$("det").value.trim(),S.acc>150?"Ubicación aprox. ±"+S.acc+" m":""].filter(Boolean).join(" · ");
   var bt=DB.batch(),ids=[];
-  A.forEach(function(c,k){var id=base+k,sid=String(id),L=lines(c),h0=S.h+DUR*k;ids.push(sid);
+  A.forEach(function(c,k){var id=base+k,sid=String(id),L=lines(c).concat(k===0&&feeAmt()?[feeLine()]:[]),h0=S.h+DUR*k;ids.push(sid);
     var note=((n>1?"🚗 Reserva de "+n+" carros ("+(k+1)+" de "+n+") · ":"")+note0).replace(/ · $/,"").slice(0,400);
-    bt.set(DB.doc("jobs/"+sid),{id:id,cli:$("cli").value.trim().slice(0,60),tel:tel,veh:c.veh.slice(0,60),vt:c.vt,items:L.map(function(l){return l.n}),lines:L,disc:0,total:carTotal(c),date:S.day,time:pad(h0)+":00",note:note,ubic:ub.slice(0,300),src:$("src").value,st:"Por confirmar",by:"web",web:true,at:at});
+    bt.set(DB.doc("jobs/"+sid),{id:id,cli:$("cli").value.trim().slice(0,60),tel:tel,veh:c.veh.slice(0,60),vt:c.vt,items:L.map(function(l){return l.n}),lines:L,disc:0,total:carTotal(c)+(k===0?feeAmt():0),date:S.day,time:pad(h0)+":00",note:note,ubic:ub.slice(0,300),src:$("src").value,st:"Por confirmar",by:"web",web:true,at:at});
     for(var q=0;q<DUR;q++)bt.set(DB.doc("slots/"+S.day+"_"+pad(h0+q)),{date:S.day,h:h0+q,job:sid,at:at})});
   bt.set(DB.doc("holds/"+tel),{job:ids[0],date:S.day,at:at});
   bt.commit().then(done,function(){loadBusy().then(function(){var taken=false;for(var k=0;k<DUR*n;k++)if(BUSY[S.day+"_"+pad(S.h+k)])taken=true;b.textContent="Confirmar cita";upd();
@@ -421,6 +473,7 @@ function confetti(){if(window.matchMedia&&matchMedia("(prefers-reduced-motion: r
   for(var i=0;i<50;i++){var d=document.createElement("i");d.className="cf";d.style.left=Math.random()*100+"vw";d.style.background=C[i%C.length];d.style.setProperty("--dx",(Math.random()*160-80)+"px");d.style.setProperty("--r",(Math.random()*900-450)+"deg");d.style.animationDelay=Math.random()*.4+"s";document.body.appendChild(d);setTimeout(function(x){x.remove()}.bind(null,d),2400)}}
 function promoUI(){$("promo").hidden=!promoOn();buildSvc()}
 promoUI();
+buildZones();
 upd();
 </script>
 </body>
