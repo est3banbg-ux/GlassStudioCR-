@@ -443,7 +443,7 @@ raf=requestAnimationFrame(frame);
     <div class="row"><input id="tme" type="email" placeholder="correo@gmail.com" autocapitalize="off" aria-label="Correo a autorizar"><button class="sm" id="tma" style="padding:10px 14px">Autorizar</button></div>
     <div id="tml" style="margin-top:6px"></div>
     <div class="row"><button class="alt" id="tms">Enviar enlace de la app por WhatsApp</button></div></div>
-  <div class="card nt" id="ntcard"><h2>Avisos al celular</h2><div class="m">Cuando alguien del equipo agenda o cambia una cita, les llega un aviso a los 3, aunque la app esté cerrada. Funciona en Android y en iPhone con la app gratis <b>ntfy</b>.</div><div id="ntb"></div></div>
+  <div class="card nt" id="ntcard"><h2>Avisos al celular</h2><div class="m">Cuando alguien del equipo agenda o cambia una cita, les llega un aviso a los 3, aunque la app esté cerrada. Funciona en Android y en iPhone con la app gratis <b>ntfy</b>.</div><div id="ntb"></div><h3 style="margin:16px 0 4px">🆕 Reservas por la web, al instante</h3><div class="m">Te llega un aviso apenas un cliente confirma en la página de reservas, aunque nadie tenga la app abierta. Por seguridad el aviso no lleva nombre ni teléfono: tocalo y lo ves aquí.</div><div id="ntwb"></div></div>
   <div class="card"><h2>Respaldo</h2><div class="m">Pegá aquí el respaldo de tu app (APK o la versión anterior) para pasar tus citas, clientes y gastos. Solo se agregan, no se borra nada. También podés crear un respaldo de todo lo que hay aquí.</div><textarea id="bt" rows="3" aria-label="Respaldo"></textarea><div class="row"><button class="alt" id="bk">Crear respaldo</button><button class="alt" id="rs">Importar</button></div></div>
 </section>
 
@@ -611,6 +611,19 @@ function renderNtfy(){var el=$("ntb");if(!el)return;
   $("ntw").onclick=function(){window.open("https://wa.me/?text="+encodeURIComponent(ntSteps()),"_blank")};
   $("ntt").onclick=function(){notify("Prueba de GlassStudioCR","Si ves esto, los avisos funcionan ✓ ("+whoN(myEmail())+")");toast("Aviso de prueba enviado")};
   if($("ntr"))$("ntr").onclick=function(){var b=this;ask(b,ntNew)}}
+function ntwSteps(t){return "Para recibir al instante las reservas de la página web de GlassStudioCR:\n1. Instalá la app gratis ntfy\n   Android: https://play.google.com/store/apps/details?id=io.heckel.ntfy\n   iPhone: https://apps.apple.com/app/ntfy/id1625396347\n2. Abrila, tocá + (Suscribirse a un tema) y escribí exactamente:\n"+t+"\n3. Permití las notificaciones. ¡Listo!"}
+function ntwSend(t){try{fetch("https://ntfy.sh/",{method:"POST",body:JSON.stringify({topic:t,title:"🆕 Prueba: nueva cita por la web",message:"Si ves esto, los avisos de reservas web funcionan ✓",tags:["calendar"],priority:4,click:NTURL})}).catch(function(){})}catch(e){}}
+function renderNtw(){var el=$("ntwb");if(!el)return;var t=(PUB&&PUB.ntw)||"";
+  if(!t){el.innerHTML=BOSS?'<div class="row"><button id="ntwon">Activar avisos de reservas web</button></div>':'<div class="m" style="margin-top:8px">Pedile a Esteban que los active.</div>';
+    if($("ntwon"))$("ntwon").onclick=function(){ntwNew()};return}
+  el.innerHTML='<ol><li>Instalá <b>ntfy</b>: <a href="https://play.google.com/store/apps/details?id=io.heckel.ntfy" target="_blank" rel="noopener">Android</a> · <a href="https://apps.apple.com/app/ntfy/id1625396347" target="_blank" rel="noopener">iPhone</a></li><li>Abrila, tocá <b>+</b> y escribí este canal:<br><code>'+esc(t)+'</code></li><li>Permití las notificaciones.</li></ol>'+
+   '<div class="row" style="flex-wrap:wrap"><button class="alt sm" id="ntwc">Copiar canal</button><button class="alt sm" id="ntww">Mandar pasos por WhatsApp</button><button class="alt sm" id="ntwt">Probar aviso</button>'+(BOSS?'<button class="alt sm" id="ntwoff">Apagar</button>':'')+'</div>';
+  $("ntwc").onclick=function(){(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){toast("Canal copiado ✓")},function(){toast(t)})};
+  $("ntww").onclick=function(){window.open("https://wa.me/?text="+encodeURIComponent(ntwSteps(t)),"_blank")};
+  $("ntwt").onclick=function(){ntwSend(t);toast("Aviso de prueba enviado")};
+  if($("ntwoff"))$("ntwoff").onclick=function(){var b=this;ask(b,function(){DB.doc("pub/cfg").set({ntw:""},{merge:true}).then(function(){toast("Avisos de reservas web apagados")}).catch(dberr)})}}
+function ntwNew(){if(!DB)return;var a=new Uint8Array(12),c="abcdefghijkmnpqrstuvwxyz23456789",t="gscr-web-";crypto.getRandomValues(a);for(var i=0;i<a.length;i++)t+=c[a[i]%c.length];
+  DB.doc("pub/cfg").set({ntw:t},{merge:true}).then(function(){toast("Avisos de reservas web activados ✓")}).catch(dberr)}
 function ntNew(){var a=new Uint8Array(12),c="abcdefghijkmnpqrstuvwxyz23456789",t="glassstudiocr-";crypto.getRandomValues(a);for(var i=0;i<a.length;i++)t+=c[a[i]%c.length];
   DB.doc("settings/notify").set({topic:t,by:myEmail(),at:Date.now()}).then(function(){toast("Avisos activados ✓")}).catch(dberr)}
 
@@ -704,7 +717,7 @@ function startSubs(u){DB=firebase.firestore();var first=true;
   SUBS.push(DB.collection("settings").onSnapshot(onSettings,function(){}));
   SUBS.push(DB.collection("slots").onSnapshot(function(sn){RULES_MISSING=false;SLOTS=sn.docs.map(function(d){return Object.assign({id:d.id},d.data())});SLOTS_READY=true;reconcile();if(CUR==="num")renderRv()},function(e){if(e&&e.code==="permission-denied"){RULES_MISSING=true;if(CUR==="num")renderRv()}}));
   SUBS.push(DB.collection("holds").onSnapshot(function(sn){HOLDS=sn.docs.map(function(d){return Object.assign({id:d.id},d.data())});reconcile()},function(){}));
-  SUBS.push(DB.doc("pub/cfg").onSnapshot(function(sn){PUB=sn.exists?sn.data():{};if(CUR==="num")renderRv()},function(){}));
+  SUBS.push(DB.doc("pub/cfg").onSnapshot(function(sn){PUB=sn.exists?sn.data():{};renderNtw();if(CUR==="num")renderRv()},function(){renderNtw()}));
   SUBS.push(DB.doc("settings/prices").onSnapshot(function(sn){S.prices=sn.exists?sn.data():{};applyPrices()},function(){}));
   if(OWN){SUBS.push(DB.collection("exp").onSnapshot(function(sn){S.exp=sn.docs.map(function(d){return d.data()});if(CUR==="num")renderNum()},function(){}));
     SUBS.push(DB.collection("team").onSnapshot(function(sn){TEAM=sn.docs.map(function(d){return d.id});renderTeam()},function(){}))}}
@@ -1200,7 +1213,8 @@ function reconcile(){clearTimeout(RCT);RCT=setTimeout(function(){if(!DB||!OWN||!
   SLOTS.forEach(function(x){if(W[x.id])return;if(x.date>=today&&!ids[x.job]&&now-(x.at||0)<120000)return;DB.doc("slots/"+x.id).delete().catch(function(){})});
   HOLDS.forEach(function(x){var j=ids[x.job];if(!j&&now-(x.at||0)<120000)return;if(!j||j.st!=="Por confirmar"||j.date<today)DB.doc("holds/"+x.id).delete().catch(function(){})});
   if(BOSS){var seen={};S.jobs.forEach(function(j){if(!(j.web&&!j.ntf&&j.st==="Por confirmar"))return;var G=webGroup(j),gk=j.tel+"|"+j.at;if(seen[gk])return;seen[gk]=1;
-    if(G.length>1)notify("🚗🚗 Reserva web de "+G.length+" carros · "+j.cli,fmtD(j.date)+" · desde las "+fmtT(G[0].time)+"\n"+G.map(function(x){return "• "+(x.veh||"Carro")+" · "+fmtT(x.time)+" · "+crc(x.total)}).join("\n")+"\nTotal: "+crc(G.reduce(function(a,x){return a+(+x.total||0)},0))+"\nFalta confirmarla en la app");
+    if(PUB&&PUB.ntw){}/* la página de reservas ya avisó al instante */
+    else if(G.length>1)notify("🚗🚗 Reserva web de "+G.length+" carros · "+j.cli,fmtD(j.date)+" · desde las "+fmtT(G[0].time)+"\n"+G.map(function(x){return "• "+(x.veh||"Carro")+" · "+fmtT(x.time)+" · "+crc(x.total)}).join("\n")+"\nTotal: "+crc(G.reduce(function(a,x){return a+(+x.total||0)},0))+"\nFalta confirmarla en la app");
     else notify("🌐 Reserva web · "+j.cli,fmtD(j.date)+" · "+fmtT(j.time)+"\n"+(j.veh||"")+" · "+crc(j.total)+"\nFalta confirmarla en la app");
     G.forEach(function(x){if(!x.ntf)DB.doc("jobs/"+x.id).update({ntf:true}).catch(function(){})})})}},1500)}
 function renderRv(){var el=$("rvb");if(!el)return;var P=PUB||{},wa=String(P.wa||"50670892537").replace(/^506/,""),open=P.open!==false,off=(P.off||[]).filter(function(d){return d>=today}).sort();

@@ -308,7 +308,7 @@ function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return
 function fmtH(h){return (h%12||12)+":00 "+(h<12?"am":"pm")}
 function pd(s){var p=s.split("-");return new Date(+p[0],+p[1]-1,+p[2])}
 function niceDay(s){var d=pd(s),t=ymd(new Date()),m=ymd(new Date(Date.now()+864e5));return (s===t?"hoy, ":s===m?"mañana, ":"")+DN[d.getDay()]+" "+d.getDate()+" de "+MNL[d.getMonth()]}
-try{firebase.initializeApp(FBC);DB=firebase.firestore();DB.doc("pub/cfg").get().then(function(d){if(d.exists){var x=d.data();if(x.wa)CFG.wa=String(x.wa).replace(/\D/g,"");if(x.open===false)CFG.open=false;if(Array.isArray(x.off))CFG.off=x.off;if(x.promo===false){PROMO.on=false;promoUI()}}if(!CFG.open)closed()}).catch(function(){})}catch(e){}
+try{firebase.initializeApp(FBC);DB=firebase.firestore();DB.doc("pub/cfg").get().then(function(d){if(d.exists){var x=d.data();if(x.wa)CFG.wa=String(x.wa).replace(/\D/g,"");if(x.open===false)CFG.open=false;if(Array.isArray(x.off))CFG.off=x.off;if(x.promo===false){PROMO.on=false;promoUI()}if(typeof x.ntw==="string"&&/^[a-z0-9-]{16,64}$/.test(x.ntw))CFG.ntw=x.ntw}if(!CFG.open)closed()}).catch(function(){})}catch(e){}
 function closed(){$("go").outerHTML='<a class="cta" href="https://wa.me/'+CFG.wa+'?text='+encodeURIComponent("Hola GlassStudioCR, quiero agendar un pulido")+'">Escribinos por WhatsApp para agendar</a>'}
 function waUrl(t){return "https://wa.me/"+CFG.wa+"?text="+encodeURIComponent(t)}
 
@@ -478,7 +478,13 @@ function submit(){var b=$("nx");if(b.disabled)return;err("");
   bt.commit().then(done,function(){loadBusy().then(function(){var taken=false;for(var k=0;k<DUR*n;k++)if(BUSY[S.day+"_"+pad(S.h+k)])taken=true;b.textContent="Confirmar cita";upd();
       if(taken){S.h=null;show(3);err("Uy, alguien acaba de tomar esa hora. Elegí otra, por favor.")}
       else err("Ya hay una cita pendiente con este número de WhatsApp. Si querés cambiarla o agendar otro carro, escribinos por WhatsApp.")})})}
-function done(){try{var _v=total(),_n=allCars().length;fbq("track","Schedule",{value:_v,currency:"CRC",num_items:_n});fbq("track","Lead",{value:_v,currency:"CRC"})}catch(e){}var t=waText();$("wa").href=waUrl(t);var A=allCars(),n=A.length;$("dt").innerHTML="<b>"+niceDay(S.day)+", "+fmtH(S.h)+"</b><br>"+(n>1?n+" carros: "+A.map(function(c){return esc(c.veh)}).join(", "):esc(A[0].veh))+" · "+crc(total());
+/* AVISO AL INSTANTE: manda un aviso al celular de Esteban (app ntfy) apenas se confirma la reserva.
+   Va por el canal público pub/cfg.ntw, así que NO lleva nombre ni teléfono del cliente: eso se ve en la app. */
+function pingNew(){if(!CFG.ntw)return;try{var A=allCars(),n=A.length,
+  car=A.map(function(c){return (c.veh||"Carro")+" · "+lines(c).map(function(l){return l.n}).join(" + ")}).join("\n"),
+  msg=niceDay(S.day)+" · "+fmtH(S.h)+"\n"+car+"\n📍 "+(S.zone?S.zone.n:"")+" · Total "+crc(total())+"\nTocá para confirmarla en la app";
+  fetch("https://ntfy.sh/",{method:"POST",keepalive:true,body:JSON.stringify({topic:CFG.ntw,title:(n>1?"🚗🚗 Nueva reserva web de "+n+" carros":"🆕 Nueva cita por la web"),message:msg,tags:["calendar"],priority:4,click:"https://citas.glassstudiocr.com/"})}).catch(function(){})}catch(e){}}
+function done(){pingNew();try{var _v=total(),_n=allCars().length;fbq("track","Schedule",{value:_v,currency:"CRC",num_items:_n});fbq("track","Lead",{value:_v,currency:"CRC"})}catch(e){}var t=waText();$("wa").href=waUrl(t);var A=allCars(),n=A.length;$("dt").innerHTML="<b>"+niceDay(S.day)+", "+fmtH(S.h)+"</b><br>"+(n>1?n+" carros: "+A.map(function(c){return esc(c.veh)}).join(", "):esc(A[0].veh))+" · "+crc(total());
   var d=pd(S.day),f=function(h){return S.day.replace(/-/g,"")+"T"+pad(h)+"0000"};
   $("cal").href="https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent("GlassStudioCR: pulido a domicilio")+"&dates="+f(S.h)+"/"+f(S.h+DUR*n)+"&details="+encodeURIComponent(A.map(function(c){return c.veh+": "+lines(c).map(function(l){return l.n}).join(" + ")}).join(" | ")+" · "+crc(total()))+"&location="+encodeURIComponent(mapLink()||$("addr").value.trim());
   document.body.classList.remove("book");document.body.classList.add("ok");window.scrollTo(0,0);confetti()}
