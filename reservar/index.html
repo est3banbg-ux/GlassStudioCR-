@@ -290,7 +290,7 @@ var HOURS={0:[8,15],1:[6,18],2:[6,18],3:[6,18],4:[6,18],5:[6,18],6:[6,18]},DUR=2
 var GLASS=[{id:"pb",n:"Pulido de parabrisas + protección cerámica",s:"Lo más pedido",p:{sedan:20000,suv:25000},ic:"🛡️"},
   {id:"tvc",n:"Todos los vidrios + protección cerámica",s:"Parabrisas, laterales y trasero",p:{sedan:40000,suv:40000},ic:"✨"},
   {id:"tv",n:"Todos los vidrios sin protección",s:"Solo el pulido",p:{sedan:30000,suv:30000},ic:"🪟"},
-  {id:"none",n:"No necesito vidrios",s:"Solo los focos",p:{sedan:0,suv:0},ic:"—"}];
+  {id:"none",n:"Solo los focos",s:"No necesito pulir vidrios",p:{sedan:0,suv:0},ic:"💡"}];
 /* PROMO: al agendar el parabrisas por esta página se regala el vidrio trasero y los retrovisores.
    Para apagarla: PROMO.on=false, ponerle fecha final en PROMO.end ("2026-12-31"), o guardar promo:false en pub/cfg. */
 var PROMO={on:true,end:"",svc:"pb",n:"🎁 Regalo promo: vidrio trasero + retrovisores"};
@@ -369,8 +369,8 @@ $("veh").addEventListener("input",function(){chkModel();upd()});
 function svcBtn(o,pr,on,attr){return '<button class="opt" '+attr+' aria-pressed="'+on+'"><span class="ic">'+o.ic+'</span><span class="tx"><b>'+o.n+(o.id==="pb"?'<span class="tag">Más pedido</span>':'')+'</b><small>'+o.s+'</small>'+(promoOn()&&o.id===PROMO.svc?'<span class="gift">🎁 + vidrio trasero y retrovisores de regalo</span>':'')+'</span><span class="pr">'+(pr?crc(pr):"")+'</span></button>'}
 function buildSvc(){var vt=S.vt||"sedan";$("gl").innerHTML=GLASS.map(function(g){return svcBtn(g,g.p[vt],S.gl===g.id,'data-g="'+g.id+'"')}).join("");
   $("fo").innerHTML=svcBtn(FOCOS,FOCOS.p,S.fo,'id="fob"');
-  Array.prototype.forEach.call(document.querySelectorAll("[data-g]"),function(b){b.onclick=function(){S.gl=b.dataset.g;buildSvc();upd()}});
-  $("fob").onclick=function(){S.fo=!S.fo;buildSvc();upd()}}
+  Array.prototype.forEach.call(document.querySelectorAll("[data-g]"),function(b){b.onclick=function(){S.gl=b.dataset.g;if(S.gl==="none")S.fo=true;buildSvc();upd()}});
+  $("fob").onclick=function(){S.fo=!S.fo;if(!S.fo&&S.gl==="none")S.gl="pb";buildSvc();upd()}}
 buildSvc();
 
 /* PASO 3: día y hora */
