@@ -187,6 +187,11 @@ body.ok .dock{display:none}
 .sum .carh{font:800 16px "Bricolage Grotesque",sans-serif;padding-top:14px}
 footer{color:var(--mute);font-size:12px;text-align:center;margin:26px 0 10px}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+#mc{display:none;text-align:center;padding:26px 0 40px}body.mc #mc{display:block}body.mc #land,body.mc #wiz,body.mc #done,body.mc .dock,body.mc footer{display:none!important}
+#mc .sum div i{font-style:normal}#mc .wbtn,#mc .lbtn{cursor:pointer;font:inherit;font-weight:700}#mc .lbtn{background:none}#mc .wbtn:disabled{opacity:.5}#mc .days{text-align:left}#mc .note{text-align:left;margin:12px 0}
+#mc .err{text-align:left}#mc .err a{color:inherit;font-weight:700}
+.mylink{text-align:left;background:var(--card);border:1.5px dashed var(--acc);border-radius:16px;padding:12px 14px;margin-top:14px}.mylink b{display:block}.mylink small{display:block;color:var(--mute);font-size:13px;margin:3px 0 8px}
+.ml{display:flex;gap:6px}.ml input{flex:1;min-width:0;font-size:13px;padding:9px 10px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}.ml button{border:0;border-radius:10px;padding:0 14px;background:var(--acc);color:var(--accink);font-weight:700}
 </style>
 <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1186226080348335');fbq('track','PageView');</script>
 </head>
@@ -208,6 +213,7 @@ footer{color:var(--mute);font-size:12px;text-align:center;margin:26px 0 10px}
       <div><span>Todos los vidrios + protección cerámica</span><b>₡40 000</b></div>
       <div><span>Todos los vidrios sin protección</span><b>₡30 000</b></div>
       <div><span>Pulido de focos con polímero líquido<small>El par</small></span><b>₡20 000</b></div>
+      <div><span>Pulido de techo panorámico<small>Se suma a cualquier servicio</small></span><b>₡15 000</b></div>
       <div><span>Servicio a domicilio en la GAM</span><b style="color:var(--ok)">Gratis</b></div>
     </div></div>
     <div class="sec"><h2>¿Hasta dónde llegamos?</h2><div class="zones" id="zlist"></div></div>
@@ -229,9 +235,10 @@ footer{color:var(--mute);font-size:12px;text-align:center;margin:26px 0 10px}
     </div>
 
     <div class="step" id="s2">
-      <div class="cars" id="ct2"></div><h2 id="h2t">¿Qué le hacemos?</h2><p class="sub">Elegí los vidrios y, si querés, sumá los focos.</p>
+      <div class="cars" id="ct2"></div><h2 id="h2t">¿Qué le hacemos?</h2><p class="sub">Elegí los vidrios y, si querés, sumá los focos o el techo panorámico.</p>
       <div class="svc" id="gl"></div>
       <div class="svc" style="margin-top:10px" id="fo"></div>
+      <div class="svc" style="margin-top:10px" id="tpo"></div>
       <div class="more" id="more"></div>
     </div>
 
@@ -276,9 +283,12 @@ footer{color:var(--mute);font-size:12px;text-align:center;margin:26px 0 10px}
   <p id="dt"></p>
   <a class="wbtn" id="wa" href="#" target="_blank" rel="noopener"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.4-.7-2.8-1.1-4.6-4-4.8-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2.1 1-2.4c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.3.5-.4.5c-.1.1-.3.3-.1.6.1.3.6 1.1 1.4 1.8 1 .9 1.8 1.1 2.1 1.3.3.1.4.1.6-.1l.8-1c.2-.3.4-.2.6-.1l2 1c.3.1.4.2.5.3.1.2.1.7-.1 1.3z"/></svg>Confirmar por WhatsApp</a>
   <p style="font-size:13px;margin-top:10px">Mandá el mensaje para que confirmemos tu cita. Te respondemos por ahí mismo.</p>
+  <div class="mylink" id="mylink" hidden><b>🔁 ¿Necesitás cambiar o cancelar?</b><small>Guardá este link: ahí podés cambiar el día u hora, o cancelar, hasta 12 horas antes.</small><div class="ml"><input id="mlv" readonly aria-label="Link de tu cita"><button id="mlc">Copiar</button></div></div>
   <a class="lbtn" id="cal" href="#" target="_blank" rel="noopener">📅 Agregar a mi calendario</a>
   <a class="lbtn" href="./">Agendar otro carro</a>
 </div></section>
+
+<section id="mc"><div class="wrap" id="mcb"><div class="hint" style="margin-top:40px">Cargando tu cita…</div></div></section>
 
 <div class="dock"><div class="wrap"><div class="t"><small id="totl">Total</small><b id="tot">₡0</b></div><button class="next" id="nx" disabled>Siguiente</button></div></div>
 <footer class="wrap">GlassStudioCR · Pulido de parabrisas y focos a domicilio · Costa Rica</footer>
@@ -291,13 +301,14 @@ var HOURS={0:[8,15],1:[6,18],2:[6,18],3:[6,18],4:[6,18],5:[6,18],6:[6,18]},DUR=2
 var GLASS=[{id:"pb",n:"Pulido de parabrisas + protección cerámica",s:"Lo más pedido",p:{sedan:20000,suv:25000},ic:"🛡️"},
   {id:"tvc",n:"Todos los vidrios + protección cerámica",s:"Parabrisas, laterales y trasero",p:{sedan:40000,suv:40000},ic:"✨"},
   {id:"tv",n:"Todos los vidrios sin protección",s:"Solo el pulido",p:{sedan:30000,suv:30000},ic:"🪟"},
-  {id:"none",n:"Solo los focos",s:"No necesito pulir vidrios",p:{sedan:0,suv:0},ic:"💡"}];
+  {id:"none",n:"Solo focos o techo",s:"No necesito pulir los otros vidrios",p:{sedan:0,suv:0},ic:"💡"}];
 /* PROMO: al agendar el parabrisas por esta página se regala el vidrio trasero y los retrovisores.
    Para apagarla: PROMO.on=false, ponerle fecha final en PROMO.end ("2026-12-31"), o guardar promo:false en pub/cfg. */
 var PROMO={on:true,end:"",svc:"pb",n:"🎁 Regalo promo: vidrio trasero + retrovisores"};
 function promoOn(){return PROMO.on&&(!PROMO.end||ymd(new Date())<=PROMO.end)}
 function hasGift(c){c=c||S;return promoOn()&&c.gl===PROMO.svc}
 var FOCOS={id:"fo",n:"Pulido de focos con polímero líquido",s:"El par, quedan transparentes",p:20000,ic:"💡"};
+var TECHO={id:"tp",n:"Pulido de techo panorámico",s:"El vidrio grande del techo",p:15000,ic:"🌅"};
 var SUVRX=["rav ?4","cr-?v","hr-?v","c-?hr","prado","land ?cruiser","fortuner","rush","hilux","tacoma","tundra","4 ?runner","highlander","sequoia","sportage","sorento","seltos","sonet","tucson","santa ?fe","creta","venue","kona","palisade","x-?trail","qashqai","kicks","frontier","navara","pathfinder","montero","outlander","asx","l ?200","pajero","nativa","mu-?x","d-?max","ranger","explorer","escape","ecosport","bronco","everest","cx-?[3589]0?","bt-?50","forester","outback","xv","crosstrek","vitara","jimny","s-?cross","terios","bego","tiguan","t-?cross","t-?roc","touareg","amarok","duster","koleos","captur","oroch","trailblazer","tracker","equinox","colorado","silverado","wrangler","cherokee","compass","renegade","gladiator","x[1-7]","q[2-8]","gl[abce]","ml","rx","nx","ux","gx","lx","xc[469]0","h6","jolion","haval","korando","tivoli","rexton","actyon","musso","partner","l300","hiace","4x4","pick ?up","pickup","camioneta","suv","jeep"];
 var SEDRX=["corolla","yaris","camry","prius","etios","civic","accord","city","fit","jazz","sentra","versa","almera","march","tiida","note","elantra","accent","i10","i20","i30","grand i10","sonata","rio","picanto","k3","k5","cerato","forte","soluto","mazda ?[236]","demio","swift","alto","celerio","ciaz","dzire","baleno","mirage","lancer","attrage","jetta","golf","gol","polo","vento","virtus","spark","sail","aveo","cruze","onix","beat","focus","fiesta","logan","sandero","clase c","model 3","leaf","ioniq","sedan","sed[aá]n","hatchback"];
 var S={vt:"",gl:"pb",fo:false,day:"",h:null,lat:null,lng:null,acc:null,step:0},BUSY={},CFG={wa:"50670892537",open:true,off:[]},T0=Date.now(),DB=null;
@@ -320,13 +331,13 @@ $("go").onclick=function(){try{fbq("track","InitiateCheckout")}catch(e){}documen
 $("bk").onclick=function(){if(S.step===0&&S.ci>0){loadCar(S.ci-1);show(1);return}if(S.step===0){document.body.classList.remove("book");return}show(S.step-1)};
 window.addEventListener("popstate",function(){if(document.body.classList.contains("book")){if(S.step===0&&S.ci>0){history.pushState({b:1},"");loadCar(S.ci-1);show(1)}else if(S.step>0){history.pushState({b:1},"");show(S.step-1)}else document.body.classList.remove("book")}});
 /* VARIOS CARROS */
-var CARS=[{vt:"",veh:"",gl:"pb",fo:false}];S.ci=0;
-function curCar(){return {vt:S.vt,veh:$("veh").value.trim(),gl:S.gl,fo:S.fo}}
+var CARS=[{vt:"",veh:"",gl:"pb",fo:false,tp:false}];S.ci=0;
+function curCar(){return {vt:S.vt,veh:$("veh").value.trim(),gl:S.gl,fo:S.fo,tp:!!S.tp}}
 function allCars(){return CARS.map(function(c,i){return i===S.ci?curCar():c})}
 function saveCar(){CARS[S.ci]=curCar()}
-function loadCar(i){saveCar();S.ci=i;var c=CARS[i];S.vt=c.vt;S.gl=c.gl;S.fo=c.fo;$("veh").value=c.veh;
+function loadCar(i){saveCar();S.ci=i;var c=CARS[i];S.vt=c.vt;S.gl=c.gl;S.fo=c.fo;S.tp=!!c.tp;$("veh").value=c.veh;
   Array.prototype.forEach.call(document.querySelectorAll("[data-vt]"),function(x){x.setAttribute("aria-pressed",x.dataset.vt===S.vt)});$("vw").classList.remove("on");buildSvc();upd()}
-function carTotal(c){var g=GLASS.find(function(x){return x.id===c.gl}),vt=c.vt||"sedan";return (g?g.p[vt]:0)+(c.fo?FOCOS.p:0)}
+function carTotal(c){var g=GLASS.find(function(x){return x.id===c.gl}),vt=c.vt||"sedan";return (g?g.p[vt]:0)+(c.fo?FOCOS.p:0)+(c.tp?TECHO.p:0)}
 function carOk(c){return !!c.vt&&c.veh.length>=3&&carTotal(c)>0}
 function vtN(c){return c.vt==="suv"?"SUV o pick-up":"Sedán o hatchback"}
 function renderCars(){var A=allCars(),n=A.length,h="";
@@ -337,9 +348,9 @@ function renderCars(){var A=allCars(),n=A.length,h="";
   $("more").innerHTML=n<MAXC?'<button id="addcar"><span style="font-size:20px">＋</span> Agregar otro carro</button><small>¿Tenés otro carro? Agendalos juntos en la misma visita. Cada uno con sus propios servicios.</small>':
     '<small>Máximo '+MAXC+' carros por reserva aquí. ¿Son más? <a href="'+waUrl("Hola GlassStudioCR, quiero agendar más de "+MAXC+" carros")+'" target="_blank" rel="noopener">Escribinos por WhatsApp</a>.</small>';
   if($("addcar"))$("addcar").onclick=function(){if(!carOk(curCar())){err(!S.vt||$("veh").value.trim().length<3?"Primero completá el tipo y modelo de este carro.":"Elegí al menos un servicio para este carro.");return}
-    saveCar();CARS.push({vt:"",veh:"",gl:"pb",fo:false});loadCar(CARS.length-1);show(0);toast2("Carro "+CARS.length+" agregado 🚗")};
+    saveCar();CARS.push({vt:"",veh:"",gl:"pb",fo:false,tp:false});loadCar(CARS.length-1);show(0);toast2("Carro "+CARS.length+" agregado 🚗")};
   Array.prototype.forEach.call(document.querySelectorAll("[data-ci]"),function(b){b.onclick=function(e){var x=e.target.getAttribute("data-cx");
-    if(x!=null){saveCar();var k=+x;CARS.splice(k,1);if(S.ci>=k&&S.ci>0)S.ci--;var c=CARS[S.ci];S.vt=c.vt;S.gl=c.gl;S.fo=c.fo;$("veh").value=c.veh;
+    if(x!=null){saveCar();var k=+x;CARS.splice(k,1);if(S.ci>=k&&S.ci>0)S.ci--;var c=CARS[S.ci];S.vt=c.vt;S.gl=c.gl;S.fo=c.fo;S.tp=!!c.tp;$("veh").value=c.veh;
       Array.prototype.forEach.call(document.querySelectorAll("[data-vt]"),function(y){y.setAttribute("aria-pressed",y.dataset.vt===S.vt)});buildSvc();show(S.step>1?1:S.step);return}
     var i=+b.dataset.ci;if(i===S.ci)return;loadCar(i);show(S.step>1?0:S.step)}})}
 function toast2(m){var t=$("er");t.textContent=m;t.style.background="color-mix(in srgb,var(--ok) 14%,transparent)";t.style.color="var(--ok)";t.classList.add("on");clearTimeout(t._h);t._h=setTimeout(function(){t.classList.remove("on");t.style.background="";t.style.color=""},2200)}
@@ -370,8 +381,10 @@ $("veh").addEventListener("input",function(){chkModel();upd()});
 function svcBtn(o,pr,on,attr){return '<button class="opt" '+attr+' aria-pressed="'+on+'"><span class="ic">'+o.ic+'</span><span class="tx"><b>'+o.n+(o.id==="pb"?'<span class="tag">Más pedido</span>':'')+'</b><small>'+o.s+'</small>'+(promoOn()&&o.id===PROMO.svc?'<span class="gift">🎁 + vidrio trasero y retrovisores de regalo</span>':'')+'</span><span class="pr">'+(pr?crc(pr):"")+'</span></button>'}
 function buildSvc(){var vt=S.vt||"sedan";$("gl").innerHTML=GLASS.map(function(g){return svcBtn(g,g.p[vt],S.gl===g.id,'data-g="'+g.id+'"')}).join("");
   $("fo").innerHTML=svcBtn(FOCOS,FOCOS.p,S.fo,'id="fob"');
-  Array.prototype.forEach.call(document.querySelectorAll("[data-g]"),function(b){b.onclick=function(){S.gl=b.dataset.g;if(S.gl==="none")S.fo=true;buildSvc();upd()}});
-  $("fob").onclick=function(){S.fo=!S.fo;if(!S.fo&&S.gl==="none")S.gl="pb";buildSvc();upd()}}
+  Array.prototype.forEach.call(document.querySelectorAll("[data-g]"),function(b){b.onclick=function(){S.gl=b.dataset.g;if(S.gl==="none"&&!S.tp)S.fo=true;buildSvc();upd()}});
+  $("tpo").innerHTML=svcBtn(TECHO,TECHO.p,!!S.tp,'id="tpb"');
+  $("fob").onclick=function(){S.fo=!S.fo;if(!S.fo&&!S.tp&&S.gl==="none")S.gl="pb";buildSvc();upd()};
+  $("tpb").onclick=function(){S.tp=!S.tp;if(!S.fo&&!S.tp&&S.gl==="none")S.gl="pb";buildSvc();upd()}}
 buildSvc();
 
 /* PASO 3: día y hora */
@@ -449,7 +462,7 @@ $("gps").onclick=function(){if(!navigator.geolocation){$("lv").innerHTML='<div c
 ["addr","cli","tel"].forEach(function(i){$(i).addEventListener("input",function(){err("");upd()})});
 
 /* PASO 5: resumen y envío */
-function lines(c){c=c||curCar();var vt=c.vt,L=[],g=GLASS.find(function(x){return x.id===c.gl});if(g&&g.id!=="none")L.push({n:g.n+(g.id==="pb"?" ("+(vt==="suv"?"SUV":"sedán")+")":""),p:g.p[vt]});if(c.fo)L.push({n:FOCOS.n,p:FOCOS.p});if(hasGift(c))L.push({n:PROMO.n,p:0});return L}
+function lines(c){c=c||curCar();var vt=c.vt,L=[],g=GLASS.find(function(x){return x.id===c.gl});if(g&&g.id!=="none")L.push({n:g.n+(g.id==="pb"?" ("+(vt==="suv"?"SUV":"sedán")+")":""),p:g.p[vt]});if(c.fo)L.push({n:FOCOS.n,p:FOCOS.p});if(c.tp)L.push({n:TECHO.n,p:TECHO.p});if(hasGift(c))L.push({n:PROMO.n,p:0});return L}
 function mapLink(){return S.lat!=null?"https://www.google.com/maps/search/?api=1&query="+S.lat+","+S.lng:""}
 function lineRows(L){return L.map(function(l){return l.p?'<div><i>✨</i><span>'+esc(l.n)+'</span><b>'+crc(l.p)+'</b></div>':'<div><i>🎁</i><span>'+esc(l.n.replace(/^🎁 /,""))+'</span><b style="color:var(--ok)">Gratis</b></div>'}).join("")}
 function renderSum(){var A=allCars(),n=A.length,len=DUR*n;
@@ -460,31 +473,35 @@ function renderSum(){var A=allCars(),n=A.length,len=DUR*n;
   '<div><i>💰</i><span>Total'+(n>1?' de los '+n+' carros':'')+'</span><span class="tot" style="flex:none">'+crc(total())+'</span></div>'}
 function waText(){var A=allCars(),n=A.length;return "Hola GlassStudioCR 👋 Acabo de agendar "+(n>1?"una cita para "+n+" carros":"mi cita")+":\n📅 "+niceDay(S.day)+", "+fmtH(S.h)+(n>1?" a "+fmtH(S.h+DUR*n):"")+
   A.map(function(c,k){return "\n🚗 "+(n>1?"Carro "+(k+1)+" ("+fmtH(S.h+DUR*k)+"): ":"")+c.veh+" ("+(c.vt==="suv"?"SUV":"sedán")+")\n✨ "+lines(c).map(function(l){return l.n}).join(" + ")+(n>1?"\n   "+crc(carTotal(c)):"")}).join("")+
-  (feeAmt()?"\n🚗 Domicilio a "+S.zone.n+": "+crc(feeAmt()):"")+"\n💰 Total: "+crc(total())+"\n📍 "+(S.zone?S.zone.n+" · ":"")+(mapLink()||$("addr").value.trim())+(S.lat!=null&&$("addr").value.trim()?"\n   "+$("addr").value.trim():"")+"\n👤 "+$("cli").value.trim()}
+  (feeAmt()?"\n🚗 Domicilio a "+S.zone.n+": "+crc(feeAmt()):"")+"\n💰 Total: "+crc(total())+"\n📍 "+(S.zone?S.zone.n+" · ":"")+(mapLink()||$("addr").value.trim())+(S.lat!=null&&$("addr").value.trim()?"\n   "+$("addr").value.trim():"")+"\n👤 "+$("cli").value.trim()+(S.tk?"\n\n🔗 Para cambiar o cancelar mi cita: "+myLink(S.tk):"")}
 function submit(){var b=$("nx");if(b.disabled)return;err("");
   if($("website").value){done();return}
   if(Date.now()-T0<8000){err("Revisá los datos un momento y tocá Confirmar otra vez.");return}
   if(!DB){err("No hay conexión. Revisá tu internet o escribinos por WhatsApp.");return}
   b.disabled=true;b.textContent="Apartando tu hora…";
-  var A=allCars(),n=A.length,base=Date.now()*100+Math.floor(Math.random()*90),tel=telN(),at=Date.now();
+  var A=allCars(),n=A.length,base=Date.now()*100+Math.floor(Math.random()*90),tel=telN(),at=Date.now(),tk=newTok();S.tk=tk;
   var ub=S.lat!=null?S.lat+","+S.lng:$("addr").value.trim();
   var note0=["Zona: "+S.zone.n+(feeAmt()?" (domicilio "+crc(feeAmt())+")":" (domicilio gratis)")+(S.gpsZone&&S.zone.src==="sel"&&S.gpsZone.n!==S.zone.n?" · GPS cerca de "+S.gpsZone.n:""),S.lat!=null&&$("addr").value.trim()?"Señas: "+$("addr").value.trim():"",$("det").value.trim(),S.acc>150?"Ubicación aprox. ±"+S.acc+" m":""].filter(Boolean).join(" · ");
-  var bt=DB.batch(),ids=[];
+  function mk(wt){var bt=DB.batch(),ids=[];
   A.forEach(function(c,k){var id=base+k,sid=String(id),L=lines(c).concat(k===0&&feeAmt()?[feeLine()]:[]),h0=S.h+DUR*k;ids.push(sid);
     var note=((n>1?"🚗 Reserva de "+n+" carros ("+(k+1)+" de "+n+") · ":"")+note0).replace(/ · $/,"").slice(0,400);
-    bt.set(DB.doc("jobs/"+sid),{id:id,cli:$("cli").value.trim().slice(0,60),tel:tel,veh:c.veh.slice(0,60),vt:c.vt,items:L.map(function(l){return l.n}),lines:L,disc:0,total:carTotal(c)+(k===0?feeAmt():0),date:S.day,time:pad(h0)+":00",note:note,ubic:ub.slice(0,300),src:$("src").value,st:"Por confirmar",by:"web",web:true,at:at});
+    var jd={id:id,cli:$("cli").value.trim().slice(0,60),tel:tel,veh:c.veh.slice(0,60),vt:c.vt,items:L.map(function(l){return l.n}),lines:L,disc:0,total:carTotal(c)+(k===0?feeAmt():0),date:S.day,time:pad(h0)+":00",note:note,ubic:ub.slice(0,300),src:$("src").value,st:"Por confirmar",by:"web",web:true,at:at,tk:tk};if(!wt)delete jd.tk;bt.set(DB.doc("jobs/"+sid),jd);
     for(var q=0;q<DUR;q++)bt.set(DB.doc("slots/"+S.day+"_"+pad(h0+q)),{date:S.day,h:h0+q,job:sid,at:at})});
   bt.set(DB.doc("holds/"+tel),{job:ids[0],date:S.day,at:at});
-  bt.commit().then(done,function(){loadBusy().then(function(){var taken=false;for(var k=0;k<DUR*n;k++)if(BUSY[S.day+"_"+pad(S.h+k)])taken=true;b.textContent="Confirmar cita";upd();
+  if(wt)bt.set(DB.doc("mine/"+tk),{jobs:ids,cli:$("cli").value.trim().slice(0,60),tel:tel,date:S.day,h:S.h,n:n,cars:A.map(function(c,k){return {veh:c.veh.slice(0,60),items:lines(c).map(function(l){return l.n}),total:carTotal(c)+(k===0?feeAmt():0)}}),total:total(),zone:S.zone?S.zone.n:"",st:"activa",at:at});
+  return bt}
+  /* Si las reglas nuevas todavía no están publicadas, reintenta sin el link de "Mi cita" */
+  var fail=function(){loadBusy().then(function(){var taken=false;for(var k=0;k<DUR*n;k++)if(BUSY[S.day+"_"+pad(S.h+k)])taken=true;b.textContent="Confirmar cita";upd();
       if(taken){S.h=null;show(3);err("Uy, alguien acaba de tomar esa hora. Elegí otra, por favor.")}
-      else err("Ya hay una cita pendiente con este número de WhatsApp. Si querés cambiarla o agendar otro carro, escribinos por WhatsApp.")})})}
+      else err("Ya hay una cita pendiente con este número de WhatsApp. Si querés cambiarla o agendar otro carro, escribinos por WhatsApp.")})};
+  mk(true).commit().then(done,function(){S.tk=null;mk(false).commit().then(done,fail)})}
 /* AVISO AL INSTANTE: manda un aviso al celular de Esteban (app ntfy) apenas se confirma la reserva.
    Va por el canal público pub/cfg.ntw, así que NO lleva nombre ni teléfono del cliente: eso se ve en la app. */
 function pingNew(){if(!CFG.ntw)return;try{var A=allCars(),n=A.length,
   car=A.map(function(c){return (c.veh||"Carro")+" · "+lines(c).map(function(l){return l.n}).join(" + ")}).join("\n"),
   msg=niceDay(S.day)+" · "+fmtH(S.h)+"\n"+car+"\n📍 "+(S.zone?S.zone.n:"")+" · Total "+crc(total())+"\nTocá para confirmarla en la app";
   fetch("https://ntfy.sh/",{method:"POST",keepalive:true,body:JSON.stringify({topic:CFG.ntw,title:(n>1?"🚗🚗 Nueva reserva web de "+n+" carros":"🆕 Nueva cita por la web"),message:msg,tags:["calendar"],priority:4,click:"https://citas.glassstudiocr.com/"})}).catch(function(){})}catch(e){}}
-function done(){pingNew();try{var _v=total(),_n=allCars().length;fbq("track","Schedule",{value:_v,currency:"CRC",num_items:_n});fbq("track","Lead",{value:_v,currency:"CRC"})}catch(e){}var t=waText();$("wa").href=waUrl(t);var A=allCars(),n=A.length;$("dt").innerHTML="<b>"+niceDay(S.day)+", "+fmtH(S.h)+"</b><br>"+(n>1?n+" carros: "+A.map(function(c){return esc(c.veh)}).join(", "):esc(A[0].veh))+" · "+crc(total());
+function done(){pingNew();if(S.tk){$("mylink").hidden=false;$("mlv").value=myLink(S.tk);$("mlc").onclick=function(){var v=$("mlv").value;(navigator.clipboard?navigator.clipboard.writeText(v):Promise.reject()).then(function(){$("mlc").textContent="¡Copiado!"},function(){$("mlv").select()})}}try{var _v=total(),_n=allCars().length;fbq("track","Schedule",{value:_v,currency:"CRC",num_items:_n});fbq("track","Lead",{value:_v,currency:"CRC"})}catch(e){}var t=waText();$("wa").href=waUrl(t);var A=allCars(),n=A.length;$("dt").innerHTML="<b>"+niceDay(S.day)+", "+fmtH(S.h)+"</b><br>"+(n>1?n+" carros: "+A.map(function(c){return esc(c.veh)}).join(", "):esc(A[0].veh))+" · "+crc(total());
   var d=pd(S.day),f=function(h){return S.day.replace(/-/g,"")+"T"+pad(h)+"0000"};
   $("cal").href="https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent("GlassStudioCR: pulido a domicilio")+"&dates="+f(S.h)+"/"+f(S.h+DUR*n)+"&details="+encodeURIComponent(A.map(function(c){return c.veh+": "+lines(c).map(function(l){return l.n}).join(" + ")}).join(" | ")+" · "+crc(total()))+"&location="+encodeURIComponent(mapLink()||$("addr").value.trim());
   document.body.classList.remove("book");document.body.classList.add("ok");window.scrollTo(0,0);confetti()}
@@ -495,6 +512,66 @@ promoUI();
 buildZones();
 (function(){try{var q=location.search,r=document.referrer||"";if(/[?&](fbclid=|utm_source=(facebook|fb|ig|instagram|meta|messenger))/i.test(q)||/facebook\.|instagram\.|messenger\.|fb\.com|m\.me/i.test(r)){var s=$("src");if(s&&!s.value)s.value="Facebook / Instagram"}}catch(e){}})();
 upd();
+
+/* ===== MI CITA: el cliente cambia o cancela su cita con su link secreto (hasta 12 h antes) ===== */
+var MCQ=(new URLSearchParams(location.search).get("cita")||"").toLowerCase().replace(/[^a-z0-9]/g,""),MC=null,MS={day:"",h:null},MBUSY={};
+function newTok(){var a=new Uint8Array(24),c="abcdefghijkmnpqrstuvwxyz23456789";(window.crypto||window.msCrypto).getRandomValues(a);return Array.prototype.map.call(a,function(x){return c[x%32]}).join("")}
+function myLink(tk){return location.origin+location.pathname.replace(/[^\/]*$/,"")+"?cita="+tk}
+function citaMs(f,h){var d=pd(f);d.setHours(h,0,0,0);return d.getTime()}
+function mcBox(h){$("mcb").innerHTML=h;window.scrollTo(0,0)}
+function mcWa(t){return waUrl(t||"Hola GlassStudioCR 👋 Quiero hacer un cambio en mi cita del "+(MC?niceDay(MC.date)+", "+fmtH(MC.h):""))}
+function mcPing(title,msg){if(!CFG.ntw)return;try{fetch("https://ntfy.sh/",{method:"POST",keepalive:true,body:JSON.stringify({topic:CFG.ntw,title:title,message:msg,tags:["calendar"],priority:4,click:"https://citas.glassstudiocr.com/"})}).catch(function(){})}catch(e){}}
+function loadMine(){if(!DB){mcBox('<h2>Sin conexión</h2><p class="sub">Revisá tu internet y volvé a abrir el link.</p>');return}
+  DB.doc("mine/"+MCQ).get().then(function(d){if(!d.exists){mcBox('<h2>No encontramos esta cita</h2><p class="sub">Revisá que el link esté completo o escribinos por WhatsApp.</p><a class="wbtn" target="_blank" rel="noopener" href="'+mcWa("Hola GlassStudioCR 👋 Tengo una consulta sobre mi cita")+'">Escribir por WhatsApp</a>');return}MC=d.data();renderMine()},
+   function(){mcBox('<h2>No se pudo cargar tu cita</h2><p class="sub">Revisá tu internet y volvé a intentar.</p><a class="lbtn" href="">Reintentar</a>')})}
+function mcSum(){var n=MC.n||MC.jobs.length;return '<div class="sum" style="text-align:left;margin:14px 0"><div style="border-top:0"><i>📅</i><span><b>'+niceDay(MC.date).replace(/^./,function(c){return c.toUpperCase()})+'</b><br>'+fmtH(MC.h)+' a '+fmtH(MC.h+DUR*n)+(n>1?' · '+n+' carros':'')+'</span></div>'
+  +(MC.cars||[]).map(function(c){return '<div><i>🚗</i><span>'+esc(c.veh||"Carro")+'<br><small style="color:var(--mute)">'+esc((c.items||[]).join(" + "))+'</small></span><b style="margin-left:auto">'+crc(c.total)+'</b></div>'}).join("")
+  +(MC.zone?'<div><i>📍</i><span>'+esc(MC.zone)+'</span></div>':'')+'<div><i>💰</i><span><b>Total</b></span><b style="margin-left:auto">'+crc(MC.total)+'</b></div></div>'}
+function renderMine(){var left=citaMs(MC.date,MC.h)-Date.now(),can=MC.st==="activa"&&left>12*36e5;
+  var head='<div class="check" style="background:var(--acc)"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></div><h2>'+(MC.st==="cancelada"?"Cita cancelada":"Tu cita")+'</h2><p class="sub">Hola '+esc(String(MC.cli).split(" ")[0])+' 👋</p>';
+  if(MC.st==="cancelada"){mcBox(head+mcSum()+'<p class="sub">Esta cita ya está cancelada. Cuando querás, agendá otra.</p><a class="wbtn" href="./" style="background:var(--acc)">Agendar una cita nueva</a>');return}
+  if(left<0){mcBox(head+mcSum()+'<p class="sub">Esta cita ya pasó. ¡Gracias por confiar en GlassStudioCR!</p><a class="lbtn" href="./">Agendar otra cita</a>');return}
+  if(!can){mcBox(head+mcSum()+'<div class="note">Faltan menos de 12 horas para tu cita. Para cambiarla o cancelarla escribinos por WhatsApp y lo vemos.</div><a class="wbtn" target="_blank" rel="noopener" href="'+mcWa()+'">Escribir por WhatsApp</a>');return}
+  mcBox(head+mcSum()+'<button class="wbtn" id="mcMove" style="background:var(--acc)">🔁 Cambiar día u hora</button><button class="lbtn" id="mcCancel" style="color:var(--bad)">Cancelar mi cita</button><a class="lbtn" target="_blank" rel="noopener" href="'+mcWa()+'">💬 Escribir por WhatsApp</a><p class="sub" style="font-size:13px;margin-top:12px">Podés cambiar o cancelar tu cita aquí hasta 12 horas antes.</p>');
+  $("mcMove").onclick=startMove;$("mcCancel").onclick=askCancel}
+function slotKeys(day,h,n,jobs){var M={};for(var k=0;k<n;k++)for(var q=0;q<DUR;q++)M[day+"_"+pad(h+DUR*k+q)]=String(jobs[k]||jobs[0]);return M}
+function startMove(){var n=MC.n||MC.jobs.length;CARS=MC.jobs.map(function(){return {vt:"sedan",veh:"",gl:"pb",fo:false,tp:false}});S.zone=MC.zone?{n:MC.zone,z:"free"}:null;S.lat=null;MS={day:"",h:null};
+  mcBox('<h2>Elegí el nuevo día</h2><p class="sub">Solo te mostramos las horas libres.</p><div class="days" id="mdays"></div><div id="mhl"><div class="hint">Cargando horarios…</div></div><div class="err" id="mer" role="alert"></div><button class="wbtn" id="mGo" style="background:var(--acc)" disabled>Confirmar el cambio</button><button class="lbtn" id="mBack">Volver</button>');
+  $("mBack").onclick=renderMine;$("mGo").onclick=doMove;
+  var a=ymd(new Date()),e=new Date();e.setDate(e.getDate()+DAYS_AHEAD);
+  DB.collection("slots").where("date",">=",a).where("date","<=",ymd(e)).get().then(function(sn){BUSY={};var mine=MC.jobs.map(String);sn.forEach(function(d){var x=d.data()||{};if(mine.indexOf(String(x.job))<0)BUSY[d.id]=x.z||1});renderMDays()},function(){BUSY={};renderMDays()})}
+function renderMDays(){var h="",first="";for(var i=0;i<DAYS_AHEAD;i++){var d=new Date();d.setDate(d.getDate()+i);var k=ymd(d),fr=slotsOf(k).filter(function(x){return x.free&&citaMs(k,x.h)-Date.now()>2*36e5}).length;if(fr&&!first)first=k;
+    h+='<button class="day" data-md="'+k+'" aria-pressed="'+(MS.day===k)+'"'+(fr?'':' disabled')+'><small>'+(i===0?"hoy":i===1?"mañana":DS[d.getDay()])+'</small><b>'+d.getDate()+'</b><i>'+(fr?MN[d.getMonth()]:"lleno")+'</i></button>'}
+  $("mdays").innerHTML=h;if(!MS.day)MS.day=first;Array.prototype.forEach.call($("mdays").children,function(b){b.setAttribute("aria-pressed",b.dataset.md===MS.day);b.onclick=function(){if(b.disabled)return;MS.day=b.dataset.md;MS.h=null;renderMDays()}});
+  var sb=document.querySelector('[data-md="'+MS.day+'"]');if(sb&&sb.scrollIntoView)sb.scrollIntoView({block:"nearest",inline:"center"});
+  if(!MS.day){$("mhl").innerHTML='<div class="hint">No hay horas libres en estas semanas. Escribinos por WhatsApp.</div>';return}
+  var L=slotsOf(MS.day).filter(function(x){return citaMs(MS.day,x.h)-Date.now()>2*36e5});
+  $("mhl").innerHTML='<label style="margin-top:6px">Horas libres el '+niceDay(MS.day)+'</label><div class="hours">'+L.map(function(x){var same=MS.day===MC.date&&x.h===MC.h;return '<button class="hr" data-mh="'+x.h+'" aria-pressed="'+(MS.h===x.h)+'"'+(x.free&&!same?'':' disabled')+'>'+fmtH(x.h)+'</button>'}).join("")+'</div>';
+  Array.prototype.forEach.call(document.querySelectorAll("[data-mh]"),function(b){b.onclick=function(){MS.h=+b.dataset.mh;renderMDays()}});$("mGo").disabled=MS.h==null}
+function doMove(){var b=$("mGo");if(MS.h==null)return;b.disabled=true;b.textContent="Cambiando tu cita…";$("mer").textContent="";
+  var n=MC.n||MC.jobs.length,ids=MC.jobs.map(String),O=slotKeys(MC.date,MC.h,n,ids),N=slotKeys(MS.day,MS.h,n,ids),at=Date.now(),bt=DB.batch(),ts=firebase.firestore.FieldValue.serverTimestamp();
+  ids.forEach(function(id,k){bt.update(DB.doc("jobs/"+id),{date:MS.day,time:pad(MS.h+DUR*k)+":00",st:"Por confirmar",key:MCQ,chg:"movida",chgAt:ts})});
+  Object.keys(O).forEach(function(k){if(!N[k])bt.delete(DB.doc("slots/"+k))});
+  Object.keys(N).forEach(function(k){if(O[k]!==N[k]){var p=k.split("_");bt.set(DB.doc("slots/"+k),{date:p[0],h:+p[1],job:N[k],at:at})}});
+  bt.update(DB.doc("mine/"+MCQ),{date:MS.day,h:MS.h,upd:at});
+  var before=niceDay(MC.date)+", "+fmtH(MC.h);
+  bt.commit().then(function(){MC.date=MS.day;MC.h=MS.h;mcPing("🔁 Un cliente cambió su cita por la web","Antes: "+before+"\nAhora: "+niceDay(MC.date)+", "+fmtH(MC.h)+"\nTocá para confirmarla en la app");
+    var t="Hola GlassStudioCR 👋 Cambié mi cita desde el link.\nAntes: "+before+"\nAhora: "+niceDay(MC.date)+", "+fmtH(MC.h)+"\n👤 "+MC.cli;
+    mcBox('<div class="check"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg></div><h2>¡Listo, cambiamos tu cita!</h2>'+mcSum()+'<a class="wbtn" target="_blank" rel="noopener" href="'+waUrl(t)+'">Avisar por WhatsApp</a><p style="font-size:13px;margin-top:10px;color:var(--mute)">Te confirmamos la nueva hora por WhatsApp.</p><button class="lbtn" id="mOk">Ver mi cita</button>');$("mOk").onclick=renderMine},
+   function(){b.disabled=false;b.textContent="Confirmar el cambio";var left=citaMs(MC.date,MC.h)-Date.now();
+     $("mer").innerHTML=left<12*36e5?"Ya faltan menos de 12 horas para tu cita. Escribinos por WhatsApp para cambiarla.":"No se pudo cambiar: puede que esa hora se acabe de ocupar. Elegí otra o <a target=\"_blank\" rel=\"noopener\" href=\""+mcWa()+"\">escribinos por WhatsApp</a>.";startMoveReload()})}
+function startMoveReload(){var keep=MS.day;var a=ymd(new Date()),e=new Date();e.setDate(e.getDate()+DAYS_AHEAD);DB.collection("slots").where("date",">=",a).where("date","<=",ymd(e)).get().then(function(sn){BUSY={};var mine=MC.jobs.map(String);sn.forEach(function(d){var x=d.data()||{};if(mine.indexOf(String(x.job))<0)BUSY[d.id]=x.z||1});MS.day=keep;MS.h=null;renderMDays()},function(){})}
+function askCancel(){mcBox('<h2>¿Cancelar tu cita?</h2>'+mcSum()+'<p class="sub">La hora queda libre para otra persona. Si querés, podés cambiarla de día en vez de cancelarla.</p><button class="wbtn" id="cY" style="background:var(--bad)">Sí, cancelar mi cita</button><button class="lbtn" id="cM">🔁 Mejor cambiar el día</button><button class="lbtn" id="cN">No, dejarla como está</button><div class="err" id="mer" role="alert"></div>');
+  $("cN").onclick=renderMine;$("cM").onclick=startMove;$("cY").onclick=function(){var b=this;b.disabled=true;b.textContent="Cancelando…";
+    var n=MC.n||MC.jobs.length,ids=MC.jobs.map(String),O=slotKeys(MC.date,MC.h,n,ids),bt=DB.batch(),ts=firebase.firestore.FieldValue.serverTimestamp();
+    ids.forEach(function(id){bt.update(DB.doc("jobs/"+id),{st:"Cancelada",key:MCQ,chg:"cancelada",chgAt:ts})});
+    Object.keys(O).forEach(function(k){bt.delete(DB.doc("slots/"+k))});
+    if(MC.tel)bt.delete(DB.doc("holds/"+MC.tel));
+    bt.update(DB.doc("mine/"+MCQ),{st:"cancelada",upd:Date.now()});
+    bt.commit().then(function(){MC.st="cancelada";mcPing("❌ Un cliente canceló su cita por la web",niceDay(MC.date)+", "+fmtH(MC.h)+"\nEsa hora quedó libre.");
+      mcBox('<h2>Tu cita quedó cancelada</h2><p class="sub">Gracias por avisarnos. Cuando querás, agendá otra.</p><a class="wbtn" href="./" style="background:var(--acc)">Agendar una cita nueva</a><a class="lbtn" target="_blank" rel="noopener" href="'+waUrl("Hola GlassStudioCR 👋 Cancelé mi cita del "+niceDay(MC.date)+", "+fmtH(MC.h)+". 👤 "+MC.cli)+'">Avisar por WhatsApp</a>')},
+     function(){b.disabled=false;b.textContent="Sí, cancelar mi cita";$("mer").innerHTML="No se pudo cancelar. Si faltan menos de 12 horas, <a target=\"_blank\" rel=\"noopener\" href=\""+mcWa()+"\">escribinos por WhatsApp</a>."})}}
+if(MCQ){document.body.classList.add("mc");loadMine()}
 </script>
 </body>
 </html>
