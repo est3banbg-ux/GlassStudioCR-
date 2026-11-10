@@ -12,15 +12,14 @@
 <meta property="og:url" content="https://citas.glassstudiocr.com/reservar/">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#0a3c42">
+<meta name="theme-color" content="#04131a">
 <link rel="icon" href="../icon-192.png">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f1f6f5;--card:#fff;--ink:#0f2a2c;--mute:#5a7174;--line:#d6e4e2;--acc:#0d7a85;--acc2:#3fc1cd;--accink:#fff;--glow:#f2b134;--ok:#1f8a4c;--bad:#c0392b;--sh:0 10px 30px rgba(10,60,66,.12);box-sizing:border-box}
-@media (prefers-color-scheme:dark){:root{--bg:#0a1718;--card:#122426;--ink:#e6f3f1;--mute:#8fabad;--line:#23403f;--acc:#3fc1cd;--acc2:#7fe3ea;--accink:#04201f;--ok:#4cc782;--bad:#ff8b80;--sh:0 10px 30px rgba(0,0,0,.35)}}
+:root{--bg:#04131a;--card:#0b2329;--ink:#eaf6f5;--mute:#9dbdbd;--dim:#6f9396;--line:#1d444a;--hair:rgba(95,224,234,.13);--acc:#5fe0ea;--acc2:#2bb3c0;--accink:#05282c;--glow:#f5b52e;--cta:#f5b52e;--ctaink:#1b1300;--ok:#4cc782;--bad:#ff8b80;--wa:#25d366;--waink:#04210f;--sh:0 14px 34px -14px rgba(0,0,0,.8);--ease:cubic-bezier(.23,1,.32,1);color-scheme:dark;box-sizing:border-box}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:16px/1.45 Figtree,system-ui,sans-serif;padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
@@ -192,23 +191,140 @@ footer{color:var(--mute);font-size:12px;text-align:center;margin:26px 0 10px}
 #mc .err{text-align:left}#mc .err a{color:inherit;font-weight:700}
 .mylink{text-align:left;background:var(--card);border:1.5px dashed var(--acc);border-radius:16px;padding:12px 14px;margin-top:14px}.mylink b{display:block}.mylink small{display:block;color:var(--mute);font-size:13px;margin:3px 0 8px}
 .ml{display:flex;gap:6px}.ml input{flex:1;min-width:0;font-size:13px;padding:9px 10px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}.ml button{border:0;border-radius:10px;padding:0 14px;background:var(--acc);color:var(--accink);font-weight:700}
+
+/* ===== Diseño 2026: igual que glassstudiocr.com ===== */
+body{background:var(--bg);overflow-x:hidden}
+::selection{background:var(--acc);color:var(--accink)}
+.sky{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:radial-gradient(900px 600px at 50% -10%,rgba(43,179,192,.22),transparent 60%),radial-gradient(700px 500px at 100% 70%,rgba(43,179,192,.08),transparent 60%),var(--bg)}
+.sky i{position:absolute;inset:0;background-repeat:repeat}
+.sky .s1{background-image:radial-gradient(1px 1px at 20px 30px,rgba(234,246,245,.55),transparent),radial-gradient(1px 1px at 140px 90px,rgba(234,246,245,.4),transparent),radial-gradient(1.5px 1.5px at 260px 170px,rgba(95,224,234,.6),transparent),radial-gradient(1px 1px at 330px 40px,rgba(234,246,245,.35),transparent);background-size:360px 220px}
+.sky .s2{background-image:radial-gradient(1px 1px at 60px 120px,rgba(234,246,245,.45),transparent),radial-gradient(2px 2px at 210px 60px,rgba(95,224,234,.45),transparent),radial-gradient(1px 1px at 300px 200px,rgba(234,246,245,.3),transparent);background-size:420px 260px}
+input,textarea,select{background:rgba(4,19,26,.7);border-color:var(--line);color:var(--ink)}
+input::placeholder,textarea::placeholder{color:var(--dim)}
+input:focus,textarea:focus,select:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(95,224,234,.18)}
+select option,select optgroup{background:#0b2329;color:var(--ink)}
+label{color:var(--ink)}
+/* Recuadro de selección (firma de la marca) */
+.hl{position:relative;display:inline-block;padding:0 .14em;margin:.04em 0;white-space:nowrap}
+.hl::before{content:"";position:absolute;inset:-.02em -.02em .04em;border:2px solid var(--acc);border-radius:6px;background:rgba(95,224,234,.10)}
+.hl b{position:absolute;width:.26em;height:.26em;min-width:9px;min-height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 3px var(--bg)}
+.hl b:first-of-type{left:-.1em;top:-.12em}.hl b:last-of-type{right:-.1em;bottom:-.06em}
+.hl span{position:relative}
+.dimt{color:var(--dim);display:block}
+/* Héroe */
+.hero{background:none;border-radius:0;padding:calc(14px + env(safe-area-inset-top,0px)) 0 28px;text-align:center}
+.hero::after{display:none}
+.brand{justify-content:space-between}
+.brand .lg{display:flex;align-items:center;gap:10px}
+.brand .wa-mini{display:inline-flex;align-items:center;gap:6px;font:600 13px Figtree,sans-serif;color:var(--mute);text-decoration:none;padding:7px 12px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--hair);background:rgba(11,35,41,.7)}
+.brand .wa-mini svg{width:16px;height:16px;color:var(--wa)}
+.hero h1{font-size:clamp(40px,11vw,56px);line-height:1;letter-spacing:-.045em;margin:30px 0 16px}
+.hero h1 .dimt{font-size:.6em;letter-spacing:-.03em;margin-bottom:.14em}
+.hero p.lead{color:var(--mute);opacity:1;font-size:16.5px;max-width:42ch;margin:0 auto}
+.hero p.lead b{color:var(--ink)}
+.promo{position:relative;overflow:hidden;text-align:left;margin:24px 0 0;padding:15px 16px;border-radius:20px;background:linear-gradient(135deg,#ffe08a,var(--glow) 60%,#f0a614);color:var(--ctaink);box-shadow:0 18px 40px -18px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.5)}
+.promo::after{content:"";position:absolute;top:0;bottom:0;left:0;width:30%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:translateX(-160%) skewX(-18deg);animation:shine 4.5s ease-in-out 1.5s infinite;will-change:transform}
+@keyframes shine{0%{transform:translateX(-160%) skewX(-18deg)}35%,100%{transform:translateX(460%) skewX(-18deg)}}
+.promo .gi{display:grid;place-items:center;width:46px;height:46px;border-radius:14px;background:rgba(27,19,0,.12);flex:none}
+.promo .gi svg{width:26px;height:26px}
+.promo b{font:800 16.5px/1.25 "Bricolage Grotesque",sans-serif}
+.chips{justify-content:center;gap:8px;margin:20px 0 22px}
+.chips span{display:inline-flex;align-items:center;gap:7px;background:rgba(11,35,41,.75);border:0;box-shadow:inset 0 0 0 1px var(--hair);color:var(--ink);padding:8px 12px;font-size:13.5px}
+.chips svg{width:16px;height:16px;color:var(--acc);flex:none}
+.cta{background:var(--cta);color:var(--ctaink);border-radius:18px;padding:18px;font-size:18px;box-shadow:0 10px 24px -10px rgba(0,0,0,.8);transition:transform 160ms var(--ease),background-color 200ms ease}
+.cta:active{transform:scale(.97)}
+.cta svg{transition:transform 200ms var(--ease)}
+@media (hover:hover) and (pointer:fine){.cta:hover{background:#ffc444}.cta:hover svg{transform:translateX(3px)}}
+.ease{margin-top:12px;color:var(--mute);font-size:14px}
+.ease svg{display:inline-block;width:16px;height:16px;color:var(--ok);vertical-align:-3px;margin-right:5px}
+/* Secciones de la portada */
+.sec{margin:34px 0}
+.sec h2{font-size:clamp(28px,8vw,36px);line-height:1.05;letter-spacing:-.035em;text-align:center;margin-bottom:18px}
+.how{grid-template-columns:1fr;gap:10px}
+.how div{display:grid;grid-template-columns:auto 1fr;gap:2px 14px;align-items:center;background:rgba(11,35,41,.75);box-shadow:inset 0 0 0 1px var(--hair);border-radius:20px;padding:16px;font-size:14.5px;color:var(--mute)}
+.how div i{grid-row:span 2;display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:var(--acc);color:var(--accink);font:800 18px "Bricolage Grotesque",sans-serif;box-shadow:0 0 0 5px rgba(43,179,192,.16)}
+.how b{margin:0;font-size:16.5px}
+.pl,.zones{background:rgba(11,35,41,.75);box-shadow:inset 0 0 0 1px var(--hair);border-radius:20px}
+.pl div,.zones div{border-top-color:var(--hair)}
+.pl div{padding:15px 18px;align-items:center}
+.pl b{font:800 18px "Bricolage Grotesque",sans-serif;font-variant-numeric:tabular-nums}
+.pl .best{background:linear-gradient(90deg,rgba(245,181,46,.10),transparent)}
+.pl .best small{color:var(--glow);font-weight:700}
+/* Asistente */
+.top{background:#04131a;-webkit-backdrop-filter:none;backdrop-filter:none;border-bottom:1px solid var(--hair)}
+.back{background:rgba(11,35,41,.9);box-shadow:inset 0 0 0 1px var(--line);color:var(--ink)}
+.bar{background:var(--line)}
+.bar i{background:var(--acc)}
+.step h2{font-size:clamp(28px,8vw,34px);letter-spacing:-.035em;line-height:1.05;margin:14px 0 6px}
+.opt{background:rgba(11,35,41,.85);border:0;box-shadow:inset 0 0 0 1.5px var(--line);transition:box-shadow .2s,transform 160ms var(--ease)}
+.opt:active{transform:scale(.97)}
+.opt[aria-pressed=true]{box-shadow:inset 0 0 0 2px var(--acc),0 0 0 4px rgba(95,224,234,.14);background:rgba(15,44,49,.95)}
+.opt[aria-pressed=true]::after{background:var(--acc);color:var(--accink)}
+.svc .ic{background:rgba(95,224,234,.10);color:var(--acc)}
+.svc .ic svg{width:24px;height:24px}
+.svc .pr{font-variant-numeric:tabular-nums}
+.tag{background:var(--glow);color:var(--ctaink)}
+.warn{background:rgba(245,181,46,.10);border-color:rgba(245,181,46,.6)}
+.warn button,.more button{background:var(--acc);color:var(--accink)}
+.day,.hr{background:rgba(11,35,41,.85);border:0;box-shadow:inset 0 0 0 1.5px var(--line);color:var(--ink);transition:box-shadow .2s,background-color .2s,transform 160ms var(--ease)}
+.day:active,.hr:active{transform:scale(.96)}
+.day[aria-pressed=true],.hr[aria-pressed=true]{background:var(--acc);color:var(--accink);box-shadow:none}
+.hr{font-variant-numeric:tabular-nums}
+.gps,.zc a{background:var(--wa);color:var(--waink)}
+.map{background:#0b2329;border-color:var(--line)}
+.zc.free{background:rgba(76,199,130,.10)}.zc.fee{background:rgba(245,181,46,.10)}.zc.no{background:rgba(255,139,128,.10)}
+.zc button{color:var(--acc)}
+.sum{background:rgba(11,35,41,.85);box-shadow:inset 0 0 0 1px var(--hair);border-radius:20px}
+.sum div{border-top-color:var(--hair);align-items:flex-start}
+.sum i{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:rgba(95,224,234,.10);color:var(--acc)}
+.sum i svg{width:17px;height:17px}
+.sum .tot{font-variant-numeric:tabular-nums}
+.more{background:rgba(11,35,41,.6);border-color:rgba(95,224,234,.45)}
+.more a{color:var(--acc)}
+.cars button{background:rgba(11,35,41,.85);border-color:var(--line);color:var(--ink)}
+.cars button[aria-pressed=true]{border-color:var(--acc);background:rgba(95,224,234,.12)}
+/* Barra inferior */
+.dock{background:#04131a;-webkit-backdrop-filter:none;backdrop-filter:none;border-top:1px solid var(--hair)}
+.dock .t b{font-variant-numeric:tabular-nums}
+.next{background:var(--cta);color:var(--ctaink);font-weight:800;border-radius:16px;transition:opacity .2s,transform 160ms var(--ease),background-color .2s}
+.next:active{transform:scale(.97)}
+@media (hover:hover) and (pointer:fine){.next:not(:disabled):hover{background:#ffc444}}
+/* Listo y Mi cita */
+#done h2,#mc h2{font-size:clamp(28px,8vw,34px);letter-spacing:-.035em}
+.wbtn{background:var(--wa);color:var(--waink)}
+.lbtn{border:0;box-shadow:inset 0 0 0 1.5px var(--line);color:var(--ink)}
+.mylink{background:rgba(11,35,41,.75);border-color:rgba(95,224,234,.45)}
+.ml input{background:rgba(4,19,26,.7);border-color:var(--line);color:var(--ink)}
+.ml button{background:var(--acc);color:var(--accink)}
+.err{background:rgba(255,139,128,.12)}
+footer{color:var(--dim)}
+.gift{color:#ffe08a;background:rgba(245,181,46,.14)}
+.next-steps{display:grid;gap:10px;text-align:left;margin:18px 0 6px}
+.next-steps div{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:18px;background:rgba(11,35,41,.8);box-shadow:inset 0 0 0 1px var(--hair);font-size:15px;color:var(--mute)}
+.next-steps b{color:var(--ink)}
+.next-steps svg{width:22px;height:22px;flex:none;margin-top:1px;color:var(--ok)}
+.next-steps div+div svg{color:var(--wa)}
+.lbtn.quiet{box-shadow:none;color:var(--mute);font-weight:600;text-decoration:underline;text-underline-offset:.2em}
+@media (prefers-reduced-motion:reduce){.sky i,.promo::after{animation:none!important}}
 </style>
 <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1186226080348335');fbq('track','PageView');</script>
 </head>
 <body>
+<div class="sky" aria-hidden="true"><i class="s1"></i><i class="s2"></i></div>
 <section id="land">
   <div class="hero"><div class="wrap">
-    <div class="brand"><img src="logo-icon.png" alt="" width="56" height="44" style="height:44px;width:auto"><span style="color:#fff">GlassStudio<b style="font-weight:400;color:#fff">CR</b></span></div>
-    <h1>Vidrios como nuevos, <em>sin salir de casa</em></h1>
-    <p>Pulido de parabrisas y focos a domicilio. Llegamos <b>gratis</b> a San José, Heredia y Alajuela, y con un pequeño costo a Cartago, Grecia, San Ramón y alrededores.</p>
-    <div class="promo" id="promo" hidden><i>🎁</i><span><b>Promo: agendá aquí y te regalamos el vidrio trasero y los retrovisores</b><small>Al agendar el pulido de parabrisas desde esta página. Sedán o SUV, mismo regalo.</small></span></div>
-    <div class="chips"><span>🚗 Vamos donde estés</span><span>🚙🚗 ¿Varios carros? Agendalos juntos</span><span>🛡️ Protección cerámica incluida</span><span>⏱️ Agendás en 1 minuto</span></div>
-    <button class="cta" id="go">Agendar mi cita <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    <div class="brand"><span class="lg"><img src="logo-icon.png" alt="" width="56" height="44" style="height:40px;width:auto"><span style="color:#fff">GlassStudio<b style="font-weight:400;color:#fff">CR</b></span></span><a class="wa-mini" href="https://wa.me/50670892537" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm4.5 12.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>¿Dudas?</a></div>
+    <h1><span class="dimt">Vidrios como nuevos,</span><span class="hl"><b></b><span>sin salir de casa.</span><b></b></span></h1>
+    <p class="lead">Pulido de parabrisas y focos a domicilio. Llegamos <b>gratis</b> a San José, Heredia y Alajuela, y con un pequeño costo a Cartago, Grecia, San Ramón y alrededores.</p>
+    <div class="promo" id="promo" hidden><span class="gi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="5" rx="1"/><path d="M5 13v7h14v-7M12 8v12M12 8c-1.5-3-5-3.5-5-1.2C7 8 9.5 8 12 8Zm0 0c1.5-3 5-3.5 5-1.2C17 8 14.5 8 12 8Z"/></svg></span><span><b>Promo: agendá aquí y te regalamos el vidrio trasero y los retrovisores</b><small>Al agendar el pulido de parabrisas desde esta página. Sedán o SUV, mismo regalo.</small></span></div>
+    <div class="chips"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg>Vamos donde estés</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/><path d="m8.5 12 2.5 2.5 4.5-5" stroke-linecap="round"/></svg>Protección cerámica incluida</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 16H3v-4l2-5h10l4 5h2v4h-2"/><circle cx="7.5" cy="16.5" r="2"/><circle cx="16.5" cy="16.5" r="2"/></svg>¿Varios carros? Agendalos juntos</span></div>
+    <button class="cta" id="go"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" style="transition:none"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Agendar en 1 minuto <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    <p class="ease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>Elegís servicio, día y hora. Sin llamadas.</p>
   </div></div>
   <div class="wrap">
-    <div class="sec"><h2>Así de fácil</h2><div class="how"><div><i>📅</i><b>Elegí día y hora</b>Solo ves horas libres</div><div><i>📍</i><b>Mandá tu ubicación</b>Con un toque</div><div><i>✨</i><b>Llegamos y listo</b>Vos seguís en lo tuyo</div></div></div>
-    <div class="sec"><h2>Precios</h2><div class="pl">
-      <div><span>Parabrisas + protección cerámica<small>Sedán o hatchback</small></span><b>₡20 000</b></div>
+    <div class="sec"><h2><span class="dimt">Así de fácil,</span><span class="hl"><b></b><span>en 3 pasos.</span><b></b></span></h2><div class="how"><div><i>1</i><b>Elegí día y hora</b>Solo ves horas libres</div><div><i>2</i><b>Mandá tu ubicación</b>Con un toque</div><div><i>3</i><b>Llegamos y listo</b>Vos seguís en lo tuyo</div></div></div>
+    <div class="sec"><h2><span class="dimt">Precios claros,</span><span class="hl"><b></b><span>sin sorpresas.</span><b></b></span></h2><div class="pl">
+      <div class="best"><span>Parabrisas + protección cerámica<small>Sedán o hatchback · el más pedido</small></span><b>₡20 000</b></div>
       <div><span>Parabrisas + protección cerámica<small>SUV o pick-up</small></span><b>₡25 000</b></div>
       <div><span>Todos los vidrios + protección cerámica</span><b>₡40 000</b></div>
       <div><span>Todos los vidrios sin protección</span><b>₡30 000</b></div>
@@ -216,7 +332,7 @@ footer{color:var(--mute);font-size:12px;text-align:center;margin:26px 0 10px}
       <div><span>Pulido de techo panorámico<small>Se suma a cualquier servicio</small></span><b>₡15 000</b></div>
       <div><span>Servicio a domicilio en la GAM</span><b style="color:var(--ok)">Gratis</b></div>
     </div></div>
-    <div class="sec"><h2>¿Hasta dónde llegamos?</h2><div class="zones" id="zlist"></div></div>
+    <div class="sec"><h2><span class="dimt">¿Hasta dónde</span><span class="hl"><b></b><span>llegamos?</span><b></b></span></h2><div class="zones" id="zlist"></div></div>
   </div>
 </section>
 
@@ -243,7 +359,7 @@ footer{color:var(--mute);font-size:12px;text-align:center;margin:26px 0 10px}
     </div>
 
     <div class="step" id="s3">
-      <h2>¿Cuándo te sirve?</h2><p class="sub">Solo te mostramos las horas libres. Cada servicio dura unas 2 horas.</p>
+      <h2>¿Cuándo te sirve?</h2><p class="sub">Solo te mostramos las horas libres. Cada carro lleva alrededor de 1 hora.</p>
       <div class="days" id="days"></div>
       <div id="hl"><div class="hint">Cargando horarios…</div></div>
     </div>
@@ -271,7 +387,7 @@ footer{color:var(--mute);font-size:12px;text-align:center;margin:26px 0 10px}
     <div class="step" id="s5">
       <h2>Revisá tu cita</h2><p class="sub">Si todo está bien, confirmá y listo.</p>
       <div class="sum" id="sum"></div>
-      <div class="note">Al confirmar te pedimos mandarnos un mensaje por WhatsApp para dejarla lista. Así evitamos citas falsas y tu hora queda apartada solo para vos.</div>
+      <div class="note">Al confirmar, tu hora queda apartada solo para vos. No tenés que escribirnos: nosotros te contactamos por WhatsApp para confirmarla.</div>
     </div>
     <div class="err" id="er" role="alert"></div>
   </div>
@@ -279,12 +395,12 @@ footer{color:var(--mute);font-size:12px;text-align:center;margin:26px 0 10px}
 
 <section id="done"><div class="wrap">
   <div class="check"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg></div>
-  <h2>¡Tu hora quedó apartada!</h2>
+  <h2>¡Listo, tu cita quedó agendada!</h2>
   <p id="dt"></p>
-  <a class="wbtn" id="wa" href="#" target="_blank" rel="noopener"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.4-.7-2.8-1.1-4.6-4-4.8-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2.1 1-2.4c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.3.5-.4.5c-.1.1-.3.3-.1.6.1.3.6 1.1 1.4 1.8 1 .9 1.8 1.1 2.1 1.3.3.1.4.1.6-.1l.8-1c.2-.3.4-.2.6-.1l2 1c.3.1.4.2.5.3.1.2.1.7-.1 1.3z"/></svg>Confirmar por WhatsApp</a>
-  <p style="font-size:13px;margin-top:10px">Mandá el mensaje para que confirmemos tu cita. Te respondemos por ahí mismo.</p>
-  <div class="mylink" id="mylink" hidden><b>🔁 ¿Necesitás cambiar o cancelar?</b><small>Guardá este link: ahí podés cambiar el día u hora, o cancelar, hasta 12 horas antes.</small><div class="ml"><input id="mlv" readonly aria-label="Link de tu cita"><button id="mlc">Copiar</button></div></div>
-  <a class="lbtn" id="cal" href="#" target="_blank" rel="noopener">📅 Agregar a mi calendario</a>
+  <div class="next-steps"><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span><b>No tenés que hacer nada más.</b> Tu hora ya está apartada.</span></div><div><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm4.5 12.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg><span>Te escribimos por WhatsApp para confirmarla y avisarte cuando vamos en camino.</span></div></div>
+  <div class="mylink" id="mylink" hidden><b>¿Necesitás cambiar o cancelar?</b><small>Guardá este link: ahí podés cambiar el día u hora, o cancelar, hasta 12 horas antes.</small><div class="ml"><input id="mlv" readonly aria-label="Link de tu cita"><button id="mlc">Copiar</button></div></div>
+  <a class="lbtn" id="cal" href="#" target="_blank" rel="noopener">Agregar a mi calendario</a>
+  <a class="lbtn quiet" id="wa" href="#" target="_blank" rel="noopener">¿Tenés alguna duda? Escribinos por WhatsApp</a>
   <a class="lbtn" href="./">Agendar otro carro</a>
 </div></section>
 
@@ -298,17 +414,17 @@ var FBC={apiKey:"AIzaSyCduMQlyx2gEavGERjbGrCv965hrKOrUTA",authDomain:"glassstudi
 /* HORARIO: domingo 8 am a 3 pm (última cita 1 pm); lunes a sábado 6 am a 6 pm (última cita 4 pm). Cada carro ocupa 2 horas.
    Varios carros: se apartan 2 horas por carro, seguidas. MAXC = máximo de carros por reserva web. */
 var HOURS={0:[8,15],1:[6,18],2:[6,18],3:[6,18],4:[6,18],5:[6,18],6:[6,18]},DUR=2,DAYS_AHEAD=21,LEAD_H=2,MAXC=3;
-var GLASS=[{id:"pb",n:"Pulido de parabrisas + protección cerámica",s:"Lo más pedido",p:{sedan:20000,suv:25000},ic:"🛡️"},
-  {id:"tvc",n:"Todos los vidrios + protección cerámica",s:"Parabrisas, laterales y trasero",p:{sedan:40000,suv:40000},ic:"✨"},
-  {id:"tv",n:"Todos los vidrios sin protección",s:"Solo el pulido",p:{sedan:30000,suv:30000},ic:"🪟"},
-  {id:"none",n:"Solo focos o techo",s:"No necesito pulir los otros vidrios",p:{sedan:0,suv:0},ic:"💡"}];
+var GLASS=[{id:"pb",n:"Pulido de parabrisas + protección cerámica",s:"Lo más pedido",p:{sedan:20000,suv:25000},ic:"<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linejoin=\"round\"><path d=\"M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z\"/><path d=\"m8.5 12 2.5 2.5 4.5-5\" stroke-linecap=\"round\"/></svg>"},
+  {id:"tvc",n:"Todos los vidrios + protección cerámica",s:"Parabrisas, laterales y trasero",p:{sedan:40000,suv:40000},ic:"<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\"><path d=\"M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6\"/></svg>"},
+  {id:"tv",n:"Todos los vidrios sin protección",s:"Solo el pulido",p:{sedan:30000,suv:30000},ic:"<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linejoin=\"round\"><path d=\"M4 11 7 5h10l3 6z\"/><path d=\"M4 11v6h16v-6M8 11V5.5M16 11V5.5\"/></svg>"},
+  {id:"none",n:"Solo focos o techo",s:"No necesito pulir los otros vidrios",p:{sedan:0,suv:0},ic:"<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 12a9 6 0 0 1 9-6h3a6 6 0 0 1 0 12h-3a9 6 0 0 1-9-6z\"/><path d=\"M15 9v6M19 9.5v5\"/></svg>"}];
 /* PROMO: al agendar el parabrisas por esta página se regala el vidrio trasero y los retrovisores.
    Para apagarla: PROMO.on=false, ponerle fecha final en PROMO.end ("2026-12-31"), o guardar promo:false en pub/cfg. */
 var PROMO={on:true,end:"",svc:"pb",n:"🎁 Regalo promo: vidrio trasero + retrovisores"};
 function promoOn(){return PROMO.on&&(!PROMO.end||ymd(new Date())<=PROMO.end)}
 function hasGift(c){c=c||S;return promoOn()&&c.gl===PROMO.svc}
-var FOCOS={id:"fo",n:"Pulido de focos con polímero líquido",s:"El par, quedan transparentes",p:20000,ic:"💡"};
-var TECHO={id:"tp",n:"Pulido de techo panorámico",s:"El vidrio grande del techo",p:15000,ic:"🌅"};
+var FOCOS={id:"fo",n:"Pulido de focos con polímero líquido",s:"El par, quedan transparentes",p:20000,ic:"<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 12a9 6 0 0 1 9-6h3a6 6 0 0 1 0 12h-3a9 6 0 0 1-9-6z\"/><path d=\"M15 9v6M19 9.5v5\"/></svg>"};
+var TECHO={id:"tp",n:"Pulido de techo panorámico",s:"El vidrio grande del techo",p:15000,ic:"<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linejoin=\"round\"><path d=\"M3 15c3-6 15-6 18 0z\"/><path d=\"M7 12.5 9 9M17 12.5 15 9\" stroke-linecap=\"round\"/></svg>"};
 var SUVRX=["rav ?4","cr-?v","hr-?v","c-?hr","prado","land ?cruiser","fortuner","rush","hilux","tacoma","tundra","4 ?runner","highlander","sequoia","sportage","sorento","seltos","sonet","tucson","santa ?fe","creta","venue","kona","palisade","x-?trail","qashqai","kicks","frontier","navara","pathfinder","montero","outlander","asx","l ?200","pajero","nativa","mu-?x","d-?max","ranger","explorer","escape","ecosport","bronco","everest","cx-?[3589]0?","bt-?50","forester","outback","xv","crosstrek","vitara","jimny","s-?cross","terios","bego","tiguan","t-?cross","t-?roc","touareg","amarok","duster","koleos","captur","oroch","trailblazer","tracker","equinox","colorado","silverado","wrangler","cherokee","compass","renegade","gladiator","x[1-7]","q[2-8]","gl[abce]","ml","rx","nx","ux","gx","lx","xc[469]0","h6","jolion","haval","korando","tivoli","rexton","actyon","musso","partner","l300","hiace","4x4","pick ?up","pickup","camioneta","suv","jeep"];
 var SEDRX=["corolla","yaris","camry","prius","etios","civic","accord","city","fit","jazz","sentra","versa","almera","march","tiida","note","elantra","accent","i10","i20","i30","grand i10","sonata","rio","picanto","k3","k5","cerato","forte","soluto","mazda ?[236]","demio","swift","alto","celerio","ciaz","dzire","baleno","mirage","lancer","attrage","jetta","golf","gol","polo","vento","virtus","spark","sail","aveo","cruze","onix","beat","focus","fiesta","logan","sandero","clase c","model 3","leaf","ioniq","sedan","sed[aá]n","hatchback"];
 var S={vt:"",gl:"pb",fo:false,day:"",h:null,lat:null,lng:null,acc:null,step:0},BUSY={},CFG={wa:"50670892537",open:true,off:[]},T0=Date.now(),DB=null;
@@ -464,13 +580,13 @@ $("gps").onclick=function(){if(!navigator.geolocation){$("lv").innerHTML='<div c
 /* PASO 5: resumen y envío */
 function lines(c){c=c||curCar();var vt=c.vt,L=[],g=GLASS.find(function(x){return x.id===c.gl});if(g&&g.id!=="none")L.push({n:g.n+(g.id==="pb"?" ("+(vt==="suv"?"SUV":"sedán")+")":""),p:g.p[vt]});if(c.fo)L.push({n:FOCOS.n,p:FOCOS.p});if(c.tp)L.push({n:TECHO.n,p:TECHO.p});if(hasGift(c))L.push({n:PROMO.n,p:0});return L}
 function mapLink(){return S.lat!=null?"https://www.google.com/maps/search/?api=1&query="+S.lat+","+S.lng:""}
-function lineRows(L){return L.map(function(l){return l.p?'<div><i>✨</i><span>'+esc(l.n)+'</span><b>'+crc(l.p)+'</b></div>':'<div><i>🎁</i><span>'+esc(l.n.replace(/^🎁 /,""))+'</span><b style="color:var(--ok)">Gratis</b></div>'}).join("")}
+function lineRows(L){return L.map(function(l){return l.p?'<div><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/></svg></i><span>'+esc(l.n)+'</span><b>'+crc(l.p)+'</b></div>':'<div><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="5" rx="1"/><path d="M5 13v7h14v-7M12 8v12"/></svg></i><span>'+esc(l.n.replace(/^🎁 /,""))+'</span><b style="color:var(--ok)">Gratis</b></div>'}).join("")}
 function renderSum(){var A=allCars(),n=A.length,len=DUR*n;
-  $("sum").innerHTML='<div><i>📅</i><span><b>'+niceDay(S.day).replace(/^./,function(c){return c.toUpperCase()})+'</b><br>'+fmtH(S.h)+' a '+fmtH(S.h+len)+(n>1?' · '+n+' carros':'')+'</span></div>'+
-  A.map(function(c,k){return (n>1?'<div class="carh"><span>🚗 Carro '+(k+1)+' · '+fmtH(S.h+DUR*k)+'</span><b>'+crc(carTotal(c))+'</b></div>':'')+'<div><i>🚗</i><span>'+esc(c.veh)+' · '+vtN(c)+'</span></div>'+lineRows(lines(c))}).join("")+
-  '<div><i>📍</i><span>'+(S.lat!=null?'Ubicación enviada'+($("addr").value.trim()?' · '+esc($("addr").value.trim()):''):esc($("addr").value.trim()))+'<br><small style="color:'+(feeAmt()?'inherit':'var(--ok)')+';font-weight:600">'+(S.zone?esc(S.zone.n)+(feeAmt()?'':' · domicilio gratis'):'')+'</small></span></div>'+(feeAmt()?'<div><i>🚗</i><span>Domicilio a '+esc(S.zone.n)+'</span><b>'+crc(feeAmt())+'</b></div>':'')+
-  '<div><i>👤</i><span>'+esc($("cli").value.trim())+' · '+telN().replace(/(\d{4})(\d{4})/,"$1 $2")+'</span></div>'+
-  '<div><i>💰</i><span>Total'+(n>1?' de los '+n+' carros':'')+'</span><span class="tot" style="flex:none">'+crc(total())+'</span></div>'}
+  $("sum").innerHTML='<div><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></i><span><b>'+niceDay(S.day).replace(/^./,function(c){return c.toUpperCase()})+'</b><br>'+fmtH(S.h)+' a '+fmtH(S.h+len)+(n>1?' · '+n+' carros':'')+'</span></div>'+
+  A.map(function(c,k){return (n>1?'<div class="carh"><span>🚗 Carro '+(k+1)+' · '+fmtH(S.h+DUR*k)+'</span><b>'+crc(carTotal(c))+'</b></div>':'')+'<div><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16H3v-4l2-5h10l4 5h2v4h-2"/><circle cx="7.5" cy="16.5" r="2"/><circle cx="16.5" cy="16.5" r="2"/></svg></i><span>'+esc(c.veh)+' · '+vtN(c)+'</span></div>'+lineRows(lines(c))}).join("")+
+  '<div><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg></i><span>'+(S.lat!=null?'Ubicación enviada'+($("addr").value.trim()?' · '+esc($("addr").value.trim()):''):esc($("addr").value.trim()))+'<br><small style="color:'+(feeAmt()?'inherit':'var(--ok)')+';font-weight:600">'+(S.zone?esc(S.zone.n)+(feeAmt()?'':' · domicilio gratis'):'')+'</small></span></div>'+(feeAmt()?'<div><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16H3v-4l2-5h10l4 5h2v4h-2"/><circle cx="7.5" cy="16.5" r="2"/><circle cx="16.5" cy="16.5" r="2"/></svg></i><span>Domicilio a '+esc(S.zone.n)+'</span><b>'+crc(feeAmt())+'</b></div>':'')+
+  '<div><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></i><span>'+esc($("cli").value.trim())+' · '+telN().replace(/(\d{4})(\d{4})/,"$1 $2")+'</span></div>'+
+  '<div><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/></svg></i><span>Total'+(n>1?' de los '+n+' carros':'')+'</span><span class="tot" style="flex:none">'+crc(total())+'</span></div>'}
 function waText(){var A=allCars(),n=A.length;return "Hola GlassStudioCR 👋 Acabo de agendar "+(n>1?"una cita para "+n+" carros":"mi cita")+":\n📅 "+niceDay(S.day)+", "+fmtH(S.h)+(n>1?" a "+fmtH(S.h+DUR*n):"")+
   A.map(function(c,k){return "\n🚗 "+(n>1?"Carro "+(k+1)+" ("+fmtH(S.h+DUR*k)+"): ":"")+c.veh+" ("+(c.vt==="suv"?"SUV":"sedán")+")\n✨ "+lines(c).map(function(l){return l.n}).join(" + ")+(n>1?"\n   "+crc(carTotal(c)):"")}).join("")+
   (feeAmt()?"\n🚗 Domicilio a "+S.zone.n+": "+crc(feeAmt()):"")+"\n💰 Total: "+crc(total())+"\n📍 "+(S.zone?S.zone.n+" · ":"")+(mapLink()||$("addr").value.trim())+(S.lat!=null&&$("addr").value.trim()?"\n   "+$("addr").value.trim():"")+"\n👤 "+$("cli").value.trim()+(S.tk?"\n\n🔗 Para cambiar o cancelar mi cita: "+myLink(S.tk):"")}
@@ -505,7 +621,7 @@ function done(){pingNew();if(S.tk){$("mylink").hidden=false;$("mlv").value=myLin
   var d=pd(S.day),f=function(h){return S.day.replace(/-/g,"")+"T"+pad(h)+"0000"};
   $("cal").href="https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent("GlassStudioCR: pulido a domicilio")+"&dates="+f(S.h)+"/"+f(S.h+DUR*n)+"&details="+encodeURIComponent(A.map(function(c){return c.veh+": "+lines(c).map(function(l){return l.n}).join(" + ")}).join(" | ")+" · "+crc(total()))+"&location="+encodeURIComponent(mapLink()||$("addr").value.trim());
   document.body.classList.remove("book");document.body.classList.add("ok");window.scrollTo(0,0);confetti()}
-function confetti(){if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;var C=["#0d7a85","#3fc1cd","#f2b134","#ffe08a","#1f8a4c"];
+function confetti(){if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;var C=["#5fe0ea","#2bb3c0","#f5b52e","#ffe08a","#25d366"];
   for(var i=0;i<50;i++){var d=document.createElement("i");d.className="cf";d.style.left=Math.random()*100+"vw";d.style.background=C[i%C.length];d.style.setProperty("--dx",(Math.random()*160-80)+"px");d.style.setProperty("--r",(Math.random()*900-450)+"deg");d.style.animationDelay=Math.random()*.4+"s";document.body.appendChild(d);setTimeout(function(x){x.remove()}.bind(null,d),2400)}}
 function promoUI(){$("promo").hidden=!promoOn();buildSvc()}
 promoUI();
@@ -524,9 +640,9 @@ function mcPing(title,msg){if(!CFG.ntw)return;try{fetch("https://ntfy.sh/",{meth
 function loadMine(){if(!DB){mcBox('<h2>Sin conexión</h2><p class="sub">Revisá tu internet y volvé a abrir el link.</p>');return}
   DB.doc("mine/"+MCQ).get().then(function(d){if(!d.exists){mcBox('<h2>No encontramos esta cita</h2><p class="sub">Revisá que el link esté completo o escribinos por WhatsApp.</p><a class="wbtn" target="_blank" rel="noopener" href="'+mcWa("Hola GlassStudioCR 👋 Tengo una consulta sobre mi cita")+'">Escribir por WhatsApp</a>');return}MC=d.data();renderMine()},
    function(){mcBox('<h2>No se pudo cargar tu cita</h2><p class="sub">Revisá tu internet y volvé a intentar.</p><a class="lbtn" href="">Reintentar</a>')})}
-function mcSum(){var n=MC.n||MC.jobs.length;return '<div class="sum" style="text-align:left;margin:14px 0"><div style="border-top:0"><i>📅</i><span><b>'+niceDay(MC.date).replace(/^./,function(c){return c.toUpperCase()})+'</b><br>'+fmtH(MC.h)+' a '+fmtH(MC.h+DUR*n)+(n>1?' · '+n+' carros':'')+'</span></div>'
-  +(MC.cars||[]).map(function(c){return '<div><i>🚗</i><span>'+esc(c.veh||"Carro")+'<br><small style="color:var(--mute)">'+esc((c.items||[]).join(" + "))+'</small></span><b style="margin-left:auto">'+crc(c.total)+'</b></div>'}).join("")
-  +(MC.zone?'<div><i>📍</i><span>'+esc(MC.zone)+'</span></div>':'')+'<div><i>💰</i><span><b>Total</b></span><b style="margin-left:auto">'+crc(MC.total)+'</b></div></div>'}
+function mcSum(){var n=MC.n||MC.jobs.length;return '<div class="sum" style="text-align:left;margin:14px 0"><div style="border-top:0"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></i><span><b>'+niceDay(MC.date).replace(/^./,function(c){return c.toUpperCase()})+'</b><br>'+fmtH(MC.h)+' a '+fmtH(MC.h+DUR*n)+(n>1?' · '+n+' carros':'')+'</span></div>'
+  +(MC.cars||[]).map(function(c){return '<div><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16H3v-4l2-5h10l4 5h2v4h-2"/><circle cx="7.5" cy="16.5" r="2"/><circle cx="16.5" cy="16.5" r="2"/></svg></i><span>'+esc(c.veh||"Carro")+'<br><small style="color:var(--mute)">'+esc((c.items||[]).join(" + "))+'</small></span><b style="margin-left:auto">'+crc(c.total)+'</b></div>'}).join("")
+  +(MC.zone?'<div><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg></i><span>'+esc(MC.zone)+'</span></div>':'')+'<div><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/></svg></i><span><b>Total</b></span><b style="margin-left:auto">'+crc(MC.total)+'</b></div></div>'}
 function renderMine(){var left=citaMs(MC.date,MC.h)-Date.now(),can=MC.st==="activa"&&left>12*36e5;
   var head='<div class="check" style="background:var(--acc)"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></div><h2>'+(MC.st==="cancelada"?"Cita cancelada":"Tu cita")+'</h2><p class="sub">Hola '+esc(String(MC.cli).split(" ")[0])+' 👋</p>';
   if(MC.st==="cancelada"){mcBox(head+mcSum()+'<p class="sub">Esta cita ya está cancelada. Cuando querás, agendá otra.</p><a class="wbtn" href="./" style="background:var(--acc)">Agendar una cita nueva</a>');return}
