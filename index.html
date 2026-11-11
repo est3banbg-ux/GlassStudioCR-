@@ -500,7 +500,7 @@ raf=requestAnimationFrame(frame);
 </nav>
 
 <script>
-var SERV=[{id:"ps",n:"Parabrisas sedán + protección cerámica",p:25000,g:1},{id:"pu",n:"Parabrisas SUV + protección cerámica",p:25000,g:1},{id:"tvc",n:"Todos los vidrios + protección cerámica",p:40000,g:1},{id:"tv",n:"Todos los vidrios sin protección",p:35000,g:1},{id:"focos",n:"Pulido de focos con polímero líquido",p:20000},{id:"techo",n:"Pulido de techo panorámico",p:15000},{id:"hidro",n:"Tratamiento hidrofóbico",p:10000}];
+var SERV=[{id:"ps",n:"Parabrisas sedán + protección cerámica",p:20000,g:1},{id:"pu",n:"Parabrisas SUV + protección cerámica",p:25000,g:1},{id:"tvc",n:"Todos los vidrios + protección cerámica",p:40000,g:1},{id:"tv",n:"Todos los vidrios sin protección",p:35000,g:1},{id:"focos",n:"Pulido de focos con polímero líquido",p:20000},{id:"techo",n:"Pulido de techo panorámico",p:15000},{id:"hidro",n:"Tratamiento hidrofóbico",p:10000}];
 /* familia de un servicio (para metas e insumos, también con nombres viejos o de la web) */
 function sfam(n){n=String(n||"");return /focos/i.test(n)?"focos":/hidrof/i.test(n)?"hidro":/parabrisas|vidrios/i.test(n)?"parabrisas":""}
 /* nombres viejos o de la página de reservas → servicio de la lista */
