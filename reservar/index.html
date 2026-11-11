@@ -223,6 +223,15 @@ label{color:var(--ink)}
 .wafab.on{opacity:.94;transform:none;pointer-events:auto}
 body.book .wafab,body.ok .wafab,body.mc .wafab{display:none}
 @media (prefers-reduced-motion:reduce){.wafab{transition:none}}
+.rvs{display:grid;gap:10px}
+.rvs figure{margin:0;padding:14px 16px;border-radius:18px;background:rgba(11,35,41,.8);box-shadow:inset 0 0 0 1px var(--hair);text-align:left}
+.rvs .st{color:var(--glow);letter-spacing:2px;font-size:14px}
+.rvs blockquote{margin:6px 0 8px;font-size:15.5px;line-height:1.35;color:var(--ink)}
+.rvs figcaption{font-size:13px;color:var(--mute)}
+.rvs figcaption b{color:var(--ink)}
+.upf{margin-top:12px;padding:14px 16px;border-radius:18px;background:rgba(245,181,46,.1);box-shadow:inset 0 0 0 1px rgba(245,181,46,.35);font-size:14.5px;color:var(--mute)}
+.upf b{display:block;color:var(--ink);font:800 16px/1.25 "Bricolage Grotesque",sans-serif;margin-bottom:3px}
+.upf button{margin-top:10px;width:100%;min-height:46px;border:0;border-radius:14px;background:var(--glow);color:#1b1300;font:700 15px Figtree,sans-serif;cursor:pointer}
 .sugrow{display:flex;justify-content:flex-end;margin-top:8px}
 .sugrow .wa-mini{display:inline-flex;align-items:center;gap:6px;font:600 13px Figtree,sans-serif;color:var(--mute);text-decoration:none;padding:7px 12px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--hair);background:rgba(11,35,41,.7);white-space:nowrap}
 .sugrow .wa-mini svg{width:16px;height:16px;color:var(--wa);flex:none}
@@ -331,6 +340,7 @@ footer{color:var(--dim)}
     <p class="ease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>Elegís servicio, día y hora. Sin llamadas.</p>
   </div></div>
   <div class="wrap">
+    <div class="sec"><h2><span class="dimt">Lo que dicen</span><span class="hl"><b></b><span>nuestros clientes.</span><b></b></span></h2><div class="rvs"><figure><div class="st" aria-hidden="true">★★★★★</div><blockquote>“Muy buen servicio al cliente, me quedaron como nuevo.”</blockquote><figcaption><b>Grace C.</b> · Pulido de focos · Facebook</figcaption></figure><figure><div class="st" aria-hidden="true">★★★★★</div><blockquote>“Excelente trabajo. Recomendados y servicio al cliente.”</blockquote><figcaption><b>Alejandro G.</b> · Facebook</figcaption></figure><figure><div class="st" aria-hidden="true">★★★★★</div><blockquote>“Excelente servicio y atención, ¡muchas gracias!”</blockquote><figcaption><b>Gabriel C.</b> · Instagram</figcaption></figure><figure><div class="st" aria-hidden="true">★★★★★</div><blockquote>“Recomendado al 100 %.”</blockquote><figcaption><b>Jhulian R.</b> · Instagram</figcaption></figure></div></div>
     <div class="sec"><h2><span class="dimt">Así de fácil,</span><span class="hl"><b></b><span>en 3 pasos.</span><b></b></span></h2><div class="how"><div><i>1</i><b>Elegí día y hora</b>Solo ves horas libres</div><div><i>2</i><b>Mandá tu ubicación</b>Con un toque</div><div><i>3</i><b>Llegamos y listo</b>Vos seguís en lo tuyo</div></div></div>
     <div class="sec"><h2><span class="dimt">Precios claros,</span><span class="hl"><b></b><span>sin sorpresas.</span><b></b></span></h2><div class="pl">
       <div class="best"><span>Pulido de parabrisas + protección cerámica<small>Sedán o hatchback · el más pedido</small></span><b>₡20 000</b></div>
@@ -397,6 +407,7 @@ footer{color:var(--dim)}
     <div class="step" id="s5">
       <h2>Revisá tu cita</h2><p class="sub">Si todo está bien, confirmá y listo.</p>
       <div class="sum" id="sum"></div>
+      <div id="upf"></div>
       <div class="note">Al confirmar, tu hora queda apartada solo para vos. Después solo mandanos el mensaje por WhatsApp que te aparece al final, y te la confirmamos por ahí.</div>
     </div>
     <div class="err" id="er" role="alert"></div>
@@ -458,7 +469,7 @@ function waUrl(t){return "https://wa.me/"+CFG.wa+"?text="+encodeURIComponent(t)}
 /* PASOS */
 var STEPS=["s1","s2","s4","s3","s4b","s5"];
 function show(i){S.step=i;STEPS.forEach(function(s,k){$(s).classList.toggle("on",k===i)});$("pt").textContent=i<5?"Paso "+(i+1)+" de 5":"Último paso";$("pb").style.width=((i+1)/6*100)+"%";
-  $("nx").textContent=i===5?"Confirmar cita":"Siguiente";err("");upd();window.scrollTo(0,0);if(i===3)loadBusy();if(i===5)renderSum()}
+  $("nx").textContent=i===5?"Confirmar cita":"Siguiente";err("");upd();window.scrollTo(0,0);if(i===3)loadBusy();if(i===5){renderSum();upf()}}
 function startBook(pm){if(!CFG.open)return;setPM(pm);try{fbq("track","InitiateCheckout")}catch(e){}document.body.classList.add("book");history.pushState({b:1},"");show(0)}
 $("go").onclick=function(){startBook(false)};
 $("promo").onclick=function(){startBook(true)};$("promo").onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();startBook(true)}};
@@ -597,6 +608,11 @@ $("gps").onclick=function(){if(!navigator.geolocation){$("lv").innerHTML='<div c
 
 /* PASO 5: resumen y envío */
 function lines(c){c=c||curCar();var vt=c.vt,L=[],g=GLASS.find(function(x){return x.id===c.gl});if(g&&g.id!=="none")L.push({n:(g.ln||g.n)+(g.id==="pb"||g.id==="pr"?" ("+(vt==="suv"?"SUV":"sedán")+")":""),p:g.p[vt]});if(c.fo)L.push({n:FOCOS.n,p:FOCOS.p});if(c.tp)L.push({n:TECHO.n,p:TECHO.p});return L}
+/* Antes de confirmar: ofrecer el pulido de focos a los carros que no lo llevan */
+function upf(){var el=$("upf");if(!el)return;var k=allCars().filter(function(c){return !c.fo}).length;
+  if(!k){el.innerHTML="";return}
+  el.innerHTML='<div class="upf"><b>¿Sumamos el pulido de focos?</b>Quitamos lo amarillo y opaco en la misma visita. '+crc(FOCOS.p)+' el par'+(k>1?' por carro':'')+'.<button type="button" id="upfb">Agregar focos · +'+crc(FOCOS.p*k)+'</button></div>';
+  $("upfb").onclick=function(){S.fo=true;CARS.forEach(function(c){c.fo=true});buildSvc();renderSum();upf();upd();toast2("Focos agregados ✓")}}
 function mapLink(){return S.lat!=null?"https://www.google.com/maps/search/?api=1&query="+S.lat+","+S.lng:""}
 function lineRows(L){return L.map(function(l){return l.p?'<div><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/></svg></i><span>'+esc(l.n)+'</span><b>'+crc(l.p)+'</b></div>':'<div><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="5" rx="1"/><path d="M5 13v7h14v-7M12 8v12"/></svg></i><span>'+esc(l.n.replace(/^🎁 /,""))+'</span><b style="color:var(--ok)">Gratis</b></div>'}).join("")}
 function renderSum(){var A=allCars(),n=A.length,len=DUR*n;

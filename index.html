@@ -423,7 +423,7 @@ raf=requestAnimationFrame(frame);
   </div>
 </section>
 
-<section id="v-cli" class="hide"><div class="card"><h2>Clientes</h2><input id="q" placeholder="Buscar por nombre o vehículo" aria-label="Buscar cliente"><div class="m" id="cs" style="margin-top:8px"></div><div id="cll"></div></div></section>
+<section id="v-cli" class="hide"><div class="card hide" id="rncard"><h2>Les toca renovar el cerámico</h2><div id="rnb"></div></div><div class="card"><h2>Clientes</h2><input id="q" placeholder="Buscar por nombre o vehículo" aria-label="Buscar cliente"><div class="m" id="cs" style="margin-top:8px"></div><div id="cll"></div></div></section>
 <section id="v-num" class="hide">
   <div class="seg" id="seg"><button data-p="w">Semana</button><button data-p="m">Mes</button><button data-p="y">Año</button></div>
   <div class="card"><h2 id="ph"></h2><div class="stats" id="stats"></div></div>
@@ -501,11 +501,11 @@ raf=requestAnimationFrame(frame);
 </nav>
 
 <script>
-var SERV=[{id:"ps",n:"Parabrisas sedán + protección cerámica",p:20000,g:1},{id:"pu",n:"Parabrisas SUV + protección cerámica",p:25000,g:1},{id:"tvc",n:"Todos los vidrios + protección cerámica",p:40000,g:1},{id:"tv",n:"Todos los vidrios sin protección",p:35000,g:1},{id:"focos",n:"Pulido de focos con polímero líquido",p:20000},{id:"techo",n:"Pulido de techo panorámico",p:15000},{id:"hidro",n:"Tratamiento hidrofóbico",p:10000}];
+var SERV=[{id:"ps",n:"Parabrisas sedán + protección cerámica",p:20000,g:1},{id:"pu",n:"Parabrisas SUV + protección cerámica",p:25000,g:1},{id:"promo",n:"Promo: parabrisas + protección cerámica + vidrio trasero y retrovisores",p:25000,g:1},{id:"tvc",n:"Todos los vidrios + protección cerámica",p:40000,g:1},{id:"tv",n:"Todos los vidrios sin protección",p:35000,g:1},{id:"focos",n:"Pulido de focos con polímero líquido",p:20000},{id:"techo",n:"Pulido de techo panorámico",p:15000},{id:"hidro",n:"Tratamiento hidrofóbico",p:10000}];
 /* familia de un servicio (para metas e insumos, también con nombres viejos o de la web) */
 function sfam(n){n=String(n||"");return /focos/i.test(n)?"focos":/hidrof/i.test(n)?"hidro":/parabrisas|vidrios/i.test(n)?"parabrisas":""}
 /* nombres viejos o de la página de reservas → servicio de la lista */
-function salias(l){var n=String(l.n||"");if(/^Pulido de parabrisas( \+ protección cerámica)?$/.test(n))return (l.p||0)>=25000?"pu":"ps";if(/^Pulido de focos/.test(n))return "focos";return null}
+function salias(l){var n=String(l.n||"");if(/^Promo: pulido de parabrisas/.test(n))return "promo";if(/^Pulido de parabrisas( \+ protección cerámica)?$/.test(n))return (l.p||0)>=25000?"pu":"ps";if(/^Pulido de focos/.test(n))return "focos";return null}
 var DN=["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"],MN=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
 var S={prices:{},jobs:[],exp:[]};
 
@@ -682,7 +682,7 @@ $("cp").onclick=function(){var L=S.jobs.filter(function(j){return j.date===sel})
   var t="Agenda "+DN[d.getDay()]+" "+d.getDate()+" "+MN[d.getMonth()]+":\n"+L.map(function(j){return fmtT(j.time)+" - "+j.cli+(j.veh?" ("+j.veh+")":"")+" · "+j.items.join(", ")+" · "+crc(j.total)+(j.tel?" · "+j.tel:"")+(j.note?" · "+j.note:"")}).join("\n");
   window.open("https://wa.me/?text="+encodeURIComponent(L.length?t:"Sin citas este día"),"_blank")};
 var CA=[];
-function renderCli(){var M={};S.jobs.forEach(function(j){var k=j.cli.trim().toLowerCase(),c=M[k]||(M[k]={n:j.cli,tel:"",veh:"",v:0,t:0,last:""});if(j.tel)c.tel=j.tel;if(j.veh)c.veh=j.veh;if(locOf(j))c.ubic=locOf(j);if(isDone(j)){c.v++;c.t+=j.total;if(j.date>c.last)c.last=j.date}});
+function renderCli(){try{renderRn()}catch(e){}var M={};S.jobs.forEach(function(j){var k=j.cli.trim().toLowerCase(),c=M[k]||(M[k]={n:j.cli,tel:"",veh:"",v:0,t:0,last:""});if(j.tel)c.tel=j.tel;if(j.veh)c.veh=j.veh;if(locOf(j))c.ubic=locOf(j);if(isDone(j)){c.v++;c.t+=j.total;if(j.date>c.last)c.last=j.date}});
   var q=$("q").value.toLowerCase(),lim=ymd(addD(new Date(),-150));
   CA=Object.keys(M).map(function(k){return M[k]}).filter(function(c){return !q||c.n.toLowerCase().indexOf(q)>-1||c.veh.toLowerCase().indexOf(q)>-1}).map(function(c){c.od=!!(c.last&&c.last<lim);return c}).sort(function(a,b){return (b.od-a.od)||(a.last<b.last?1:-1)});
   var od=CA.filter(function(c){return c.od}).length;
@@ -1338,7 +1338,22 @@ function renderRef(){var el=$("refb");if(!el)return;var L=refList(),due=L.filter
   if(paid.length)h+='<div class="m" style="padding:6px 0">✅ Premios pagados: <b>'+paid.length+'</b> · '+crc(paid.length*REFAMT)+'</div>';
   el.innerHTML=h;
   Array.prototype.forEach.call(el.querySelectorAll("[data-rfw]"),function(b){b.onclick=function(){var e=refList().find(function(x){return x.j.id==b.dataset.rfw});if(e)waTo(e.r.tel,refMsg(e))}});
-  Array.prototype.forEach.call(el.querySelectorAll("[data-rfp]"),function(b){b.onclick=function(){var j=S.jobs.find(function(x){return x.id==b.dataset.rfp});if(!j||!DB)return;j.refp=1;DB.doc("jobs/"+j.id).update({refp:1}).then(function(){toast("Premio marcado como pagado ✓")}).catch(dberr);renderRef()}})}
+  Array.prototype.forEach.call(el.querySelectorAll("[data-rfp]"),function(b){b.onclick=function(){var j=S.jobs.find(function(x){return x.id==b.dataset.rfp});if(!j||!DB)return;j.refp=1;DB.doc("jobs/"+j.id).update({refp:1}).then(function(){toast("Premio pagado y apuntado en Gastos ✓")}).catch(dberr);var rb=refBy(j),ne={id:Date.now(),d:today,desc:"Premio de referido"+(rb&&rb.cli?" ("+String(rb.cli).split(" ")[0]+")":""),amt:REFAMT};DB.doc("exp/"+ne.id).set(ne).catch(dberr);if(OWN)S.exp.push(ne);renderNum()}})}
+/* RENOVAR: clientes a los que se les hizo protección cerámica hace 11 meses o más y no han vuelto.
+   Al escribirles (o tocar «Quitar») la cita queda con rn:1 y ya no salen. */
+var RNDAYS=335;
+function hasCer(j){return (j.items||[]).some(function(n){return /cer[aá]mic|^Promo/i.test(n)&&!/sin protecci/i.test(n)})}
+function rnList(){var cut=ymd(addD(new Date(),-RNDAYS)),M={};
+  S.jobs.forEach(function(j){if(j.st==="Cancelada")return;var k=telK(j.tel)||String(j.cli||"").trim().toLowerCase();if(!k)return;var c=M[k]||(M[k]={last:"",cer:null});
+    if(j.date>c.last)c.last=j.date;if(isDone(j)&&hasCer(j)&&(!c.cer||j.date>c.cer.date))c.cer=j});
+  return Object.keys(M).map(function(k){return M[k]}).filter(function(c){return c.cer&&c.cer.tel&&!c.cer.rn&&c.cer.date<=cut&&c.last<=c.cer.date}).map(function(c){return c.cer}).sort(function(a,b){return a.date<b.date?1:-1}).slice(0,25)}
+function rnMsg(j){return "¡Hola "+String(j.cli||"").split(" ")[0]+"! Te saluda GlassStudioCR 👋\n\nHace cerca de un año le pulimos los vidrios a tu "+(j.veh||"carro")+" y le pusimos la protección cerámica. Ya le toca renovarla para que la lluvia siga resbalando.\n\n¿Te agendamos? Es 1 minuto y vamos donde estés:\nhttps://citas.glassstudiocr.com/reservar/"}
+function rnMark(j){j.rn=1;if(DB)DB.doc("jobs/"+j.id).update({rn:1}).catch(dberr);renderRn()}
+function renderRn(){var el=$("rnb"),cd=$("rncard");if(!el)return;var L=rnList();cd.classList.toggle("hide",!L.length);if(!L.length)return;
+  el.innerHTML='<div class="m">La protección cerámica dura alrededor de un año. Estos clientes ya cumplieron y no han vuelto.</div>'+L.map(function(j){var ms=Math.round((new Date()-pd(j.date))/2629800000);
+    return '<div class="svc" style="display:block;padding:10px 0"><div><b>'+esc(j.cli)+'</b> <span class="m">· '+esc(j.veh||"")+'</span></div><div class="m">Último cerámico: '+fmtD(j.date)+' · hace '+ms+' meses</div><div class="row" style="margin-top:8px"><button class="sm wa" data-rnw="'+j.id+'">'+ICWA+'Recordarle</button><button class="alt sm" data-rnx="'+j.id+'">Quitar</button></div></div>'}).join("");
+  Array.prototype.forEach.call(el.querySelectorAll("[data-rnw]"),function(b){b.onclick=function(){var j=S.jobs.find(function(x){return x.id==b.dataset.rnw});if(!j)return;waTo(j.tel,rnMsg(j));rnMark(j)}});
+  Array.prototype.forEach.call(el.querySelectorAll("[data-rnx]"),function(b){b.onclick=function(){var j=S.jobs.find(function(x){return x.id==b.dataset.rnx});if(j)rnMark(j)}})}
 /* Reseñas de Google: mensaje y aviso al terminar un trabajo */
 var REVURL="https://g.page/r/CZLaHgXQEDONEAI/review";
 function revMsg(j){var z="";try{var p=jobPos(j);z=p&&p.n?p.n.replace(/\s*\(.*\)/,"").replace(/ centro$/i,""):""}catch(e){}
