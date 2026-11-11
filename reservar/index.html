@@ -424,6 +424,8 @@ var GLASS=[{id:"pr",n:"Promo: pulido de parabrisas + protección cerámica",ln:"
    Solo aparece si el cliente toca el banner de promo o entra con ?promo=1. El botón normal de agendar muestra los precios normales.
    Para apagarla: PROMO.on=false, ponerle fecha final en PROMO.end ("2026-12-31"), o guardar promo:false en pub/cfg. */
 var PROMO={on:true,end:"",svc:"pr"},PM=false;
+/* REFERIDOS: ?ref=código llega del link personal de un cliente. La cita se guarda con origen "Referido: código". */
+var REF="";try{REF=(new URLSearchParams(location.search).get("ref")||"").toLowerCase();if(!/^[a-z0-9]{6,12}$/.test(REF))REF=""}catch(e){}
 function promoOn(){return PROMO.on&&(!PROMO.end||ymd(new Date())<=PROMO.end)}
 function swapGl(g){return PM&&g==="pb"?"pr":!PM&&g==="pr"?"pb":g}
 function setPM(on){PM=!!on&&promoOn();CARS.forEach(function(c){c.gl=swapGl(c.gl)});S.gl=swapGl(S.gl);buildSvc();upd()}
@@ -607,7 +609,7 @@ function submit(){var b=$("nx");if(b.disabled)return;err("");
   function mk(wt){var bt=DB.batch(),ids=[];
   A.forEach(function(c,k){var id=base+k,sid=String(id),L=lines(c).concat(k===0&&feeAmt()?[feeLine()]:[]),h0=S.h+DUR*k;ids.push(sid);
     var note=((n>1?"🚗 Reserva de "+n+" carros ("+(k+1)+" de "+n+") · ":"")+note0).replace(/ · $/,"").slice(0,400);
-    var jd={id:id,cli:$("cli").value.trim().slice(0,60),tel:tel,veh:c.veh.slice(0,60),vt:c.vt,items:L.map(function(l){return l.n}),lines:L,disc:0,total:carTotal(c)+(k===0?feeAmt():0),date:S.day,time:pad(h0)+":00",note:note,ubic:ub.slice(0,300),src:$("src").value,st:"Por confirmar",by:"web",web:true,at:at,tk:tk};if(!wt)delete jd.tk;bt.set(DB.doc("jobs/"+sid),jd);
+    var jd={id:id,cli:$("cli").value.trim().slice(0,60),tel:tel,veh:c.veh.slice(0,60),vt:c.vt,items:L.map(function(l){return l.n}),lines:L,disc:0,total:carTotal(c)+(k===0?feeAmt():0),date:S.day,time:pad(h0)+":00",note:note,ubic:ub.slice(0,300),src:REF?"Referido: "+REF:$("src").value,st:"Por confirmar",by:"web",web:true,at:at,tk:tk};if(!wt)delete jd.tk;bt.set(DB.doc("jobs/"+sid),jd);
     for(var q=0;q<DUR;q++)bt.set(DB.doc("slots/"+S.day+"_"+pad(h0+q)),{date:S.day,h:h0+q,job:sid,at:at})});
   bt.set(DB.doc("holds/"+tel),{job:ids[0],date:S.day,at:at});
   if(wt)bt.set(DB.doc("mine/"+tk),{jobs:ids,cli:$("cli").value.trim().slice(0,60),tel:tel,date:S.day,h:S.h,n:n,cars:A.map(function(c,k){return {veh:c.veh.slice(0,60),items:lines(c).map(function(l){return l.n}),total:carTotal(c)+(k===0?feeAmt():0)}}),total:total(),zone:S.zone?S.zone.n:"",st:"activa",at:at});
@@ -635,7 +637,7 @@ buildZones();
 (function(){try{var q=location.search,r=document.referrer||"";if(/[?&](fbclid=|utm_source=(facebook|fb|ig|instagram|meta|messenger))/i.test(q)||/facebook\.|instagram\.|messenger\.|fb\.com|m\.me/i.test(r)){var s=$("src");if(s&&!s.value)s.value="Facebook / Instagram"}}catch(e){}})();
 upd();
 /* Link directo a la promo (banner de glassstudiocr.com o anuncios): ?promo=1 abre la agenda con la promo puesta */
-try{if(/[?&]promo=1(&|$)/.test(location.search)&&!/[?&]cita=/.test(location.search))startBook(true)}catch(e){}
+try{if((REF||/[?&]promo=1(&|$)/.test(location.search))&&!/[?&]cita=/.test(location.search)){startBook(true);if(REF){var _sl=document.querySelector('label[for="src"]');if(_sl)_sl.style.display="none";$("src").style.display="none";setTimeout(function(){toast2("🎁 Venís recomendado: ya tenés la promo puesta")},500)}}}catch(e){}
 
 /* ===== MI CITA: el cliente cambia o cancela su cita con su link secreto (hasta 12 h antes) ===== */
 var MCQ=(new URLSearchParams(location.search).get("cita")||"").toLowerCase().replace(/[^a-z0-9]/g,""),MC=null,MS={day:"",h:null},MBUSY={};
