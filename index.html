@@ -1572,7 +1572,7 @@ var RNDAYS=335;
 /* GARANTÍA, CUIDADOS Y MANTENIMIENTO
    Los valores se cambian en Números → Ajustes → Garantía y mantenimiento (settings/gar). */
 var GAR0={dias:30,mant:8,renov:11,precio:0},GAR=Object.assign({},GAR0);
-var CUIDADOS=["Lavá los vidrios solo con jabón pH neutro para carro.","No uses jabón de platos (como Acción), jabón de baño ni detergente de ropa: son alcalinos y le quitan el cerámico.","No uses desengrasantes (como Ciner), cloro ni limpiadores de cocina en los vidrios.","No apliqués quitamanchas ni removedores de gota seca, ni limpiador de aros: muchos son ácidos y pueden manchar o quemar el vidrio. En el lavacar pedí que no le caiga limpiador de aros a los vidrios.","No uses esponjas abrasivas, cepillos duros ni raspadores.","Cambiá las escobillas si dejan rayas o ya están gastadas."];
+var CUIDADOS=["Lavá los vidrios solo con jabón pH neutro para carro.","No uses jabón de platos (como Acción), jabón de baño ni detergente de ropa: son alcalinos y le quitan el cerámico.","No uses desengrasantes (como Sinner), cloro ni limpiadores de cocina en los vidrios.","No apliqués quitamanchas ni removedores de gota seca, ni limpiador de aros: muchos son ácidos y pueden manchar o quemar el vidrio. En el lavacar pedí que no le caiga limpiador de aros a los vidrios.","No uses esponjas abrasivas, cepillos duros ni raspadores.","Cambiá las escobillas si dejan rayas o ya están gastadas."];
 var NOCUBRE="daños por productos que no se recomiendan (jabón de platos o de ropa, desengrasantes, quitamanchas o productos ácidos), golpes de piedra, rayones nuevos ni escobillas gastadas";
 function mesesDesde(f){return (new Date()-pd(f))/2629800000}
 function addM(f,m){var d=pd(f);d.setMonth(d.getMonth()+m);return ymd(d)}
