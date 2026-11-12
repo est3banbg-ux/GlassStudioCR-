@@ -161,7 +161,7 @@ svg rect.br{transform-box:fill-box;transform-origin:bottom;animation:grow .7s cu
 .mcap{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:flex-end;gap:8px;padding:18px 10px 7px;background:linear-gradient(transparent,rgba(6,28,30,.78));font-size:13px;font-weight:600}
 .mcap span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mcap span:last-child{flex:none;background:rgba(255,255,255,.2);padding:2px 9px;border-radius:99px}
-body.locked main>section,body.locked nav,body.locked .fabnew,body.locked .cdfab,body.locked .cdpop{display:none!important}
+body.locked main>section,body.locked nav,body.locked .fabnew,body.locked .cdfab,body.locked .cdpop,body.locked .apsheet,body.locked #who{display:none!important}
 .lk{max-width:420px;margin:24px auto 0}
 .lk h2{font-size:22px}
 .gbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:#fff!important;color:#1f1f1f!important;border:1px solid #c9d1d3!important}
@@ -202,6 +202,24 @@ body.locked main>section,body.locked nav,body.locked .fabnew,body.locked .cdfab,
 /* NAV CON ICONOS */
 .fabnew{position:fixed;right:14px;bottom:calc(74px + env(safe-area-inset-bottom,0px));z-index:9;display:inline-flex;align-items:center;gap:6px;background:var(--acc);color:var(--accink);border:0;border-radius:99px;padding:13px 18px;font:700 15px "Bricolage Grotesque",system-ui,sans-serif;box-shadow:0 8px 20px rgba(13,122,133,.4);cursor:pointer}
 .fabnew span{font-size:20px;line-height:1}
+/* MI APARIENCIA (cada persona en su equipo; por defecto no cambia nada) */
+.apsheet{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:12;max-width:520px;margin:auto;max-height:78vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 14px 40px rgba(0,0,0,.28)}
+.apsheet h3{margin:0 0 4px;font:800 17px "Bricolage Grotesque",system-ui,sans-serif}
+.apsheet .m{font-size:13px;color:var(--mute);margin-bottom:10px}
+.apsheet .lab{font-size:13px;font-weight:700;margin:12px 0 6px}
+.apsheet .sw{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.apsheet .sw button{border:2px solid var(--line);border-radius:14px;padding:8px 4px;background:var(--card);color:var(--ink);font-size:12px;font-weight:600;cursor:pointer}
+.apsheet .sw button[aria-pressed=true]{border-color:var(--acc);box-shadow:0 0 0 2px var(--acc) inset}
+.apsheet .sw i{display:block;height:22px;border-radius:8px;margin-bottom:6px}
+.apsheet .ch{display:flex;flex-wrap:wrap;gap:6px}
+.apsheet .ch button{border:1px solid var(--line);border-radius:99px;padding:7px 12px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;cursor:pointer}
+.apsheet .ch button[aria-pressed=true]{background:var(--acc);color:var(--accink);border-color:var(--acc)}
+.apsheet .tg{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
+.apsheet .tg input{width:20px;height:20px;margin:0}
+.apsheet .row{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+/* efectos de letra y tamaño según la elección de cada persona */
+html.ap-big body{font-size:18px}
+html.ap-noanim *,html.ap-noanim *::before,html.ap-noanim *::after{animation:none!important;transition:none!important}
 /* ANIMACIONES (se apagan si el teléfono pide menos movimiento) */
 .fabnew{overflow:hidden}
 .fabnew::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-18deg);pointer-events:none}
@@ -411,7 +429,7 @@ raf=requestAnimationFrame(frame);
 })();
 </script>
 <main>
-<h1>Glass<span>Studio</span>CR <span id="who" class="hide"><span id="whoe"></span><button class="alt sm" id="out">Salir</button></span></h1>
+<h1>Glass<span>Studio</span>CR <span id="who" class="hide"><span id="whoe"></span><button class="alt sm" id="apBtn" aria-label="Mi apariencia" title="Mi apariencia">🎨</button><button class="alt sm" id="out">Salir</button></span></h1>
 <button id="mot" type="button" aria-label="Mensaje del día. Tocá para ver otro"></button>
 <div id="lk-login" class="card lk hide">
   <h2>Entrar</h2><div class="m">Agenda del equipo de GlassStudioCR. Solo entran los correos autorizados.</div>
@@ -550,6 +568,7 @@ raf=requestAnimationFrame(frame);
 <button id="fabNew" class="fabnew hide" type="button"><span aria-hidden="true">+</span> Nueva cita</button>
 <button id="cdFab" class="cdfab hide" type="button" aria-label="Cerrar o abrir horas de este día" title="Cerrar mi día"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/><circle cx="12" cy="16" r="1.2" fill="currentColor" stroke="none"/></svg></button>
 <div id="cdPop" class="cdpop hide" role="dialog" aria-label="Cerrar mi día"></div>
+<div id="apSheet" class="apsheet hide" role="dialog" aria-label="Mi apariencia"></div>
 
 <script>
 var SERV=[{id:"ps",n:"Parabrisas sedán + protección cerámica",p:20000,g:1},{id:"pu",n:"Parabrisas SUV + protección cerámica",p:25000,g:1},{id:"promo",n:"Promo: parabrisas + protección cerámica + vidrio trasero y retrovisores",p:25000,g:1},{id:"tvc",n:"Todos los vidrios + protección cerámica",p:40000,g:1},{id:"tv",n:"Todos los vidrios sin protección",p:35000,g:1},{id:"focos",n:"Pulido de focos con polímero líquido",p:20000},{id:"techo",n:"Pulido de techo panorámico",p:15000},{id:"hidro",n:"Tratamiento hidrofóbico",p:10000}];
@@ -999,6 +1018,46 @@ var TABS=["ag","new","cli","not","ins","num"];
 function show(v){if(v==="ag")LASTK=null;if(v==="num"&&!OWN)v="ag";CUR=v;TABS.forEach(function(k){$("v-"+k).classList.toggle("hide",k!==v);if($("t-"+k))$("t-"+k).setAttribute("aria-selected",k===v)});$("fabNew").classList.toggle("hide",v!=="ag"&&v!=="cli");if($("cdFab")){$("cdFab").classList.toggle("hide",v!=="ag"||!BOSS);$("cdPop").classList.add("hide")}
   if(v==="ag")renderAg();if(v==="new"){$("fecha").value=sel;clients();updClash()}if(v==="cli")renderCli();if(v==="num"){$("gf").value=today;renderNum();adLoad(false)}if(v==="not"){renderNotes();if(NMODE==="g")renderGoals()}if(v==="ins")renderIns();window.scrollTo(0,0)}
 TABS.forEach(function(k){if($("t-"+k))$("t-"+k).onclick=function(){if(k==="new"&&EID)resetForm();show(k)}});
+/* MI APARIENCIA: se guarda en este equipo (no cambia la base del sistema) */
+var AP_TEMAS={marca:{n:"Marca GlassStudioCR",c:["#071a1d","#f5b52e"],v:{"--bg":"#071a1d","--card":"#0f2c31","--ink":"#eaf6f5","--mute":"#9dbdbd","--line":"#1d444a","--acc":"#2bb3c0","--accink":"#071a1d","--glow":"#f5b52e","--ok":"#34c38f","--bad":"#ff7b7b","--acc2":"#5fe0ea","--altbg":"#1d444a","--altbd":"transparent","--hero":"linear-gradient(135deg,#2bb3c0,#0f2c31 70%,#071a1d)"}},
+  oceano:{n:"Océano",c:["#e6f1f8","#1b6fb0"],v:{"--bg":"#e6f1f8","--card":"#f6fbfe","--ink":"#0c2a3d","--mute":"#56707f","--line":"#c5dbe8","--acc":"#1b6fb0","--accink":"#fff","--glow":"#f0a500","--acc2":"#1b6fb0","--hero":"linear-gradient(135deg,#1b6fb0,#124b78 70%,#0b3152)"}},
+  atardecer:{n:"Atardecer",c:["#fbf1e8","#c2552b"],v:{"--bg":"#fbf1e8","--card":"#fffaf5","--ink":"#3a1f12","--mute":"#7a5a4a","--line":"#ecd3bd","--acc":"#c2552b","--accink":"#fff","--glow":"#e8a317","--acc2":"#c2552b","--hero":"linear-gradient(135deg,#e8733a,#c2552b 60%,#8c3416)"}},
+  bosque:{n:"Bosque",c:["#eef4ea","#3a7d44"],v:{"--bg":"#eef4ea","--card":"#f8fbf5","--ink":"#1d3320","--mute":"#5f7360","--line":"#cfdcc8","--acc":"#3a7d44","--accink":"#fff","--glow":"#d9a421","--acc2":"#3a7d44","--hero":"linear-gradient(135deg,#4f9a57,#2f6b3a 70%,#1d4625)"}},
+  grafito:{n:"Grafito",c:["#eceef1","#3b4a5c"],v:{"--bg":"#eceef1","--card":"#f9fafb","--ink":"#1f2328","--mute":"#646d78","--line":"#d3d8df","--acc":"#3b4a5c","--accink":"#fff","--glow":"#d99a1e","--acc2":"#3b4a5c","--hero":"linear-gradient(135deg,#4a5a6e,#2b3644 70%,#1b222c)"}},
+  nocheazul:{n:"Noche azul",c:["#0b1220","#3b82f6"],v:{"--bg":"#0b1220","--card":"#131d30","--ink":"#e7edf7","--mute":"#97a4bd","--line":"#22304a","--acc":"#3b82f6","--accink":"#fff","--glow":"#f5c542","--ok":"#34c38f","--bad":"#ff7b7b","--acc2":"#7cc4f0","--altbg":"#2a3a60","--altbd":"transparent","--hero":"linear-gradient(135deg,#3b82f6,#1e3a8a 70%,#0f1f4a)"}},
+  menta:{n:"Menta",c:["#e4f5ef","#0f8f73"],v:{"--bg":"#e4f5ef","--card":"#f4fbf8","--ink":"#0f3328","--mute":"#4e7a68","--line":"#bfe0d3","--acc":"#0f8f73","--accink":"#fff","--glow":"#e0a020","--acc2":"#0f8f73","--hero":"linear-gradient(135deg,#14a085,#0b6e5a 70%,#084a3e)"}}};
+var AP_ORDEN=["marca","oceano","atardecer","bosque","grafito","nocheazul","menta"];
+var AP_VARS=["--bg","--card","--ink","--mute","--line","--acc","--accink","--glow","--ok","--bad","--acc2","--altbg","--altbd","--hero"];
+var AP_LETRAS={base:{n:"Normal",css:""},clasica:{n:"Clásica",css:'body,h1,h2,h3,button,input,select,label{font-family:Georgia,"Times New Roman",serif!important}'},sistema:{n:"Sistema",css:'body,h1,h2,h3,button,input,select,label{font-family:system-ui,-apple-system,"Segoe UI",sans-serif!important}'}};
+var APR=(function(){try{return Object.assign({tema:"base",letra:"base",grande:false,anim:true,diario:false},JSON.parse(localStorage.getItem("gs_ap")||"{}"))}catch(e){return {tema:"base",letra:"base",grande:false,anim:true,diario:false}}})();
+function apSave(){try{localStorage.setItem("gs_ap",JSON.stringify(APR))}catch(e){}}
+function apTemaActual(){if(APR.diario){var h=new Date(),ini=new Date(h.getFullYear(),0,0),dia=Math.floor((h-ini)/864e5);return AP_ORDEN[dia%AP_ORDEN.length]}return APR.tema}
+function applyAp(){var root=document.documentElement,t=apTemaActual(),def=AP_TEMAS[t];
+  AP_VARS.forEach(function(v){root.style.removeProperty(v)});
+  if(def)Object.keys(def.v).forEach(function(k){root.style.setProperty(k,def.v[k])});
+  var st=document.getElementById("apFont");if(!st){st=document.createElement("style");st.id="apFont";document.head.appendChild(st)}
+  st.textContent=AP_LETRAS[APR.letra]?AP_LETRAS[APR.letra].css:"";
+  root.classList.toggle("ap-big",!!APR.grande);root.classList.toggle("ap-noanim",!APR.anim)}
+function apPintar(){var el=$("apSheet"),hoy=apTemaActual();
+  var sw='<button type="button" data-tema="base" aria-pressed="'+(APR.tema==="base"&&!APR.diario)+'"><i style="background:linear-gradient(90deg,#0d7a85,#e8f0ef)"></i>Predeterminada</button>';
+  AP_ORDEN.forEach(function(k){var t=AP_TEMAS[k];sw+='<button type="button" data-tema="'+k+'" aria-pressed="'+(APR.tema===k&&!APR.diario)+'"><i style="background:linear-gradient(90deg,'+t.c[0]+','+t.c[1]+')"></i>'+t.n+'</button>'});
+  var le=Object.keys(AP_LETRAS).map(function(k){return '<button type="button" data-letra="'+k+'" aria-pressed="'+(APR.letra===k)+'">'+AP_LETRAS[k].n+'</button>'}).join("");
+  el.innerHTML='<h3>Mi apariencia</h3><div class="m">Solo cambia en este equipo. Si no tocás nada, se ve como siempre.</div>'+
+   '<div class="lab">Color</div><div class="sw">'+sw+'</div>'+
+   '<div class="tg"><span>Cambiar de color cada día</span><input type="checkbox" id="apDia"'+(APR.diario?' checked':'')+'></div>'+(APR.diario?'<div class="m">Hoy te toca: '+esc(AP_TEMAS[hoy].n)+'</div>':'')+
+   '<div class="lab">Letra</div><div class="ch">'+le+'</div>'+
+   '<div class="tg"><span>Texto más grande</span><input type="checkbox" id="apGr"'+(APR.grande?' checked':'')+'></div>'+
+   '<div class="tg"><span>Animaciones</span><input type="checkbox" id="apAn"'+(APR.anim?' checked':'')+'></div>'+
+   '<div class="row"><button class="alt sm" id="apRes">Volver a lo normal</button><button class="sm" id="apCer">Listo</button></div>';
+  Array.prototype.forEach.call(el.querySelectorAll("[data-tema]"),function(b){b.onclick=function(){APR.tema=b.dataset.tema;APR.diario=false;if(APR.tema==="base")APR.tema="base";apSave();applyAp();apPintar()}});
+  Array.prototype.forEach.call(el.querySelectorAll("[data-letra]"),function(b){b.onclick=function(){APR.letra=b.dataset.letra;apSave();applyAp();apPintar()}});
+  $("apDia").onchange=function(){APR.diario=this.checked;apSave();applyAp();apPintar()};
+  $("apGr").onchange=function(){APR.grande=this.checked;apSave();applyAp()};
+  $("apAn").onchange=function(){APR.anim=this.checked;apSave();applyAp()};
+  $("apRes").onclick=function(){APR.tema="base";APR.letra="base";APR.grande=false;APR.anim=true;APR.diario=false;apSave();applyAp();apPintar()};
+  $("apCer").onclick=function(){el.classList.add("hide")}}
+$("apBtn").onclick=function(){var el=$("apSheet");if(!el.classList.contains("hide")){el.classList.add("hide");return}apPintar();el.classList.remove("hide")};
+applyAp();
 $("fabNew").onclick=function(){var f=this;f.classList.remove("go");void f.offsetWidth;f.classList.add("go");if(EID)resetForm();show("new")};
 /* CONFIRMAR ANTES DE BORRAR + DESHACER */
 var DLGF=null,UNDO=null;
