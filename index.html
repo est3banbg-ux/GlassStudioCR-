@@ -63,6 +63,15 @@ nav button[aria-selected=true]{background:var(--acc);color:var(--accink)}
 .seg{display:flex;gap:4px;margin-bottom:12px}
 .seg button{background:var(--card);color:var(--ink);border:1px solid var(--line)}
 .seg button[aria-pressed=true]{background:var(--acc);color:var(--accink);border-color:var(--acc)}
+.agq{margin-bottom:10px}.agq input{margin:0}#agr button{display:flex;width:100%;justify-content:space-between;align-items:center;text-align:left;gap:10px;margin-top:6px;line-height:1.3}#agr .m{font-weight:400}
+.mtg{display:flex!important;width:100%;justify-content:space-between;align-items:center;margin:-4px 0 12px}.mtg .gch{font-size:20px;line-height:1;transition:transform .2s ease-out}.mtg[aria-expanded=true] .gch{transform:rotate(180deg)}
+#mbox .mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}#mbox .mh b{font:700 17px "Bricolage Grotesque",system-ui,sans-serif;text-transform:capitalize}
+.mg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.mg small{text-align:center;color:var(--mute);font-size:11px}
+.mg button{padding:8px 0 12px;background:var(--bg);color:var(--ink);border:1px solid var(--line);font-size:14px;position:relative;min-height:44px}.mg button.td{border-color:var(--acc2)}.mg button[aria-pressed=true]{background:var(--acc);color:var(--accink);border-color:var(--acc)}
+.mg button i{position:absolute;bottom:3px;left:0;right:0;font-style:normal;font-size:10px;font-weight:700;color:var(--glow)}.mg button.pcd i{color:var(--bad)}.mg button[aria-pressed=true] i{color:#fff}
+#dsum .stats{margin-top:12px}#dsum h3{margin:14px 0 0;font-size:14px;color:var(--mute);font-weight:600}
+.plr{margin-top:8px}.plr .pt{display:flex;justify-content:space-between;font-size:14px;gap:8px}.plr .pb{height:6px;border-radius:99px;background:var(--bg);margin-top:4px;overflow:hidden}.plr .pb i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--acc),var(--acc2))}
+#plb h3{margin:16px 0 0;font-size:14px;color:var(--mute);font-weight:600}#plb h3:first-child{margin-top:0}
 .gmore{display:flex!important;width:100%;justify-content:space-between;align-items:center;margin-top:10px}.gmore .gch{font-size:20px;line-height:1;transition:transform .2s ease-out}.gmore[aria-expanded=true] .gch{transform:rotate(180deg)}#gold{margin-top:8px}
 #numB>.card>h2{margin:0;cursor:pointer;display:flex;justify-content:space-between;align-items:center;-webkit-tap-highlight-color:transparent}
 #numB>.card>h2::after{content:"›";font-size:22px;line-height:1;color:var(--mute);transition:transform .2s ease-out}
@@ -406,9 +415,11 @@ raf=requestAnimationFrame(frame);
 
 <section id="v-ag">
   <div class="card hero" id="hero"></div>
+  <div class="agq"><input id="agq" type="search" placeholder="🔎 Buscar cita: nombre, teléfono o carro" autocomplete="off" aria-label="Buscar cita"><div id="agr"></div></div>
   <div class="nav2"><button class="alt sm" id="pw">‹ Semana</button><span id="wl"></span><button class="alt sm" id="nw">Semana ›</button></div>
   <div class="week" id="week"></div>
-  <div class="m" id="pc" style="margin:0 2px 8px"></div><div class="card"><h2 id="dh"></h2><div id="dl"></div><div class="row"><button class="alt sm" id="cp">Compartir agenda del día</button></div></div>
+  <button class="alt sm mtg" id="mtg" aria-expanded="false"><span>📅 Ver el mes completo</span><span class="gch">⌄</span></button><div id="mbox" class="card hide"></div>
+  <div class="m" id="pc" style="margin:0 2px 8px"></div><div class="card"><h2 id="dh"></h2><div id="dl"></div><div id="dsum"></div><div class="row"><button class="alt sm" id="cp">Compartir agenda del día</button></div></div>
 </section>
 
 <section id="v-new" class="hide">
@@ -441,6 +452,7 @@ raf=requestAnimationFrame(frame);
   <div class="card"><h2>Meta del mes</h2><div id="gring"></div><label for="goal">Mi meta de ingresos (₡)</label><input id="goal" type="number" inputmode="numeric" min="0" placeholder="Ej: 800000"></div>
   <div class="card"><h2>Ingresos y gastos</h2><div id="chart"></div><div class="leg"><span><i style="background:var(--acc)"></i>Ingresos</span><span><i style="background:var(--glow)"></i>Gastos</span></div></div>
   <div class="card"><h2>Comparado con el periodo anterior</h2><div id="cmp"></div></div>
+  <div class="card" id="plcard"><h2>De dónde viene tu plata</h2><div id="plb"></div></div>
   <div class="card" id="adcard"><h2>Publicidad en Meta</h2><div id="adb"></div></div>
   <div class="card"><h2>Materiales y gastos</h2>
     <div class="two"><div><label for="gd">Detalle</label><input id="gd" placeholder="Pasta, discos..."></div><div><label for="ga">Monto (₡)</label><input id="ga" type="number" inputmode="numeric"></div></div>
@@ -1499,6 +1511,53 @@ function onWayEta(j,from){var nowM=new Date().getHours()*60+new Date().getMinute
 function onWayMsg(j,eta){var nm=String(j.cli||"").trim().split(" ")[0],r=Math.ceil((eta||0)/5)*5;
   return "¡Hola "+nm+"! 🚗✨ Ya vamos saliendo hacia tu ubicación."+(eta?" Llegamos aprox. a las "+hm(r)+".":"")+"\n\nSi hay algo que debamos saber para llegar (portón, condominio, parqueo), contanos por aquí.\n\n¡Ya casi dejamos "+(j.veh?"tu "+j.veh:"tus vidrios")+" como "+(j.veh?"nuevo":"nuevos")+"! — GlassStudioCR"}
 function markOw(j){if(!j||j.ow)return;j.ow=1;try{if(DB)DB.doc("jobs/"+j.id).update({ow:1}).catch(function(){})}catch(e){}}
+</script>
+<script>
+/* ===== IDEAS EN VISTA PREVIA (rama ideas-vista-previa, sin publicar) ===== */
+(function(){
+var nrm=function(t){return String(t||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")};
+/* 1) Buscador de citas en toda la agenda */
+function goJob(j){$("agq").value="";$("agr").innerHTML="";goPend(j)}
+function agSearch(){var q=nrm($("agq").value.trim()),qd=q.replace(/\D/g,""),el=$("agr");if(q.length<2){el.innerHTML="";return}
+  var R=S.jobs.filter(function(j){return nrm(j.cli).indexOf(q)>=0||nrm(j.veh).indexOf(q)>=0||(qd.length>=3&&String(j.tel||"").replace(/\D/g,"").indexOf(qd)>=0)});
+  var F=R.filter(function(j){return j.date>=today}).sort(function(a,b){return (a.date+a.time)<(b.date+b.time)?-1:1}),P=R.filter(function(j){return j.date<today}).sort(function(a,b){return (a.date+a.time)<(b.date+b.time)?1:-1});
+  R=F.concat(P);el.innerHTML=R.length?"":'<div class="m" style="margin-top:6px">No encontré citas con ese dato.</div>';
+  R.slice(0,8).forEach(function(j){var b=document.createElement("button");b.className="alt sm";
+    b.innerHTML='<span><b>'+esc(j.cli)+'</b> <span class="m">· '+esc(j.veh||"")+'</span><br><span class="m">'+(j.date===today?"Hoy":fmtD(j.date))+" · "+fmtT(j.time)+" · "+esc(j.st)+(j.date<today?" · pasada":"")+'</span></span><span>Ver ›</span>';
+    b.onclick=function(){goJob(j)};el.appendChild(b)});
+  if(R.length>8){var m=document.createElement("div");m.className="m";m.style.marginTop="6px";m.textContent="y "+(R.length-8)+" más: escribí más letras para afinar";el.appendChild(m)}}
+$("agq").addEventListener("input",agSearch);
+/* 2) Vista del mes completo */
+var MOPEN=false,MOFF=null,MNL=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+function renderMonth(){var bx=$("mbox");$("mtg").setAttribute("aria-expanded",MOPEN);$("mtg").firstChild.textContent=MOPEN?"📅 Ocultar el mes":"📅 Ver el mes completo";bx.classList.toggle("hide",!MOPEN);if(!MOPEN)return;
+  var b=pd(sel),m=new Date(b.getFullYear(),b.getMonth()+(MOFF||0),1),y=m.getFullYear(),mo=m.getMonth(),n=new Date(y,mo+1,0).getDate(),lead=(m.getDay()+6)%7,C={},PC={};
+  S.jobs.forEach(function(j){C[j.date]=(C[j.date]||0)+1;if(j.st==="Por confirmar")PC[j.date]=1});
+  var h='<div class="mh"><button class="alt sm" id="mpv" aria-label="Mes anterior">‹</button><b>'+MNL[mo]+" "+y+'</b><button class="alt sm" id="mnx" aria-label="Mes siguiente">›</button></div><div class="mg">'+["L","K","M","J","V","S","D"].map(function(x){return "<small>"+x+"</small>"}).join("");
+  for(var i=0;i<lead;i++)h+="<span></span>";
+  for(var d=1;d<=n;d++){var k=ymd(new Date(y,mo,d));h+='<button data-md="'+k+'" class="'+(k===today?"td ":"")+(PC[k]?"pcd":"")+'" aria-pressed="'+(k===sel)+'" aria-label="'+d+" de "+MNL[mo]+(C[k]?", "+C[k]+" citas":"")+'">'+d+(C[k]?"<i>"+C[k]+(C[k]===1?" cita":" citas")+"</i>":"")+"</button>"}
+  bx.innerHTML=h+'</div><div class="m" style="margin-top:8px">El número en rojo indica que hay una reserva por confirmar.</div>';
+  $("mpv").onclick=function(){MOFF=(MOFF||0)-1;renderMonth()};$("mnx").onclick=function(){MOFF=(MOFF||0)+1;renderMonth()};
+  Array.prototype.forEach.call(bx.querySelectorAll("[data-md]"),function(x){x.onclick=function(){sel=x.dataset.md;MOFF=0;wOff=Math.round((monday(pd(sel))-monday(new Date()))/6048e5);MOPEN=false;renderAg();$("dh").scrollIntoView({behavior:"smooth",block:"start"})}})}
+$("mtg").onclick=function(){MOPEN=!MOPEN;MOFF=0;renderMonth()};
+/* 3) Cierre del día: cobrado, por cobrar, gastos y ganancia del día elegido */
+function renderDaySum(){var el=$("dsum");if(!OWN){el.innerHTML="";return}var L=S.jobs.filter(function(j){return j.date===sel}),ex=S.exp.filter(function(e){return e.d===sel}).reduce(function(a,e){return a+(+e.amt||0)},0);
+  if(!L.length&&!ex){el.innerHTML="";return}
+  var t=function(f){return L.filter(f).reduce(function(a,j){return a+(+j.total||0)},0)},pag=t(function(j){return j.st==="Pagado"}),hec=t(function(j){return j.st==="Hecho"}),pen=t(function(j){return j.st==="Pendiente"||j.st==="Por confirmar"});
+  el.innerHTML='<h3>Cierre del día</h3><div class="stats"><div><small>Cobrado</small><b>'+crc(pag)+'</b></div><div><small>Hecho sin cobrar</small><b>'+crc(hec)+'</b></div><div><small>Gastos del día</small><b>'+crc(ex)+'</b></div><div><small>'+(pen?"Ganancia si se hace todo":"Ganancia del día")+'</small><b>'+crc(pag+hec+pen-ex)+'</b></div></div>'}
+var _raI=renderAg;renderAg=function(){_raI();try{renderDaySum();renderMonth()}catch(e){}};
+/* 4) De dónde viene tu plata: zonas, servicios y cómo nos conocieron */
+function bars(M){var A=Object.keys(M).map(function(k){return [k,M[k]]}).sort(function(a,b){return b[1]-a[1]}),tot=A.reduce(function(a,x){return a+x[1]},0),mx=A.length?A[0][1]:0;
+  return A.slice(0,5).map(function(x){return '<div class="plr"><div class="pt"><span>'+esc(x[0])+'</span><span><b>'+crc(x[1])+'</b> <span class="m">'+Math.round(x[1]/tot*100)+'%</span></span></div><div class="pb"><i style="width:'+Math.max(4,Math.round(x[1]/mx*100))+'%"></i></div></div>'}).join("")}
+function renderPlata(){var r=range(per,0),J=S.jobs.filter(function(j){return isDone(j)&&j.date>=r[0]&&j.date<=r[1]}),Z={},V={},O={};
+  if(!J.length){$("plb").innerHTML='<div class="empty">Todavía no hay trabajos hechos en este periodo.</div>';return}
+  J.forEach(function(j){var tt=+j.total||0,z="Sin zona";try{var p=jobPos(j);if(p&&p.n)z=p.n}catch(e){}Z[z]=(Z[z]||0)+tt;
+    var o=j.web?"Reserva web":(j.src||"Sin dato");O[o]=(O[o]||0)+tt;
+    var Ls=(j.lines||[]).filter(function(l){return l&&l.n}),sp=Ls.reduce(function(a,l){return a+(+l.p||0)},0);
+    if(Ls.length&&sp>0)Ls.forEach(function(l){V[l.n]=(V[l.n]||0)+tt*(+l.p||0)/sp});else{var n=(j.items&&j.items[0])||"Otro";V[n]=(V[n]||0)+tt}});
+  Object.keys(V).forEach(function(k){V[k]=Math.round(V[k])});
+  $("plb").innerHTML='<h3>Zonas que más dejan</h3>'+bars(Z)+'<h3>Servicios que más dejan</h3>'+bars(V)+'<h3>Cómo llegaron los clientes</h3>'+bars(O)+'<div class="m" style="margin-top:10px">Solo cuenta trabajos Hechos o Pagados del periodo elegido arriba.</div>'}
+var _rnI=renderNum;renderNum=function(){_rnI();try{renderPlata()}catch(e){}};
+})();
 </script>
 </body>
 </html>
