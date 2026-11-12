@@ -202,6 +202,21 @@ body.locked main>section,body.locked nav,body.locked .fabnew,body.locked .cdfab,
 /* NAV CON ICONOS */
 .fabnew{position:fixed;right:14px;bottom:calc(74px + env(safe-area-inset-bottom,0px));z-index:9;display:inline-flex;align-items:center;gap:6px;background:var(--acc);color:var(--accink);border:0;border-radius:99px;padding:13px 18px;font:700 15px "Bricolage Grotesque",system-ui,sans-serif;box-shadow:0 8px 20px rgba(13,122,133,.4);cursor:pointer}
 .fabnew span{font-size:20px;line-height:1}
+/* ANIMACIONES (se apagan si el teléfono pide menos movimiento) */
+.fabnew{overflow:hidden}
+.fabnew::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-18deg);pointer-events:none}
+.fabnew.go::after{animation:sw .8s ease forwards}
+@keyframes sw{to{left:130%}}
+#dl.enter>*{animation:mv .45s cubic-bezier(.2,.8,.2,1) both}
+#dl.enter>*:nth-child(2){animation-delay:.07s}#dl.enter>*:nth-child(3){animation-delay:.14s}#dl.enter>*:nth-child(4){animation-delay:.21s}#dl.enter>*:nth-child(n+5){animation-delay:.28s}
+@keyframes mv{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+#dh.enter .lt{display:inline-block;opacity:0;animation:fi .02s forwards}
+@keyframes fi{to{opacity:1}}
+.cdfab.on{animation:cdp 1.8s ease-in-out infinite}
+@keyframes cdp{0%,100%{box-shadow:0 0 0 0 rgba(180,57,47,.55)}70%{box-shadow:0 0 0 12px rgba(180,57,47,0)}}
+nav button,.cdfab,.fabnew{transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+nav button:active,.cdfab:active,.fabnew:active{transform:scale(.9)}
+@media (prefers-reduced-motion:reduce){#dl.enter>*,#dh.enter .lt,.cdfab.on,.fabnew.go::after{animation:none!important;opacity:1!important}}
 .cdfab{position:fixed;left:14px;bottom:calc(74px + env(safe-area-inset-bottom,0px));z-index:9;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--acc);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.14);cursor:pointer;padding:0}
 .cdfab svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .cdfab.on{background:var(--bad);border-color:var(--bad);color:#fff}
@@ -984,7 +999,7 @@ var TABS=["ag","new","cli","not","ins","num"];
 function show(v){if(v==="ag")LASTK=null;if(v==="num"&&!OWN)v="ag";CUR=v;TABS.forEach(function(k){$("v-"+k).classList.toggle("hide",k!==v);if($("t-"+k))$("t-"+k).setAttribute("aria-selected",k===v)});$("fabNew").classList.toggle("hide",v!=="ag"&&v!=="cli");if($("cdFab")){$("cdFab").classList.toggle("hide",v!=="ag"||!BOSS);$("cdPop").classList.add("hide")}
   if(v==="ag")renderAg();if(v==="new"){$("fecha").value=sel;clients();updClash()}if(v==="cli")renderCli();if(v==="num"){$("gf").value=today;renderNum();adLoad(false)}if(v==="not"){renderNotes();if(NMODE==="g")renderGoals()}if(v==="ins")renderIns();window.scrollTo(0,0)}
 TABS.forEach(function(k){if($("t-"+k))$("t-"+k).onclick=function(){if(k==="new"&&EID)resetForm();show(k)}});
-$("fabNew").onclick=function(){if(EID)resetForm();show("new")};
+$("fabNew").onclick=function(){var f=this;f.classList.remove("go");void f.offsetWidth;f.classList.add("go");if(EID)resetForm();show("new")};
 /* CONFIRMAR ANTES DE BORRAR + DESHACER */
 var DLGF=null,UNDO=null;
 function confirmDel(o,fn){$("dlt").textContent=o.t||"¿Seguro que querés borrar esto?";$("dlw").innerHTML=o.w||"";$("dlw").classList.toggle("hide",!o.w);
@@ -1567,7 +1582,12 @@ function renderDaySum(){var el=$("dsum");if(!OWN){el.innerHTML="";return}var L=S
   if(!L.length&&!ex){el.innerHTML="";return}
   var t=function(f){return L.filter(f).reduce(function(a,j){return a+(+j.total||0)},0)},pag=t(function(j){return j.st==="Pagado"}),hec=t(function(j){return j.st==="Hecho"}),pen=t(function(j){return j.st==="Pendiente"||j.st==="Por confirmar"});
   el.innerHTML='<h3>Cierre del día</h3><div class="stats"><div><small>Cobrado</small><b>'+crc(pag)+'</b></div><div><small>Hecho sin cobrar</small><b>'+crc(hec)+'</b></div><div><small>Gastos del día</small><b>'+crc(ex)+'</b></div><div><small>'+(pen?"Ganancia si se hace todo":"Ganancia del día")+'</small><b>'+crc(pag+hec+pen-ex)+'</b></div></div>'}
-var _raI=renderAg;renderAg=function(){_raI();try{renderDaySum();renderMonth();renderCierre()}catch(e){}};
+var _raI=renderAg,ANK="";renderAg=function(){_raI();var k=sel+"|"+CUR;var nuevo=k!==ANK;ANK=k;
+  if(nuevo&&CUR==="ag"){var dl=$("dl"),dh=$("dh");dl.classList.remove("enter");void dl.offsetWidth;dl.classList.add("enter");
+    if(dh&&!dh.dataset.raw||dh.dataset.raw!==dh.textContent){var raw=dh.textContent;dh.dataset.raw=raw;dh.innerHTML=Array.prototype.map.call(raw,function(c,i){return '<span class="lt" style="animation-delay:'+(i*0.018)+'s">'+(c===" "?"&nbsp;":esc(c))+'</span>'}).join("")}}
+  try{renderDaySum();renderMonth();renderCierre()}catch(e){}
+  if(nuevo&&CUR==="ag"){Array.prototype.forEach.call(document.querySelectorAll("#dsum .stats b"),function(b){var to=+(b.textContent||"").replace(/\D/g,"");if(!to)return;var t0=null;
+    (function f(t){if(!t0)t0=t;var k=Math.min((t-t0)/800,1),e=1-Math.pow(1-k,3);b.textContent=crc(to*e);if(k<1)requestAnimationFrame(f)})(performance.now())})}};
 
 /* 4) De dónde viene tu plata: zonas, servicios y cómo nos conocieron */
 function bars(M){var A=Object.keys(M).map(function(k){return [k,M[k]]}).sort(function(a,b){return b[1]-a[1]}),tot=A.reduce(function(a,x){return a+x[1]},0),mx=A.length?A[0][1]:0;
