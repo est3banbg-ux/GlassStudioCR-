@@ -850,7 +850,8 @@ function initDb(){
   $("vy").onclick=function(){var u=AUTH.currentUser;if(!u)return;lm("vmsg","Revisando…",true);u.reload().then(function(){if(!AUTH.currentUser.emailVerified){lm("vmsg","Todavía no aparece confirmado. Abrí el enlace del correo.");return}return AUTH.currentUser.getIdToken(true).then(function(){handleUser(AUTH.currentUser)})}).catch(function(e){lm("vmsg",errEs(e))})};
   $("vr").onclick=function(){AUTH.currentUser.sendEmailVerification().then(function(){lm("vmsg","Correo reenviado.",true)}).catch(function(e){lm("vmsg",errEs(e))})};
   $("nr").onclick=function(){AUTH.currentUser.getIdToken(true).then(function(){handleUser(AUTH.currentUser)})};
-  $("out").onclick=$("vo").onclick=$("no").onclick=function(){AUTH.signOut()};
+  $("vo").onclick=$("no").onclick=function(){AUTH.signOut()};
+  $("out").onclick=function(){confirmDel({t:"¿Querés cerrar sesión?",m:"Vas a tener que volver a entrar con tu correo.",ok:"Sí, cerrar sesión"},function(){AUTH.signOut()})};
   $("tma").onclick=function(){var e=$("tme").value.trim().toLowerCase();if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){toast("Escribí un correo válido");return}
     DB.doc("team/"+e).set({email:e,added:Date.now()}).then(function(){$("tme").value="";toast("Autorizado ✓")}).catch(dberr)};
   $("tms").onclick=function(){window.open("https://wa.me/?text="+encodeURIComponent("Esta es la app de GlassStudioCR: "+location.origin+location.pathname+"\n\n1. Abrila en Safari.\n2. Entrá con tu correo (Crear cuenta la primera vez) y confirmá el correo que te llega.\n3. Tocá Compartir y Agregar a pantalla de inicio."),"_blank")};
@@ -1104,7 +1105,7 @@ function apPintar(){var el=$("apSheet"),hoy=apTemaActual();
    '<div class="tg"><span>Texto más grande</span><input type="checkbox" id="apGr"'+(APR.grande?' checked':'')+'></div>'+
    '<div class="tg"><span>Animaciones</span><input type="checkbox" id="apAn"'+(APR.anim?' checked':'')+'></div>'+
    '<div class="row"><button class="alt sm" id="apRes">Volver a lo normal</button><button class="sm" id="apCer">Listo</button></div>';
-  Array.prototype.forEach.call(el.querySelectorAll("[data-tema]"),function(b){b.onclick=function(){APR.tema=b.dataset.tema;APR.diario=false;if(APR.tema==="base")APR.tema="base";apSave();applyAp();apPintar()}});
+  Array.prototype.forEach.call(el.querySelectorAll("[data-tema]"),function(b){b.onclick=function(){APR.tema=b.dataset.tema;APR.diario=false;apSave();applyAp();apPintar();toast("Color: "+(AP_TEMAS[b.dataset.tema]?AP_TEMAS[b.dataset.tema].n:"Predeterminada")+" ✓")}});
   Array.prototype.forEach.call(el.querySelectorAll("[data-letra]"),function(b){b.onclick=function(){APR.letra=b.dataset.letra;apSave();applyAp();apPintar()}});
   $("apDia").onchange=function(){APR.diario=this.checked;apSave();applyAp();apPintar()};
   $("apGr").onchange=function(){APR.grande=this.checked;apSave();applyAp()};
