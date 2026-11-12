@@ -161,7 +161,7 @@ svg rect.br{transform-box:fill-box;transform-origin:bottom;animation:grow .7s cu
 .mcap{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:flex-end;gap:8px;padding:18px 10px 7px;background:linear-gradient(transparent,rgba(6,28,30,.78));font-size:13px;font-weight:600}
 .mcap span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mcap span:last-child{flex:none;background:rgba(255,255,255,.2);padding:2px 9px;border-radius:99px}
-body.locked main>section,body.locked nav,body.locked .fabnew{display:none!important}
+body.locked main>section,body.locked nav,body.locked .fabnew,body.locked .cdfab,body.locked .cdpop{display:none!important}
 .lk{max-width:420px;margin:24px auto 0}
 .lk h2{font-size:22px}
 .gbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:#fff!important;color:#1f1f1f!important;border:1px solid #c9d1d3!important}
@@ -202,6 +202,11 @@ body.locked main>section,body.locked nav,body.locked .fabnew{display:none!import
 /* NAV CON ICONOS */
 .fabnew{position:fixed;right:14px;bottom:calc(74px + env(safe-area-inset-bottom,0px));z-index:9;display:inline-flex;align-items:center;gap:6px;background:var(--acc);color:var(--accink);border:0;border-radius:99px;padding:13px 18px;font:700 15px "Bricolage Grotesque",system-ui,sans-serif;box-shadow:0 8px 20px rgba(13,122,133,.4);cursor:pointer}
 .fabnew span{font-size:20px;line-height:1}
+.cdfab{position:fixed;left:14px;bottom:calc(74px + env(safe-area-inset-bottom,0px));z-index:9;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--acc);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.14);cursor:pointer;padding:0}
+.cdfab svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.cdfab.on{background:var(--bad);border-color:var(--bad);color:#fff}
+.cdpop{position:fixed;left:14px;right:14px;bottom:128px;z-index:9;max-width:420px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.cdpop .row{margin-top:10px}
 nav{gap:2px;padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px));z-index:10}
 nav button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 1px 6px;font-size:11px;min-width:0;position:relative;line-height:1.1}
 nav button svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -528,6 +533,8 @@ raf=requestAnimationFrame(frame);
 <button id="t-num" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M11 20V5M17 20v-7M2 20h20"/></svg>Números</button>
 </nav>
 <button id="fabNew" class="fabnew hide" type="button"><span aria-hidden="true">+</span> Nueva cita</button>
+<button id="cdFab" class="cdfab hide" type="button" aria-label="Cerrar o abrir horas de este día" title="Cerrar mi día"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/><circle cx="12" cy="16" r="1.2" fill="currentColor" stroke="none"/></svg></button>
+<div id="cdPop" class="cdpop hide" role="dialog" aria-label="Cerrar mi día"></div>
 
 <script>
 var SERV=[{id:"ps",n:"Parabrisas sedán + protección cerámica",p:20000,g:1},{id:"pu",n:"Parabrisas SUV + protección cerámica",p:25000,g:1},{id:"promo",n:"Promo: parabrisas + protección cerámica + vidrio trasero y retrovisores",p:25000,g:1},{id:"tvc",n:"Todos los vidrios + protección cerámica",p:40000,g:1},{id:"tv",n:"Todos los vidrios sin protección",p:35000,g:1},{id:"focos",n:"Pulido de focos con polímero líquido",p:20000},{id:"techo",n:"Pulido de techo panorámico",p:15000},{id:"hidro",n:"Tratamiento hidrofóbico",p:10000}];
@@ -756,7 +763,7 @@ function startSubs(u){DB=firebase.firestore();var first=true;
   SUBS.push(DB.collection("settings").onSnapshot(onSettings,function(){}));
   SUBS.push(DB.collection("slots").onSnapshot(function(sn){RULES_MISSING=false;SLOTS=sn.docs.map(function(d){return Object.assign({id:d.id},d.data())});SLOTS_READY=true;reconcile();if(CUR==="num")renderRv()},function(e){if(e&&e.code==="permission-denied"){RULES_MISSING=true;if(CUR==="num")renderRv()}}));
   SUBS.push(DB.collection("holds").onSnapshot(function(sn){HOLDS=sn.docs.map(function(d){return Object.assign({id:d.id},d.data())});reconcile()},function(){}));
-  SUBS.push(DB.doc("pub/cfg").onSnapshot(function(sn){PUB=sn.exists?sn.data():{};renderNtw();if(CUR==="num")renderRv()},function(){renderNtw()}));
+  SUBS.push(DB.doc("pub/cfg").onSnapshot(function(sn){PUB=sn.exists?sn.data():{};renderNtw();renderCierre();if(CUR==="num")renderRv()},function(){renderNtw()}));
   SUBS.push(DB.doc("settings/prices").onSnapshot(function(sn){S.prices=sn.exists?sn.data():{};applyPrices()},function(){}));
   if(OWN){SUBS.push(DB.collection("exp").onSnapshot(function(sn){S.exp=sn.docs.map(function(d){return d.data()});if(CUR==="num")renderNum()},function(){}));
     SUBS.push(DB.collection("team").onSnapshot(function(sn){TEAM=sn.docs.map(function(d){return d.id});renderTeam()},function(){}))}}
@@ -974,7 +981,7 @@ $("gadd2").onclick=function(){var t=$("gty").value,v=+$("gtv").value;if(!v||v<1)
 Array.prototype.forEach.call($("gseg").children,function(b){b.onclick=function(){GP=b.dataset.p;renderGoals()}});
 setNMode(NMODE);
 var TABS=["ag","new","cli","not","ins","num"];
-function show(v){if(v==="ag")LASTK=null;if(v==="num"&&!OWN)v="ag";CUR=v;TABS.forEach(function(k){$("v-"+k).classList.toggle("hide",k!==v);if($("t-"+k))$("t-"+k).setAttribute("aria-selected",k===v)});$("fabNew").classList.toggle("hide",v!=="ag"&&v!=="cli");
+function show(v){if(v==="ag")LASTK=null;if(v==="num"&&!OWN)v="ag";CUR=v;TABS.forEach(function(k){$("v-"+k).classList.toggle("hide",k!==v);if($("t-"+k))$("t-"+k).setAttribute("aria-selected",k===v)});$("fabNew").classList.toggle("hide",v!=="ag"&&v!=="cli");if($("cdFab")){$("cdFab").classList.toggle("hide",v!=="ag"||!BOSS);$("cdPop").classList.add("hide")}
   if(v==="ag")renderAg();if(v==="new"){$("fecha").value=sel;clients();updClash()}if(v==="cli")renderCli();if(v==="num"){$("gf").value=today;renderNum();adLoad(false)}if(v==="not"){renderNotes();if(NMODE==="g")renderGoals()}if(v==="ins")renderIns();window.scrollTo(0,0)}
 TABS.forEach(function(k){if($("t-"+k))$("t-"+k).onclick=function(){if(k==="new"&&EID)resetForm();show(k)}});
 $("fabNew").onclick=function(){if(EID)resetForm();show("new")};
@@ -1279,6 +1286,19 @@ function reconcile(){clearTimeout(RCT);RCT=setTimeout(function(){if(!DB||!OWN||!
     else if(G.length>1)notify("🚗🚗 Reserva web de "+G.length+" carros · "+j.cli,fmtD(j.date)+" · desde las "+fmtT(G[0].time)+"\n"+G.map(function(x){return "• "+(x.veh||"Carro")+" · "+fmtT(x.time)+" · "+crc(x.total)}).join("\n")+"\nTotal: "+crc(G.reduce(function(a,x){return a+(+x.total||0)},0))+"\nFalta confirmarla en la app");
     else notify("🌐 Reserva web · "+j.cli,fmtD(j.date)+" · "+fmtT(j.time)+"\n"+(j.veh||"")+" · "+crc(j.total)+"\nFalta confirmarla en la app");
     G.forEach(function(x){if(!x.ntf)DB.doc("jobs/"+x.id).update({ntf:true}).catch(function(){})})})}},1500)}
+/* CERRAR MI DÍA: la web muestra esas horas tachadas, como si estuvieran llenas (solo el dueño) */
+function saveCierre(d,h){if(!DB)return;var o={};o[d]=h==null?firebase.firestore.FieldValue.delete():h;DB.doc("pub/cfg").set({cierre:o},{merge:true}).then(function(){toast(h==null?"Día abierto otra vez ✓":"Día cerrado ✓ ya no se agenda")}).catch(dberr)}
+function cierrePop(c){var pop=$("cdPop"),fecha=fmtD(sel);
+  if(c!=null){pop.innerHTML='<b>🔒 '+esc(fecha)+'</b><div class="m" style="margin-top:6px">Cerrado para la web '+(c===0?'todo el día':'desde las '+fmtT(pad(c)+":00"))+'.</div><div class="row"><button class="alt sm" id="cdOpen">Abrir este día</button><button class="alt sm" id="cdX">Cancelar</button></div>';
+    $("cdOpen").onclick=function(){saveCierre(sel,null);pop.classList.add("hide")}}
+  else{var op='<option value="0">Todo el día</option>';for(var k=8;k<=16;k++)op+='<option value="'+k+'">Desde las '+fmtT(pad(k)+":00")+'</option>';
+    pop.innerHTML='<b>🔒 '+esc(fecha)+'</b><label for="cdH">¿Desde qué hora ya no se agenda?</label><div class="row" style="margin-top:6px"><select id="cdH">'+op+'</select><button class="sm" id="cdGo">Cerrar día</button><button class="alt sm" id="cdX">Cancelar</button></div>';
+    $("cdGo").onclick=function(){saveCierre(sel,+$("cdH").value);pop.classList.add("hide")}}
+  $("cdX").onclick=function(){pop.classList.add("hide")}}
+function renderCierre(){var f=$("cdFab");if(!f)return;var on=BOSS&&CUR==="ag";f.classList.toggle("hide",!on);if(!on){$("cdPop").classList.add("hide");return}
+  var c=((PUB&&PUB.cierre)||{})[sel];f.classList.toggle("on",c!=null);f.title=c!=null?"Día cerrado para la web":"Cerrar mi día";
+  if(!$("cdPop").classList.contains("hide"))cierrePop(c)}
+$("cdFab").onclick=function(){var pop=$("cdPop");if(!pop.classList.contains("hide")){pop.classList.add("hide");return}cierrePop(((PUB&&PUB.cierre)||{})[sel]);pop.classList.remove("hide")};
 function renderRv(){var el=$("rvb");if(!el)return;var P=PUB||{},wa=String(P.wa||"50670892537").replace(/^506/,""),open=P.open!==false,off=(P.off||[]).filter(function(d){return d>=today}).sort();
   var ms=today.slice(0,7),wm=S.jobs.filter(function(j){return j.web&&(j.date||"").slice(0,7)===ms}).length,pc=S.jobs.filter(function(j){return j.st==="Por confirmar"}).length;
   var h='';
@@ -1547,7 +1567,8 @@ function renderDaySum(){var el=$("dsum");if(!OWN){el.innerHTML="";return}var L=S
   if(!L.length&&!ex){el.innerHTML="";return}
   var t=function(f){return L.filter(f).reduce(function(a,j){return a+(+j.total||0)},0)},pag=t(function(j){return j.st==="Pagado"}),hec=t(function(j){return j.st==="Hecho"}),pen=t(function(j){return j.st==="Pendiente"||j.st==="Por confirmar"});
   el.innerHTML='<h3>Cierre del día</h3><div class="stats"><div><small>Cobrado</small><b>'+crc(pag)+'</b></div><div><small>Hecho sin cobrar</small><b>'+crc(hec)+'</b></div><div><small>Gastos del día</small><b>'+crc(ex)+'</b></div><div><small>'+(pen?"Ganancia si se hace todo":"Ganancia del día")+'</small><b>'+crc(pag+hec+pen-ex)+'</b></div></div>'}
-var _raI=renderAg;renderAg=function(){_raI();try{renderDaySum();renderMonth()}catch(e){}};
+var _raI=renderAg;renderAg=function(){_raI();try{renderDaySum();renderMonth();renderCierre()}catch(e){}};
+
 /* 4) De dónde viene tu plata: zonas, servicios y cómo nos conocieron */
 function bars(M){var A=Object.keys(M).map(function(k){return [k,M[k]]}).sort(function(a,b){return b[1]-a[1]}),tot=A.reduce(function(a,x){return a+x[1]},0),mx=A.length?A[0][1]:0;
   return A.slice(0,5).map(function(x){return '<div class="plr"><div class="pt"><span>'+esc(x[0])+'</span><span><b>'+crc(x[1])+'</b> <span class="m">'+Math.round(x[1]/tot*100)+'%</span></span></div><div class="pb"><i style="width:'+Math.max(4,Math.round(x[1]/mx*100))+'%"></i></div></div>'}).join("")}
