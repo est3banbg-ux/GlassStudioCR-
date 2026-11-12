@@ -63,6 +63,11 @@ nav button[aria-selected=true]{background:var(--acc);color:var(--accink)}
 .seg{display:flex;gap:4px;margin-bottom:12px}
 .seg button{background:var(--card);color:var(--ink);border:1px solid var(--line)}
 .seg button[aria-pressed=true]{background:var(--acc);color:var(--accink);border-color:var(--acc)}
+#numB>.card>h2{margin:0;cursor:pointer;display:flex;justify-content:space-between;align-items:center;-webkit-tap-highlight-color:transparent}
+#numB>.card>h2::after{content:"›";font-size:22px;line-height:1;color:var(--mute);transition:transform .2s ease-out}
+#numB>.card.open>h2{margin-bottom:10px}#numB>.card.open>h2::after{transform:rotate(90deg)}
+#numB>.card:not(.open)>*:not(h2){display:none!important}
+@media (prefers-reduced-motion:reduce){#numB>.card>h2::after{transition:none}}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .stats div{background:var(--bg);border-radius:10px;padding:10px}
 .stats small{color:var(--mute);display:block}
@@ -428,27 +433,33 @@ raf=requestAnimationFrame(frame);
 
 <section id="v-cli" class="hide"><div class="card hide" id="rncard"><h2>Les toca renovar el cerámico</h2><div id="rnb"></div></div><div class="card"><h2>Clientes</h2><input id="q" placeholder="Buscar por nombre o vehículo" aria-label="Buscar cliente"><div class="m" id="cs" style="margin-top:8px"></div><div id="cll"></div></div></section>
 <section id="v-num" class="hide">
+  <div class="seg" id="numd"><button data-m="a" aria-pressed="true">📊 Números</button><button data-m="b" aria-pressed="false">⚙️ Ajustes</button></div>
+  <div id="numA">
   <div class="seg" id="seg"><button data-p="w">Semana</button><button data-p="m">Mes</button><button data-p="y">Año</button></div>
   <div class="card"><h2 id="ph"></h2><div class="stats" id="stats"></div></div>
   <div class="card"><h2>Meta del mes</h2><div id="gring"></div><label for="goal">Mi meta de ingresos (₡)</label><input id="goal" type="number" inputmode="numeric" min="0" placeholder="Ej: 800000"></div>
   <div class="card"><h2>Ingresos y gastos</h2><div id="chart"></div><div class="leg"><span><i style="background:var(--acc)"></i>Ingresos</span><span><i style="background:var(--glow)"></i>Gastos</span></div></div>
   <div class="card"><h2>Comparado con el periodo anterior</h2><div id="cmp"></div></div>
   <div class="card" id="adcard"><h2>Publicidad en Meta</h2><div id="adb"></div></div>
-  <div class="card" id="refcard"><h2>Referidos</h2><div id="refb"></div></div>
   <div class="card"><h2>Materiales y gastos</h2>
     <div class="two"><div><label for="gd">Detalle</label><input id="gd" placeholder="Pasta, discos..."></div><div><label for="ga">Monto (₡)</label><input id="ga" type="number" inputmode="numeric"></div></div>
     <label for="gf">Fecha</label><input id="gf" type="date">
     <div class="row"><button id="gadd">Agregar gasto</button></div>
     <div id="gl" style="margin-top:8px"></div>
   </div>
-  <div class="card"><h2>Precios base</h2><div class="m">Son los precios que salen al crear una cita. En cada cita podés cambiar el precio sin que cambie el precio base.</div><div id="bpl"></div><div class="row"><button id="bps">Guardar precios base</button></div></div>
+  </div>
+  <div id="numB" class="hide">
+  <div class="m" style="margin:0 2px 10px">Tocá una sección para abrirla.</div>
   <div class="card" id="rvcard"><h2>Reservas en línea</h2><div id="rvb"></div></div>
+  <div class="card" id="refcard"><h2>Referidos</h2><div id="refb"></div></div>
+  <div class="card"><h2>Precios base</h2><div class="m">Son los precios que salen al crear una cita. En cada cita podés cambiar el precio sin que cambie el precio base.</div><div id="bpl"></div><div class="row"><button id="bps">Guardar precios base</button></div></div>
   <div class="card" id="tmcard"><h2>Equipo</h2><div class="m">Autorizá los correos de tu equipo. Tienen acceso a todo: agenda, clientes, precios, Números y gastos. Solo vos podés autorizar o quitar personas.</div>
     <div class="row"><input id="tme" type="email" placeholder="correo@gmail.com" autocapitalize="off" aria-label="Correo a autorizar"><button class="sm" id="tma" style="padding:10px 14px">Autorizar</button></div>
     <div id="tml" style="margin-top:6px"></div>
     <div class="row"><button class="alt" id="tms">Enviar enlace de la app por WhatsApp</button></div></div>
   <div class="card nt" id="ntcard"><h2>Avisos al celular</h2><div class="m">Cuando alguien del equipo agenda o cambia una cita, les llega un aviso a los 3, aunque la app esté cerrada. Funciona en Android y en iPhone con la app gratis <b>ntfy</b>.</div><div id="ntb"></div><h3 style="margin:16px 0 4px">🆕 Reservas por la web, al instante</h3><div class="m">Te llega un aviso apenas un cliente confirma en la página de reservas, aunque nadie tenga la app abierta. Por seguridad el aviso no lleva nombre ni teléfono: tocalo y lo ves aquí.</div><div id="ntwb"></div></div>
   <div class="card"><h2>Respaldo</h2><div class="m">Pegá aquí el respaldo de tu app (APK o la versión anterior) para pasar tus citas, clientes y gastos. Solo se agregan, no se borra nada. También podés crear un respaldo de todo lo que hay aquí.</div><textarea id="bt" rows="3" aria-label="Respaldo"></textarea><div class="row"><button class="alt" id="bk">Crear respaldo</button><button class="alt" id="rs">Importar</button></div></div>
+  </div>
 </section>
 
 <section id="v-not" class="hide">
@@ -850,6 +861,12 @@ setInterval(function(){if(!$("v-ag").classList.contains("hide"))renderHero()},30
 /* ===== METAS (dentro de Notas) ===== */
 var GOALS=[],NMODE="n";
 try{if(localStorage.getItem("gscr_nmode")==="g")NMODE="g"}catch(e){}
+/* Números: pestaña Ajustes con secciones plegables (reservas, referidos, precios, equipo, avisos, respaldo) */
+function setNumMode(m){Array.prototype.forEach.call($("numd").children,function(b){b.setAttribute("aria-pressed",b.dataset.m===m)});$("numA").classList.toggle("hide",m!=="a");$("numB").classList.toggle("hide",m!=="b");window.scrollTo(0,0)}
+(function(){Array.prototype.forEach.call($("numd").children,function(b){b.onclick=function(){setNumMode(b.dataset.m)}});
+  Array.prototype.forEach.call(document.querySelectorAll("#numB>.card>h2"),function(h){h.setAttribute("role","button");h.tabIndex=0;h.setAttribute("aria-expanded","false");
+    var f=function(){var o=h.parentNode.classList.toggle("open");h.setAttribute("aria-expanded",o);if(o)setTimeout(function(){h.parentNode.scrollIntoView({behavior:"smooth",block:"nearest"})},50)};
+    h.onclick=f;h.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();f()}}})})();
 function setNMode(m){NMODE=m;try{localStorage.setItem("gscr_nmode",m)}catch(e){}Array.prototype.forEach.call($("nmd").children,function(b){b.setAttribute("aria-pressed",b.dataset.m===m)});$("gwrapM").classList.toggle("hide",m!=="g");$("nwrapM").classList.toggle("hide",m!=="n");if(m==="g")renderGoals()}
 Array.prototype.forEach.call($("nmd").children,function(b){b.onclick=function(){setNMode(b.dataset.m)}});
 var GP="m",PN={d:"Día",w:"Semana",m:"Mes",y:"Año"};
