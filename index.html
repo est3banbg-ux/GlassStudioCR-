@@ -161,7 +161,7 @@ svg rect.br{transform-box:fill-box;transform-origin:bottom;animation:grow .7s cu
 .mcap{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:flex-end;gap:8px;padding:18px 10px 7px;background:linear-gradient(transparent,rgba(6,28,30,.78));font-size:13px;font-weight:600}
 .mcap span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mcap span:last-child{flex:none;background:rgba(255,255,255,.2);padding:2px 9px;border-radius:99px}
-body.locked main>section,body.locked nav,body.locked .fabnew,body.locked .cdfab,body.locked .cdpop,body.locked .apsheet,body.locked #who{display:none!important}
+body.locked main>section,body.locked nav,body.locked .fabnew,body.locked .cdfab,body.locked .cdpop,body.locked .apsheet,body.locked #wkSheet,body.locked #who{display:none!important}
 .lk{max-width:420px;margin:24px auto 0}
 .lk h2{font-size:22px}
 .gbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:#fff!important;color:#1f1f1f!important;border:1px solid #c9d1d3!important}
@@ -625,6 +625,7 @@ raf=requestAnimationFrame(frame);
 <div id="cdPop" class="cdpop hide" role="dialog" aria-label="Cerrar mi día"></div>
 <div id="apSheet" class="apsheet hide" role="dialog" aria-label="Mi apariencia"></div>
 <div id="fiSheet" class="apsheet fisheet hide" role="dialog" aria-label="Ficha del cliente"></div>
+<div id="wkSheet" class="apsheet hide" role="dialog" aria-label="Resumen de tu semana"></div>
 
 <script>
 var SERV=[{id:"ps",n:"Parabrisas sedán + protección cerámica",p:20000,g:1},{id:"pu",n:"Parabrisas SUV + protección cerámica",p:25000,g:1},{id:"promo",n:"Promo: parabrisas + protección cerámica + vidrio trasero y retrovisores",p:25000,g:1},{id:"tvc",n:"Todos los vidrios + protección cerámica",p:40000,g:1},{id:"tv",n:"Todos los vidrios sin protección",p:35000,g:1},{id:"focos",n:"Pulido de focos con polímero líquido",p:20000},{id:"techo",n:"Pulido de techo panorámico",p:15000},{id:"hidro",n:"Tratamiento hidrofóbico",p:10000}];
@@ -849,7 +850,7 @@ function ask(b,fn){if(b.dataset.armed){clearTimeout(b._t);delete b.dataset.armed
 function stopSubs(){SUBS.forEach(function(f){try{f()}catch(e){}});SUBS=[];DB=null}
 function startSubs(u){DB=firebase.firestore();var first=true;
   SUBS.push(DB.collection("jobs").onSnapshot(function(sn){var CX=[];S.jobs=sn.docs.map(function(d){return d.data()}).filter(function(j){if(j.st==="Cancelada"){CX.push(j);return false}return true});if(OWN)CX.forEach(function(j){DB.doc("jobs/"+j.id).delete().catch(function(){});toast("❌ "+j.cli+" canceló su cita del "+fmtD(j.date)+(j.time?" "+fmtT(j.time):""))});fix();JOBS_READY=true;reconcile();if(!first){var me=myEmail();sn.docChanges().forEach(function(ch){var j=ch.doc.data();if(ch.type==="modified"&&!ch.doc.metadata.hasPendingWrites&&j.chg==="movida"&&j.st==="Por confirmar"&&j.chgAt&&j.chgAt.toMillis&&Date.now()-j.chgAt.toMillis()<6e5)toast("🔁 "+j.cli+" cambió su cita para el "+fmtD(j.date)+" "+fmtT(j.time));if(ch.type==="removed"&&OWN&&j.tk&&j.st!=="Cancelada")DB.doc("mine/"+j.tk).update({st:"cancelada",upd:Date.now()}).catch(function(){});if(ch.type==="added"&&!ch.doc.metadata.hasPendingWrites&&j.by&&j.by!==me)toast("🔔 "+whoN(j.by)+" agendó a "+j.cli+" · "+fmtD(j.date)+(j.time?" "+fmtT(j.time):""))})}if(CUR==="new")updClash();if(first){first=false;lockShow(null);show(CUR==="num"&&!OWN?"ag":CUR)}else refresh()},function(e){if(e&&e.code==="permission-denied"){$("ne").textContent=u.email;lockShow("noauth")}else{lockShow(null)}}));
-  if(BOSS){plataMigrar();SUBS.push(DB.collection("plata").onSnapshot(function(sn){MINE_ERR=false;MINE={};sn.docs.forEach(function(d){MINE[d.id]=d.data()});if(!$("numC").classList.contains("hide"))renderMine()},function(e){MINE_ERR=true;if(!$("numC").classList.contains("hide"))renderMine()}))}
+  if(BOSS){plataMigrar();SUBS.push(DB.collection("plata").onSnapshot(function(sn){MINE_ERR=false;MINE={};sn.docs.forEach(function(d){MINE[d.id]=d.data()});if(!$("numC").classList.contains("hide"))renderMine();try{semanaCheck()}catch(e){}},function(e){MINE_ERR=true;if(!$("numC").classList.contains("hide"))renderMine()}))}
   SUBS.push(DB.doc("settings/gar").onSnapshot(function(sn){GAR=Object.assign({},GAR0,sn.exists?sn.data():{});if(CUR==="cli")renderCli();if(CUR==="num")try{renderGar()}catch(e){}},function(){}));
   SUBS.push(DB.doc("settings/goal").onSnapshot(function(sn){S.goal=sn.exists?sn.data().v:0;if(CUR==="num"&&OWN)renderNum()},function(){}));
   SUBS.push(DB.doc("settings/notify").onSnapshot(function(sn){NTFY=sn.exists?(sn.data().topic||""):"";renderNtfy()},function(){renderNtfy()}));
@@ -1656,8 +1657,8 @@ function renderGar(){var el=$("garb");if(!el)return;if(!BOSS){$("garcard").class
 /* ===== MI PLATA (solo el dueño; datos en plata/*, protegidos por la regla isOwner) ===== */
 var MINE={},MINE_ERR=false,MCAT="Comida";
 var MCATS=["Comida","Salidas","Gasolina","Ropa","Compras","Salud","Familia","Otros"];
-function mCfg(){return Object.assign({pct:15,parte:50,fijos:[],pres:{}},MINE.cfg||{})}
-function mMes(k){return Object.assign({g:[],pag:{},ah:[]},MINE["m_"+k]||{})}
+function mCfg(){return Object.assign({pct:15,parte:50,fijos:[],pres:{},metas:[]},MINE.cfg||{})}
+function mMes(k){return Object.assign({g:[],pag:{},ah:[],mt:[]},MINE["m_"+k]||{})}
 function mSave(id,o){if(!DB)return Promise.reject();return DB.doc("plata/"+id).set(o,{merge:true}).catch(dberr)}
 /* Mi plata se guardaba antes en "mine" (que comparte nombre con los links de Mi cita). Si quedó algo ahí, se pasa a "plata" (solo dueño) y se borra de "mine". */
 function plataMigrar(){if(!DB||!BOSS)return;DB.collection("mine").get().then(function(qs){qs.docs.forEach(function(sn){var id=sn.id;if(id!=="cfg"&&!/^m_\d{4}-\d{2}$/.test(id))return;
@@ -1673,11 +1674,38 @@ function miParte(k){var c=mCfg(),d0=k+"-01",d1=k+"-31",x=sums(d0,d1),
 function mBars(M){var A=Object.keys(M).map(function(k){return [k,M[k]]}).sort(function(a,b){return b[1]-a[1]}),tot=A.reduce(function(a,x){return a+x[1]},0)||1,mx=A.length?A[0][1]:1;
   return A.map(function(x){return '<div class="plr"><div class="pt"><span>'+esc(x[0])+'</span><span><b>'+crc(x[1])+'</b> <span class="m">'+Math.round(x[1]/tot*100)+'%</span></span></div><div class="pb"><i style="width:'+Math.max(4,Math.round(x[1]/mx*100))+'%"></i></div></div>'}).join("")}
 function fijoMes(f){return f.anual?Math.round((+f.m||0)/12):(+f.m||0)}
+
+/* datos de la semana (lunes a hoy, o la semana pasada completa) */
+function semanaDatos(lunes,dom){var g=[],ah=0;Object.keys(MINE).forEach(function(id){if(id.indexOf("m_")!==0)return;var M=MINE[id];
+  (M.g||[]).forEach(function(x){if(x.d>=lunes&&x.d<=dom)g.push(x)});(M.ah||[]).concat(M.mt||[]).forEach(function(x){if(x.d>=lunes&&x.d<=dom)ah+=+x.m||0})});
+  var pc={};g.forEach(function(x){pc[x.c]=(pc[x.c]||0)+(+x.m||0)});var top=Object.keys(pc).sort(function(a,b){return pc[b]-pc[a]})[0];return {tot:sumL(g),pc:pc,top:top,ah:ah}}
+function semanaCheck(){if(!BOSS)return;var hoy=new Date(),dow=(hoy.getDay()+6)%7,lun=new Date(hoy);lun.setDate(hoy.getDate()-dow);var wk=ymd(lun),key="gsWk";
+  var visto="";try{visto=localStorage.getItem(key)||""}catch(e){}if(visto===wk)return;
+  var lp=new Date(lun);lp.setDate(lun.getDate()-7);var dp=new Date(lun);dp.setDate(lun.getDate()-1);var D=semanaDatos(ymd(lp),ymd(dp));
+  var c=mCfg(),k=mesK(),M=mMes(k),P=miParte(k),metaAh=Math.round(P.parte*c.pct/100),falta=Math.max(0,metaAh-sumL(M.ah)-sumL(M.mt));
+  if(!D.tot&&!D.ah&&!falta){try{localStorage.setItem(key,wk)}catch(e){}return}
+  var el=$("wkSheet");el.innerHTML='<h3>📅 Tu semana pasada</h3>'+
+    '<div class="m">'+fmtD(ymd(lp))+' al '+fmtD(ymd(dp))+'</div>'+
+    '<div style="margin-top:10px">Gastaste <b>'+crc(D.tot)+'</b>'+(D.top?' · lo que más: <b>'+esc(D.top)+'</b> ('+crc(D.pc[D.top])+')':'')+'.</div>'+
+    '<div style="margin-top:6px">Apartaste <b>'+crc(D.ah)+'</b> para ahorro.</div>'+
+    (falta?'<div class="ial b" style="margin-top:10px">🐷 Te faltan <b>'+crc(falta)+'</b> para tu ahorro de este mes. Apartalo hoy.</div>':'<div class="m" style="margin-top:10px">✅ Tu ahorro del mes va completo.</div>')+
+    '<div class="row" style="margin-top:12px"><button class="sm" id="wkGo">Ver Mi plata</button><button class="alt sm" id="wkX">Listo</button></div>';
+  el.classList.remove("hide");var cerrar=function(){el.classList.add("hide");try{localStorage.setItem(key,wk)}catch(e){}};
+  $("wkX").onclick=cerrar;$("wkGo").onclick=function(){cerrar();show("num");setNumMode("c")}}
+/* gastos hormiga: lo pequeño que se repite */
+function hormiga(M){var L=M.g||[],chicos=L.filter(function(x){return (+x.m||0)<=5000}),rep={};
+  L.forEach(function(x){var n=String(x.n||"").trim().toLowerCase();if(!n)return;var r=rep[n]||(rep[n]={n:x.n,v:0,t:0});r.v++;r.t+=+x.m||0});
+  var R=Object.keys(rep).map(function(k){return rep[k]}).filter(function(r){return r.v>=3}).sort(function(a,b){return b.t-a.t}).slice(0,3);
+  if(chicos.length<4&&!R.length)return "";
+  return '<div class="card"><h2>🐜 Gastos hormiga</h2><div class="m">Cosas pequeñas que se repiten y suman más de lo que parece.</div>'+
+    (chicos.length>=4?'<div class="fx"><span>Gastos de ₡5 000 o menos</span><b>'+chicos.length+' veces · '+crc(sumL(chicos))+'</b></div>':'')+
+    R.map(function(r){return '<div class="fx"><span>“'+esc(r.n)+'”</span><b>'+r.v+' veces · '+crc(r.t)+'</b></div>'}).join("")+
+    '<div class="m" style="margin-top:8px">Tip: poné una nota corta al apuntar (ej: “café”, “uber”) para que la app los encuentre.</div></div>'}
 function renderMine(){var el=$("numC");if(!el)return;if(!BOSS){el.innerHTML="";return}
   if(MINE_ERR){el.innerHTML='<div class="card"><h2>💰 Mi plata</h2><div class="ial b">Falta un paso para que solo vos podás ver esto: actualizar las reglas de Firebase.</div><ol style="font-size:14px;padding-left:20px;margin:8px 0"><li>Tocá <b>Copiar reglas</b>.</li><li>En Firebase entrá a <b>Firestore → Reglas</b>, borrá todo y pegá.</li><li>Tocá <b>Publicar</b> y volvé a abrir la app.</li></ol><div class="row"><button class="sm" id="mRules">Copiar reglas</button></div></div>';
     $("mRules").onclick=function(){(navigator.clipboard?navigator.clipboard.writeText(RULES):Promise.reject()).then(function(){toast("Reglas copiadas ✓ Pegalas en Firebase")},function(){toast("No se pudo copiar")})};return}
   var c=mCfg(),k=mesK(),M=mMes(k),P=miParte(k),hoy=new Date(),dia=hoy.getDate(),dm=new Date(hoy.getFullYear(),hoy.getMonth()+1,0).getDate(),
-    proy=dia>0?P.parte/dia*dm:P.parte,metaAh=Math.round(P.parte*c.pct/100),ahM=sumL(M.ah),fijos=c.fijos||[],
+    proy=dia>0?P.parte/dia*dm:P.parte,metaAh=Math.round(P.parte*c.pct/100),ahM=sumL(M.ah)+sumL(M.mt),fijos=c.fijos||[],
     fijTot=fijos.reduce(function(a,f){return a+fijoMes(f)},0),fijPag=fijos.filter(function(f){return M.pag[f.id]}).reduce(function(a,f){return a+fijoMes(f)},0),
     gVar=sumL(M.g),libre=P.parte-fijTot-gVar-Math.max(ahM,metaAh);
   var ahTot=0;Object.keys(MINE).forEach(function(id){if(id.indexOf("m_")===0)ahTot+=sumL(MINE[id].ah)});
@@ -1693,7 +1721,7 @@ function renderMine(){var el=$("numC");if(!el)return;if(!BOSS){el.innerHTML="";r
     '<div class="plr"><div class="pt"><span>Este mes: '+crc(ahM)+' de '+crc(metaAh)+'</span><span><b>'+(metaAh?Math.min(100,Math.round(ahM/metaAh*100)):0)+'%</b></span></div><div class="pb"><i style="width:'+(metaAh?Math.max(3,Math.min(100,Math.round(ahM/metaAh*100))):3)+'%"></i></div></div>'+
     (falta>0?'<div class="warn2">⚠️ Te faltan <b>'+crc(falta)+'</b> para el ahorro de este mes. Pasalos a tu cuenta de ahorro hoy, antes de que se vayan en otra cosa.</div>':(metaAh?'<div class="good2">✅ Ya apartaste tu ahorro del mes. ¡Bien hecho!</div>':''))+
     '<div class="row" style="margin-top:10px"><input id="mAh" type="number" inputmode="numeric" min="1" placeholder="Monto que apartaste"><button class="sm" id="mAhB">Apartar</button></div>'+
-    '<div class="m" style="margin-top:8px">Ahorrado en total: <b>'+crc(ahTot)+'</b></div>'+
+    '<div class="m" style="margin-top:8px">En tu fondo de ahorro: <b>'+crc(ahTot)+'</b>'+(function(){var t=0;Object.keys(MINE).forEach(function(id){if(id.indexOf("m_")===0)t+=sumL(MINE[id].mt)});return t?' · en metas: <b>'+crc(t)+'</b>':''})()+'</div>'+
     '<label for="mPct" style="margin-top:10px">% de ahorro</label><div class="row" style="margin-top:0"><input id="mPct" type="number" inputmode="numeric" min="0" max="90" value="'+c.pct+'"><button class="alt sm" id="mPctB">Guardar</button></div></div>';
   /* 3. pagos fijos */
   h+='<div class="card"><h2>📌 Pagos fijos</h2><div class="m">'+crc(fijPag)+' pagado de '+crc(fijTot)+' este mes.</div>'+
@@ -1719,6 +1747,17 @@ function renderMine(){var el=$("numC");if(!el)return;if(!BOSS){el.innerHTML="";r
     (libre<0?'<div class="warn2">Este mes vas gastando más de lo que te entra. Revisá en qué categoría se te está yendo y frená ahí.</div>':'')+
     (function(){var cols='',mx=1,D=[];for(var i=5;i>=0;i--){var d=new Date(hoy.getFullYear(),hoy.getMonth()-i,1),kk=mesK(d),pp=miParte(kk).parte,mm=mMes(kk),gg=sumL(mm.g)+(kk===k?fijTot:(c.fijos||[]).filter(function(f){return mm.pag[f.id]}).reduce(function(a,f){return a+fijoMes(f)},0));D.push([kk,pp,gg]);mx=Math.max(mx,pp,gg)}
       return '<div class="m" style="margin-top:12px"><b>Últimos 6 meses</b> · <span style="color:var(--acc)">■</span> tu parte <span style="color:var(--bad)">■</span> tus gastos</div><div class="cols">'+D.map(function(x){return '<div><div class="mcol"><i style="height:'+Math.round(x[1]/mx*100)+'%;background:var(--acc)"></i><i style="height:'+Math.round(x[2]/mx*100)+'%;background:var(--bad)"></i></div>'+MN[+x[0].slice(5)-1]+'</div>'}).join("")+'</div>'})()+'</div>';
+  /* metas con nombre */
+  var metas=c.metas||[],aport={};Object.keys(MINE).forEach(function(id){if(id.indexOf("m_")===0)(MINE[id].mt||[]).forEach(function(x){aport[x.meta]=(aport[x.meta]||0)+(+x.m||0)})});
+  h+='<div class="card"><h2>🎯 Mis metas</h2>'+(metas.length?metas.map(function(mt){var v=aport[mt.id]||0,pc=mt.meta?Math.min(100,Math.round(v/mt.meta*100)):0;
+      return '<div class="plr" style="margin-top:12px"><div class="pt"><span><b>'+esc(mt.n)+'</b></span><span>'+crc(v)+' de '+crc(mt.meta)+' <b>'+pc+'%</b></span></div><div class="pb"><i style="width:'+Math.max(3,pc)+'%"></i></div></div>'+
+        '<div class="row" style="margin-top:6px"><input type="number" inputmode="numeric" min="1" placeholder="Aportar ₡" data-mtv="'+esc(mt.id)+'"><button class="sm" data-mta="'+esc(mt.id)+'">Aportar</button><button class="alt sm" data-mtd="'+esc(mt.id)+'" aria-label="Quitar meta">✕</button></div>'}).join(""):'<div class="m">Ej: “Equipo nuevo”, “Viaje”, “Contratar técnico”.</div>')+
+    '<label for="mMn">Nueva meta</label><div class="row" style="margin-top:0"><input id="mMn" placeholder="Nombre" maxlength="40"><input id="mMm" type="number" inputmode="numeric" min="1" placeholder="Monto ₡"></div><div class="row"><button class="sm" id="mMb">Crear meta</button></div>'+
+    '<div class="m" style="margin-top:8px">Lo que aportás a una meta también cuenta como ahorro del mes.</div></div>';
+  /* ¿me alcanza? */
+  h+='<div class="card"><h2>🤔 ¿Me alcanza?</h2><div class="m">Antes de una compra grande, poné el precio y mirá cómo te deja.</div><div class="row"><input id="mQa" type="number" inputmode="numeric" min="1" placeholder="Precio ₡"><button class="sm" id="mQb">Calcular</button></div><div id="mQr"></div></div>';
+  /* gastos hormiga */
+  h+=hormiga(M);
   /* 6. fondo de emergencia */
   var fe3=fijTot*3,fe6=fijTot*6;
   h+='<div class="card"><h2>🛟 Fondo de emergencia</h2>'+(fijTot?'<div class="m">Lo recomendado es tener de 3 a 6 meses de tus pagos fijos guardados por si un mes no hay trabajo.</div>'+
@@ -1735,6 +1774,19 @@ function renderMine(){var el=$("numC");if(!el)return;if(!BOSS){el.innerHTML="";r
   Array.prototype.forEach.call(el.querySelectorAll("[data-mc]"),function(b){b.onclick=function(){MCAT=b.dataset.mc;Array.prototype.forEach.call(el.querySelectorAll("[data-mc]"),function(x){x.setAttribute("aria-pressed",x===b)})}});
   $("mGb").onclick=function(){var m=Math.round(+$("mGm").value||0);if(m<=0){toast("Poné el monto");return}var L=M.g.concat([{id:String(Date.now()),d:ymd(new Date()),m:m,c:MCAT,n:$("mGn").value.trim().slice(0,40)}]);mSave("m_"+k,{g:L}).then(function(){toast("Gasto apuntado ✓")})};
   Array.prototype.forEach.call(el.querySelectorAll("[data-gx]"),function(b){b.onclick=function(){mSave("m_"+k,{g:M.g.filter(function(x){return x.id!==b.dataset.gx})})}});
+  $("mMb").onclick=function(){var n=$("mMn").value.trim(),m=Math.round(+$("mMm").value||0);if(!n||m<=0){toast("Poné el nombre y el monto");return}
+    mSave("cfg",{metas:(c.metas||[]).concat([{id:String(Date.now()),n:n.slice(0,40),meta:m}])}).then(function(){toast("Meta creada ✓")})};
+  Array.prototype.forEach.call(el.querySelectorAll("[data-mta]"),function(b){b.onclick=function(){var id=b.dataset.mta,inp=el.querySelector('[data-mtv="'+id+'"]'),v=Math.round(+(inp&&inp.value)||0);if(v<=0){toast("Poné el monto");return}
+    mSave("m_"+k,{mt:M.mt.concat([{id:String(Date.now()),meta:id,d:ymd(new Date()),m:v}])}).then(function(){toast("Aporte guardado ✓ 🎯")})}});
+  Array.prototype.forEach.call(el.querySelectorAll("[data-mtd]"),function(b){b.onclick=function(){var mt=(c.metas||[]).find(function(x){return x.id===b.dataset.mtd});
+    confirmDel({t:"¿Quitar esta meta?",w:mt?esc(mt.n):"",m:"Lo que ya aportaste sigue contando como ahorro."},function(){mSave("cfg",{metas:(c.metas||[]).filter(function(x){return x.id!==b.dataset.mtd})})})}});
+  $("mQb").onclick=function(){var v=Math.round(+$("mQa").value||0),r=$("mQr");if(v<=0){r.innerHTML="";return}var queda=libre-v,lib=Math.max(0,libre);
+    var hh='<div class="fx"><span>Te queda libre este mes</span><b>'+(libre<0?'−'+crc(-libre):crc(libre))+'</b></div><div class="fx"><span>Después de comprarlo</span><b class="'+(queda<0?'bad2':'ok2')+'">'+(queda<0?'−'+crc(-queda):crc(queda))+'</b></div>';
+    if(queda>=0)hh+='<div class="good2">✅ Te alcanza sin tocar tu ahorro ni tus pagos fijos.</div>';
+    else{var porMes=Math.max(1,Math.round((P.parte-fijTot-gVar-metaAh)>0?(P.parte-fijTot-gVar-metaAh):0));
+      hh+='<div class="warn2">🚫 Este mes no te alcanza sin tocar el ahorro o los pagos fijos.'+(porMes>1&&Math.ceil(v/porMes)<=24?' Si lo juntás con lo que te sobra cada mes (~'+crc(porMes)+'), lo tenés en unos <b>'+Math.ceil(v/porMes)+' meses</b>.':' Con lo que te sobra hoy tardarías más de 2 años: tendrías que bajar gastos para juntarlo.')+' Una opción: creá una meta para esto y aportale cada mes.</div>'}
+    if(metaAh>0)hh+='<div class="m" style="margin-top:8px">Si lo pagaras con el ahorro, tu fondo de emergencia se atrasaría unos '+Math.max(1,Math.round(v/metaAh))+' meses.</div>';
+    r.innerHTML=hh};
   $("mPlB").onclick=function(){var o={};Array.prototype.forEach.call(el.querySelectorAll("[data-pl]"),function(i){var v=Math.round(+i.value||0);if(v>0)o[i.dataset.pl]=v});mSave("cfg",{pres:firebase.firestore.FieldValue.delete()}).then(function(){return mSave("cfg",{pres:o})}).then(function(){toast("Límites guardados ✓")})}}
 var _rnNum=renderNum;renderNum=function(){_rnNum.apply(this,arguments);try{renderGar()}catch(e){}};
 function hasCer(j){return (j.items||[]).some(function(n){return /cer[aá]mic|^Promo/i.test(n)&&!/sin protecci/i.test(n)})}
