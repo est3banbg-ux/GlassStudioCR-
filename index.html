@@ -161,7 +161,7 @@ svg rect.br{transform-box:fill-box;transform-origin:bottom;animation:grow .7s cu
 .mcap{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:flex-end;gap:8px;padding:18px 10px 7px;background:linear-gradient(transparent,rgba(6,28,30,.78));font-size:13px;font-weight:600}
 .mcap span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mcap span:last-child{flex:none;background:rgba(255,255,255,.2);padding:2px 9px;border-radius:99px}
-body.locked main>section,body.locked nav{display:none!important}
+body.locked main>section,body.locked nav,body.locked .fabnew{display:none!important}
 .lk{max-width:420px;margin:24px auto 0}
 .lk h2{font-size:22px}
 .gbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:#fff!important;color:#1f1f1f!important;border:1px solid #c9d1d3!important}
@@ -200,6 +200,8 @@ body.locked main>section,body.locked nav{display:none!important}
 .nt code{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:3px 7px;font-size:14px;word-break:break-all}
 .nt ol{margin:8px 0;padding-left:20px;font-size:14px}.nt li{margin:4px 0}
 /* NAV CON ICONOS */
+.fabnew{position:fixed;right:14px;bottom:calc(74px + env(safe-area-inset-bottom,0px));z-index:9;display:inline-flex;align-items:center;gap:6px;background:var(--acc);color:var(--accink);border:0;border-radius:99px;padding:13px 18px;font:700 15px "Bricolage Grotesque",system-ui,sans-serif;box-shadow:0 8px 20px rgba(13,122,133,.4);cursor:pointer}
+.fabnew span{font-size:20px;line-height:1}
 nav{gap:2px;padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px));z-index:10}
 nav button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 1px 6px;font-size:11px;min-width:0;position:relative;line-height:1.1}
 nav button svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -520,12 +522,12 @@ raf=requestAnimationFrame(frame);
 <div id="undo" role="status"><span id="undot"></span><button id="undob">Deshacer</button></div>
 <nav role="tablist">
 <button id="t-ag" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Agenda</button>
-<button id="t-new" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Nueva</button>
 <button id="t-cli" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c1.8.7 3 2.4 3.5 5.2"/></svg>Clientes</button>
 <button id="t-not" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h14a2 2 0 0 1 2 2v10l-6 6H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M21 15h-4a2 2 0 0 0-2 2v4M7 8h10M7 12h6"/></svg>Notas</button>
 <button id="t-ins" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v5L5.5 17A3 3 0 0 0 8.2 21h7.6a3 3 0 0 0 2.7-4L14 8V3M7.3 14h9.4"/></svg>Insumos</button>
 <button id="t-num" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M11 20V5M17 20v-7M2 20h20"/></svg>Números</button>
 </nav>
+<button id="fabNew" class="fabnew hide" type="button"><span aria-hidden="true">+</span> Nueva cita</button>
 
 <script>
 var SERV=[{id:"ps",n:"Parabrisas sedán + protección cerámica",p:20000,g:1},{id:"pu",n:"Parabrisas SUV + protección cerámica",p:25000,g:1},{id:"promo",n:"Promo: parabrisas + protección cerámica + vidrio trasero y retrovisores",p:25000,g:1},{id:"tvc",n:"Todos los vidrios + protección cerámica",p:40000,g:1},{id:"tv",n:"Todos los vidrios sin protección",p:35000,g:1},{id:"focos",n:"Pulido de focos con polímero líquido",p:20000},{id:"techo",n:"Pulido de techo panorámico",p:15000},{id:"hidro",n:"Tratamiento hidrofóbico",p:10000}];
@@ -972,9 +974,10 @@ $("gadd2").onclick=function(){var t=$("gty").value,v=+$("gtv").value;if(!v||v<1)
 Array.prototype.forEach.call($("gseg").children,function(b){b.onclick=function(){GP=b.dataset.p;renderGoals()}});
 setNMode(NMODE);
 var TABS=["ag","new","cli","not","ins","num"];
-function show(v){if(v==="ag")LASTK=null;if(v==="num"&&!OWN)v="ag";CUR=v;TABS.forEach(function(k){$("v-"+k).classList.toggle("hide",k!==v);$("t-"+k).setAttribute("aria-selected",k===v)});
+function show(v){if(v==="ag")LASTK=null;if(v==="num"&&!OWN)v="ag";CUR=v;TABS.forEach(function(k){$("v-"+k).classList.toggle("hide",k!==v);if($("t-"+k))$("t-"+k).setAttribute("aria-selected",k===v)});$("fabNew").classList.toggle("hide",v!=="ag"&&v!=="cli");
   if(v==="ag")renderAg();if(v==="new"){$("fecha").value=sel;clients();updClash()}if(v==="cli")renderCli();if(v==="num"){$("gf").value=today;renderNum();adLoad(false)}if(v==="not"){renderNotes();if(NMODE==="g")renderGoals()}if(v==="ins")renderIns();window.scrollTo(0,0)}
-TABS.forEach(function(k){$("t-"+k).onclick=function(){if(k==="new"&&EID)resetForm();show(k)}});
+TABS.forEach(function(k){if($("t-"+k))$("t-"+k).onclick=function(){if(k==="new"&&EID)resetForm();show(k)}});
+$("fabNew").onclick=function(){if(EID)resetForm();show("new")};
 /* CONFIRMAR ANTES DE BORRAR + DESHACER */
 var DLGF=null,UNDO=null;
 function confirmDel(o,fn){$("dlt").textContent=o.t||"¿Seguro que querés borrar esto?";$("dlw").innerHTML=o.w||"";$("dlw").classList.toggle("hide",!o.w);
