@@ -219,6 +219,29 @@ body.locked main>section,body.locked nav,body.locked .fabnew,body.locked .cdfab,
 .apsheet .row{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
 /* efectos de letra y tamaño según la elección de cada persona */
 html.ap-big body{font-size:18px}
+/* UNIVERSO: fondos animados solo en los temas del universo */
+#apFx{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;display:none}
+html.ap-fx #apFx{display:block}
+html.ap-fx{background:#05060f}
+html.ap-fx body{background:transparent!important}
+#apFx canvas{position:absolute;inset:0;width:100%;height:100%}
+#apFx>*{position:absolute}
+.fx-estrellas,.fx-cometas{background:#05060f}
+.fx-nebulosa{background-color:#05060f;background-image:radial-gradient(ellipse at 20% 30%,rgba(139,92,246,.5),transparent 55%),radial-gradient(ellipse at 80% 70%,rgba(34,167,196,.4),transparent 55%),radial-gradient(ellipse at 50% 95%,rgba(236,72,153,.3),transparent 50%);background-size:170% 170%;animation:nb 24s ease-in-out infinite alternate;inset:0}
+@keyframes nb{from{background-position:0% 0%}to{background-position:100% 60%}}
+.fx-aurora{background:#05060f;overflow:hidden}
+.fx-aurora::before,.fx-aurora::after{content:"";position:absolute;left:-20%;right:-20%;height:55%;filter:blur(38px);opacity:.5;border-radius:50%}
+.fx-aurora::before{top:-12%;background:linear-gradient(90deg,#22d3ee,#a78bfa,#34d399);animation:au 14s ease-in-out infinite alternate}
+.fx-aurora::after{top:24%;background:linear-gradient(90deg,#34d399,#60a5fa,#f472b6);animation:au 18s ease-in-out infinite alternate-reverse}
+@keyframes au{from{transform:translateX(-6%) skewX(-8deg)}to{transform:translateX(6%) skewX(8deg)}}
+.fx-orbita{background:#05060f;inset:0}
+.fx-orbita .planeta{position:absolute;right:-70px;top:9%;width:210px;height:210px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fde68a,#d97706 50%,#451a03);box-shadow:0 0 70px rgba(251,191,36,.28);animation:flot 9s ease-in-out infinite alternate}
+.fx-orbita .planeta i{position:absolute;left:-35%;right:-35%;top:44%;height:20%;border:3px solid rgba(253,230,138,.5);border-radius:50%;transform:rotate(-12deg)}
+.fx-orbita .luna{position:absolute;left:-40px;top:-30px;width:14px;height:14px;border-radius:50%;background:#e5e7eb;box-shadow:0 0 10px #fff;transform-origin:110px 150px;animation:orb 16s linear infinite}
+@keyframes flot{from{transform:translateY(-8px)}to{transform:translateY(10px)}}
+@keyframes orb{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.fx-nebulosa,.fx-aurora,.fx-orbita{background-image:radial-gradient(1px 1px at 20px 30px,#fff,transparent),radial-gradient(1.5px 1.5px at 120px 80px,#fff,transparent),radial-gradient(1px 1px at 200px 150px,#ddd,transparent),radial-gradient(1px 1px at 300px 60px,#fff,transparent),radial-gradient(1.2px 1.2px at 260px 210px,#fff,transparent);background-size:340px 260px}
+html.ap-noanim #apFx *,html.ap-noanim #apFx{animation:none!important}
 html.ap-noanim *,html.ap-noanim *::before,html.ap-noanim *::after{animation:none!important;transition:none!important}
 /* ANIMACIONES (se apagan si el teléfono pide menos movimiento) */
 .fabnew{overflow:hidden}
@@ -368,6 +391,7 @@ button.danger{background:var(--bad);color:#fff}
 </style>
 </head>
 <body class="locked">
+<div id="apFx" aria-hidden="true"></div>
 <div id="intro" aria-hidden="true"><canvas id="icv"></canvas>
 <div class="lgw"><div class="lgh"></div><div class="lgi"><img src="logo-icon.png" alt="" width="397" height="314"><span class="lgsh"></span><span class="lgst"></span><span class="lgrg"></span></div>
 <div class="lgt" id="lgt"></div><div class="lgtag">Pulido de parabrisas · a domicilio</div></div>
@@ -1019,7 +1043,12 @@ function show(v){if(v==="ag")LASTK=null;if(v==="num"&&!OWN)v="ag";CUR=v;TABS.for
   if(v==="ag")renderAg();if(v==="new"){$("fecha").value=sel;clients();updClash()}if(v==="cli")renderCli();if(v==="num"){$("gf").value=today;renderNum();adLoad(false)}if(v==="not"){renderNotes();if(NMODE==="g")renderGoals()}if(v==="ins")renderIns();window.scrollTo(0,0)}
 TABS.forEach(function(k){if($("t-"+k))$("t-"+k).onclick=function(){if(k==="new"&&EID)resetForm();show(k)}});
 /* MI APARIENCIA: se guarda en este equipo (no cambia la base del sistema) */
-var AP_TEMAS={medianoche:{n:"Medianoche",d:true,c:["#0a1a24","#22a7c4"],v:{"--bg":"#0a1a24","--card":"#10293a","--ink":"#e6f3f7","--mute":"#8fb0bf","--line":"#1e3f52","--acc":"#22a7c4","--accink":"#06141c","--glow":"#f5b52e","--ok":"#34c38f","--bad":"#ff7b7b","--acc2":"#7fd8ec","--altbg":"#1e3f52","--altbd":"transparent","--hero":"linear-gradient(135deg,#22a7c4,#15586c 70%,#0a2a38)"}},
+var AP_TEMAS={u_estrellas:{n:"Estrellas",d:true,fx:"estrellas",c:["#05060f","#ffffff"],v:{"--bg":"#05060f","--card":"rgba(12,15,36,.86)","--ink":"#eef0ff","--mute":"#9aa3c7","--line":"#24294a","--acc":"#7c83ff","--accink":"#ffffff","--glow":"#fbbf24","--ok":"#34d399","--bad":"#f87171","--acc2":"#a5b4fc","--altbg":"#1c2146","--altbd":"transparent","--hero":"linear-gradient(135deg,#4338ca,#1e1b4b 70%,#05060f)"}},
+u_cometas:{n:"Cometas",d:true,fx:"cometas",c:["#05060f","#60a5fa"],v:{"--bg":"#05060f","--card":"rgba(12,15,36,.86)","--ink":"#eef0ff","--mute":"#9aa3c7","--line":"#24294a","--acc":"#38bdf8","--accink":"#05060f","--glow":"#fde047","--ok":"#34d399","--bad":"#f87171","--acc2":"#7dd3fc","--altbg":"#1c2146","--altbd":"transparent","--hero":"linear-gradient(135deg,#0284c7,#0c4a6e 70%,#05060f)"}},
+u_nebulosa:{n:"Nebulosa",d:true,fx:"nebulosa",c:["#2e1065","#22a7c4"],v:{"--bg":"#080612","--card":"rgba(20,14,40,.84)","--ink":"#f3e8ff","--mute":"#b8a6d9","--line":"#3b2a66","--acc":"#a855f7","--accink":"#ffffff","--glow":"#fbbf24","--ok":"#34d399","--bad":"#fb7185","--acc2":"#e9d5ff","--altbg":"#3b2a66","--altbd":"transparent","--hero":"linear-gradient(135deg,#a855f7,#4c1d95 70%,#1e1b4b)"}},
+u_aurora:{n:"Aurora boreal",d:true,fx:"aurora",c:["#34d399","#22d3ee"],v:{"--bg":"#05060f","--card":"rgba(8,20,24,.84)","--ink":"#e6fffb","--mute":"#8fc9c0","--line":"#1b3d40","--acc":"#2dd4bf","--accink":"#04201c","--glow":"#fbbf24","--ok":"#34d399","--bad":"#fb7185","--acc2":"#67e8f9","--altbg":"#1b3d40","--altbd":"transparent","--hero":"linear-gradient(135deg,#0d9488,#164e63 70%,#05060f)"}},
+u_orbita:{n:"Órbita",d:true,fx:"orbita",c:["#451a03","#fbbf24"],v:{"--bg":"#05060f","--card":"rgba(18,14,10,.86)","--ink":"#fff7ed","--mute":"#c8b29a","--line":"#3d2c1a","--acc":"#f59e0b","--accink":"#1a0f00","--glow":"#fde68a","--ok":"#34d399","--bad":"#f87171","--acc2":"#fcd34d","--altbg":"#3d2c1a","--altbd":"transparent","--hero":"linear-gradient(135deg,#f59e0b,#78350f 70%,#05060f)"}},
+medianoche:{n:"Medianoche",d:true,c:["#0a1a24","#22a7c4"],v:{"--bg":"#0a1a24","--card":"#10293a","--ink":"#e6f3f7","--mute":"#8fb0bf","--line":"#1e3f52","--acc":"#22a7c4","--accink":"#06141c","--glow":"#f5b52e","--ok":"#34c38f","--bad":"#ff7b7b","--acc2":"#7fd8ec","--altbg":"#1e3f52","--altbd":"transparent","--hero":"linear-gradient(135deg,#22a7c4,#15586c 70%,#0a2a38)"}},
   carbon:{n:"Carbón y naranja",d:true,c:["#141414","#ff7a1a"],v:{"--bg":"#141414","--card":"#1f1f1f","--ink":"#f2f2f2","--mute":"#a3a3a3","--line":"#333333","--acc":"#ff7a1a","--accink":"#141414","--glow":"#ffd166","--ok":"#34c38f","--bad":"#ff7b7b","--acc2":"#ff9d57","--altbg":"#333333","--altbd":"transparent","--hero":"linear-gradient(135deg,#ff7a1a,#7a3210 70%,#1f1f1f)"}},
   vino:{n:"Vino oscuro",d:true,c:["#1a0d12","#c2185b"],v:{"--bg":"#1a0d12","--card":"#2a131c","--ink":"#f7e9ee","--mute":"#b89aa6","--line":"#43202d","--acc":"#c2185b","--accink":"#ffffff","--glow":"#f5c542","--ok":"#34c38f","--bad":"#ff7b7b","--acc2":"#ff7eb0","--altbg":"#43202d","--altbd":"transparent","--hero":"linear-gradient(135deg,#c2185b,#5c0f2e 70%,#1a0d12)"}},
   bosquenoche:{n:"Bosque nocturno",d:true,c:["#0b1a12","#2fbf71"],v:{"--bg":"#0b1a12","--card":"#132a1d","--ink":"#e6f5ea","--mute":"#98b8a2","--line":"#1f3d2a","--acc":"#2fbf71","--accink":"#06160d","--glow":"#f0c24b","--ok":"#34c38f","--bad":"#ff7b7b","--acc2":"#7ee2a8","--altbg":"#1f3d2a","--altbd":"transparent","--hero":"linear-gradient(135deg,#2fbf71,#16603a 70%,#0b1a12)"}},
@@ -1032,18 +1061,31 @@ var AP_TEMAS={medianoche:{n:"Medianoche",d:true,c:["#0a1a24","#22a7c4"],v:{"--bg
   grafito:{n:"Grafito",c:["#eceef1","#3b4a5c"],v:{"--bg":"#eceef1","--card":"#f9fafb","--ink":"#1f2328","--mute":"#646d78","--line":"#d3d8df","--acc":"#3b4a5c","--accink":"#fff","--glow":"#d99a1e","--acc2":"#3b4a5c","--hero":"linear-gradient(135deg,#4a5a6e,#2b3644 70%,#1b222c)"}},
   nocheazul:{n:"Noche azul",c:["#0b1220","#3b82f6"],v:{"--bg":"#0b1220","--card":"#131d30","--ink":"#e7edf7","--mute":"#97a4bd","--line":"#22304a","--acc":"#3b82f6","--accink":"#fff","--glow":"#f5c542","--ok":"#34c38f","--bad":"#ff7b7b","--acc2":"#7cc4f0","--altbg":"#2a3a60","--altbd":"transparent","--hero":"linear-gradient(135deg,#3b82f6,#1e3a8a 70%,#0f1f4a)"}},
   menta:{n:"Menta",c:["#e4f5ef","#0f8f73"],v:{"--bg":"#e4f5ef","--card":"#f4fbf8","--ink":"#0f3328","--mute":"#4e7a68","--line":"#bfe0d3","--acc":"#0f8f73","--accink":"#fff","--glow":"#e0a020","--acc2":"#0f8f73","--hero":"linear-gradient(135deg,#14a085,#0b6e5a 70%,#084a3e)"}}};
-var AP_ORDEN=["marca","medianoche","carbon","vino","bosquenoche","galaxia","nocheazul","grafitooscuro","oceano","atardecer","bosque","grafito","menta"];
+var AP_ORDEN=["marca","medianoche","carbon","vino","bosquenoche","galaxia","u_estrellas","u_cometas","u_nebulosa","u_aurora","u_orbita","nocheazul","grafitooscuro","oceano","atardecer","bosque","grafito","menta"];
 var AP_VARS=["--bg","--card","--ink","--mute","--line","--acc","--accink","--glow","--ok","--bad","--acc2","--altbg","--altbd","--hero"];
 var AP_LETRAS={base:{n:"Normal",css:""},clasica:{n:"Clásica",css:'body,h1,h2,h3,button,input,select,label{font-family:Georgia,"Times New Roman",serif!important}'},sistema:{n:"Sistema",css:'body,h1,h2,h3,button,input,select,label{font-family:system-ui,-apple-system,"Segoe UI",sans-serif!important}'}};
 var APR=(function(){try{return Object.assign({tema:"base",letra:"base",grande:false,anim:true,diario:false},JSON.parse(localStorage.getItem("gs_ap")||"{}"))}catch(e){return {tema:"base",letra:"base",grande:false,anim:true,diario:false}}})();
 function apSave(){try{localStorage.setItem("gs_ap",JSON.stringify(APR))}catch(e){}}
 function apTemaActual(){if(APR.diario){var h=new Date(),ini=new Date(h.getFullYear(),0,0),dia=Math.floor((h-ini)/864e5);return AP_ORDEN[dia%AP_ORDEN.length]}return APR.tema}
+var APFX_RAF=0;
+function apFxSet(k){var el=$("apFx");if(!el)return;cancelAnimationFrame(APFX_RAF);el.innerHTML="";el.className="";document.documentElement.classList.toggle("ap-fx",!!k);if(!k)return;el.className="fx-"+k;
+  if(k==="estrellas"||k==="cometas"){var c=document.createElement("canvas");el.appendChild(c);apFxCanvas(c,k==="cometas")}
+  else if(k==="orbita"){el.innerHTML='<div class="planeta"><i></i></div><div class="luna"></div>'}}
+function apFxCanvas(c,cometas){var ctx=c.getContext("2d"),W=0,H=0,estrellas=[],fugaces=[];
+  function reajustar(){W=c.width=innerWidth;H=c.height=innerHeight;estrellas=[];var n=Math.min(260,Math.round(W*H/5000));for(var i=0;i<n;i++)estrellas.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.3+.2,v:Math.random()*.2+.04,t:Math.random()*6.28,s:Math.random()*.03+.005})}
+  reajustar();addEventListener("resize",reajustar);
+  function cuadro(){ctx.clearRect(0,0,W,H);
+    estrellas.forEach(function(e){e.y+=e.v;if(e.y>H){e.y=0;e.x=Math.random()*W}e.t+=e.s;ctx.globalAlpha=.4+.6*Math.abs(Math.sin(e.t));ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(e.x,e.y,e.r,0,6.283);ctx.fill()});
+    if(cometas&&Math.random()<.015)fugaces.push({x:Math.random()*W*.8,y:Math.random()*H*.4,vx:7+Math.random()*4,vy:3.5+Math.random()*2,l:0});
+    fugaces=fugaces.filter(function(f){f.x+=f.vx;f.y+=f.vy;f.l++;ctx.globalAlpha=Math.max(0,1-f.l/60);var g=ctx.createLinearGradient(f.x,f.y,f.x-f.vx*10,f.y-f.vy*10);g.addColorStop(0,"#fff");g.addColorStop(1,"rgba(255,255,255,0)");ctx.strokeStyle=g;ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(f.x,f.y);ctx.lineTo(f.x-f.vx*10,f.y-f.vy*10);ctx.stroke();return f.l<60});
+    ctx.globalAlpha=1;if(APR.anim)APFX_RAF=requestAnimationFrame(cuadro)}
+  cuadro();if(!APR.anim)cancelAnimationFrame(APFX_RAF)}
 function applyAp(){var root=document.documentElement,t=apTemaActual(),def=AP_TEMAS[t];
   AP_VARS.forEach(function(v){root.style.removeProperty(v)});
   if(def)Object.keys(def.v).forEach(function(k){root.style.setProperty(k,def.v[k])});
   var st=document.getElementById("apFont");if(!st){st=document.createElement("style");st.id="apFont";document.head.appendChild(st)}
   st.textContent=AP_LETRAS[APR.letra]?AP_LETRAS[APR.letra].css:"";
-  root.classList.toggle("ap-big",!!APR.grande);root.classList.toggle("ap-noanim",!APR.anim)}
+  root.classList.toggle("ap-big",!!APR.grande);root.classList.toggle("ap-noanim",!APR.anim);apFxSet(def&&def.fx)}
 function apPintar(){var el=$("apSheet"),hoy=apTemaActual();
   var sw='<button type="button" data-tema="base" aria-pressed="'+(APR.tema==="base"&&!APR.diario)+'"><i style="background:linear-gradient(90deg,#0d7a85,#e8f0ef)"></i>Predeterminada</button>';
   AP_ORDEN.forEach(function(k){var t=AP_TEMAS[k];sw+='<button type="button" data-tema="'+k+'" aria-pressed="'+(APR.tema===k&&!APR.diario)+'"><i style="background:linear-gradient(90deg,'+t.c[0]+','+t.c[1]+')"></i>'+t.n+(t.d?' 🌙':'')+'</button>'});
