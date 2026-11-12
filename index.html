@@ -202,6 +202,19 @@ body.locked main>section,body.locked nav,body.locked .fabnew,body.locked .cdfab,
 /* NAV CON ICONOS */
 .fabnew{position:fixed;right:14px;bottom:calc(74px + env(safe-area-inset-bottom,0px));z-index:9;display:inline-flex;align-items:center;gap:6px;background:var(--acc);color:var(--accink);border:0;border-radius:99px;padding:13px 18px;font:700 15px "Bricolage Grotesque",system-ui,sans-serif;box-shadow:0 8px 20px rgba(13,122,133,.4);cursor:pointer}
 .fabnew span{font-size:20px;line-height:1}
+/* FICHA DEL CLIENTE */
+.fisheet{max-height:86vh}
+.fisheet .est{display:inline-block;padding:4px 10px;border-radius:99px;font-size:13px;font-weight:700;margin:4px 6px 0 0}
+.fisheet .est.g{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
+.fisheet .est.y{background:color-mix(in srgb,var(--glow) 22%,transparent);color:var(--ink)}
+.fisheet .est.r{background:color-mix(in srgb,var(--bad) 18%,transparent);color:var(--bad)}
+.fisheet .sec{border-top:1px solid var(--line);margin-top:12px;padding-top:10px}
+.fisheet .vis{padding:7px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.fisheet .vis:last-child{border-bottom:0}
+.fisheet .rec{padding:8px 10px;border-radius:12px;background:var(--bg);margin-top:8px;font-size:14px}
+.fisheet .acts2{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.fisheet label{display:block;font-size:13px;font-weight:700;margin:10px 0 4px}
+.fisheet select,.fisheet textarea{width:100%}
 /* MI APARIENCIA (cada persona en su equipo; por defecto no cambia nada) */
 .apsheet{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:12;max-width:520px;margin:auto;max-height:78vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 14px 40px rgba(0,0,0,.28)}
 .apsheet h3{margin:0 0 4px;font:800 17px "Bricolage Grotesque",system-ui,sans-serif}
@@ -507,7 +520,7 @@ raf=requestAnimationFrame(frame);
   </div>
 </section>
 
-<section id="v-cli" class="hide"><div class="card hide" id="rncard"><h2>Les toca renovar el cerámico</h2><div id="rnb"></div></div><div class="card"><h2>Clientes</h2><input id="q" placeholder="Buscar por nombre o vehículo" aria-label="Buscar cliente"><div class="m" id="cs" style="margin-top:8px"></div><div id="cll"></div></div></section>
+<section id="v-cli" class="hide"><div class="card hide" id="mtcard"><h2>Les toca mantenimiento</h2><div id="mtb"></div></div><div class="card hide" id="rncard"><h2>Les toca renovar el cerámico</h2><div id="rnb"></div></div><div class="card"><h2>Clientes</h2><input id="q" placeholder="Buscar por nombre o vehículo" aria-label="Buscar cliente"><div class="m" id="cs" style="margin-top:8px"></div><div id="cll"></div></div></section>
 <section id="v-num" class="hide">
   <div class="seg" id="numd"><button data-m="a" aria-pressed="true">📊 Números</button><button data-m="b" aria-pressed="false">⚙️ Ajustes</button></div>
   <div id="numA">
@@ -529,6 +542,7 @@ raf=requestAnimationFrame(frame);
   <div class="m" style="margin:0 2px 10px">Tocá una sección para abrirla.</div>
   <div class="card" id="rvcard"><h2>Reservas en línea</h2><div id="rvb"></div></div>
   <div class="card" id="refcard"><h2>Referidos</h2><div id="refb"></div></div>
+  <div class="card" id="garcard"><h2>Garantía y mantenimiento</h2><div id="garb"></div></div>
   <div class="card"><h2>Precios base</h2><div class="m">Son los precios que salen al crear una cita. En cada cita podés cambiar el precio sin que cambie el precio base.</div><div id="bpl"></div><div class="row"><button id="bps">Guardar precios base</button></div></div>
   <div class="card" id="tmcard"><h2>Equipo</h2><div class="m">Autorizá los correos de tu equipo. Tienen acceso a todo: agenda, clientes, precios, Números y gastos. Solo vos podés autorizar o quitar personas.</div>
     <div class="row"><input id="tme" type="email" placeholder="correo@gmail.com" autocapitalize="off" aria-label="Correo a autorizar"><button class="sm" id="tma" style="padding:10px 14px">Autorizar</button></div>
@@ -593,6 +607,7 @@ raf=requestAnimationFrame(frame);
 <button id="cdFab" class="cdfab hide" type="button" aria-label="Cerrar o abrir horas de este día" title="Cerrar mi día"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/><circle cx="12" cy="16" r="1.2" fill="currentColor" stroke="none"/></svg></button>
 <div id="cdPop" class="cdpop hide" role="dialog" aria-label="Cerrar mi día"></div>
 <div id="apSheet" class="apsheet hide" role="dialog" aria-label="Mi apariencia"></div>
+<div id="fiSheet" class="apsheet fisheet hide" role="dialog" aria-label="Ficha del cliente"></div>
 
 <script>
 var SERV=[{id:"ps",n:"Parabrisas sedán + protección cerámica",p:20000,g:1},{id:"pu",n:"Parabrisas SUV + protección cerámica",p:25000,g:1},{id:"promo",n:"Promo: parabrisas + protección cerámica + vidrio trasero y retrovisores",p:25000,g:1},{id:"tvc",n:"Todos los vidrios + protección cerámica",p:40000,g:1},{id:"tv",n:"Todos los vidrios sin protección",p:35000,g:1},{id:"focos",n:"Pulido de focos con polímero líquido",p:20000},{id:"techo",n:"Pulido de techo panorámico",p:15000},{id:"hidro",n:"Tratamiento hidrofóbico",p:10000}];
@@ -784,16 +799,17 @@ $("cp").onclick=function(){var L=S.jobs.filter(function(j){return j.date===sel})
   var t="Agenda "+DN[d.getDay()]+" "+d.getDate()+" "+MN[d.getMonth()]+":\n"+L.map(function(j){return fmtT(j.time)+" - "+j.cli+(j.veh?" ("+j.veh+")":"")+" · "+j.items.join(", ")+" · "+crc(j.total)+(j.tel?" · "+j.tel:"")+(j.note?" · "+j.note:"")}).join("\n");
   window.open("https://wa.me/?text="+encodeURIComponent(L.length?t:"Sin citas este día"),"_blank")};
 var CA=[];
-function renderCli(){try{renderRn()}catch(e){}var M={};S.jobs.forEach(function(j){var k=j.cli.trim().toLowerCase(),c=M[k]||(M[k]={n:j.cli,tel:"",veh:"",v:0,t:0,last:""});if(j.tel)c.tel=j.tel;if(j.veh)c.veh=j.veh;if(locOf(j))c.ubic=locOf(j);if(isDone(j)){c.v++;c.t+=j.total;if(j.date>c.last)c.last=j.date}});
+function renderCli(){try{renderRn();renderMt()}catch(e){}var M={};S.jobs.forEach(function(j){var k=j.cli.trim().toLowerCase(),c=M[k]||(M[k]={n:j.cli,tel:"",veh:"",v:0,t:0,last:""});if(j.tel)c.tel=j.tel;if(j.veh)c.veh=j.veh;if(locOf(j))c.ubic=locOf(j);if(isDone(j)){c.v++;c.t+=j.total;if(j.date>c.last)c.last=j.date}});
   var q=$("q").value.toLowerCase(),lim=ymd(addD(new Date(),-150));
   CA=Object.keys(M).map(function(k){return M[k]}).filter(function(c){return !q||c.n.toLowerCase().indexOf(q)>-1||c.veh.toLowerCase().indexOf(q)>-1}).map(function(c){c.od=!!(c.last&&c.last<lim);return c}).sort(function(a,b){return (b.od-a.od)||(a.last<b.last?1:-1)});
   var od=CA.filter(function(c){return c.od}).length;
   $("cs").textContent=CA.length+" clientes"+(od?" · "+od+" para volver a contactar":"");
   $("cll").innerHTML=CA.length?CA.map(function(c,i){var mo=c.last?Math.round((new Date()-pd(c.last))/2.6e9):0;
     return '<div class="job"><div class="jb"><div class="n">'+esc(c.n)+' <span class="m">· '+esc(c.veh)+'</span></div><div class="m">'+c.v+(c.v===1?" visita":" visitas")+(OWN?' · '+crc(c.t):'')+(c.last?' · última '+pd(c.last).getDate()+" "+MN[pd(c.last).getMonth()]:'')+'</div>'+(c.ubic?mapThumb(c.ubic,true):'')+(c.od?'<div class="m down">Hace '+mo+' meses que no viene</div>':'')+pendNotes(c.n).slice(0,3).map(function(n){return '<div class="cn">📌 '+esc(n.txt)+(n.due?' <span class="m">· '+dueTxt(n.due)+'</span>':'')+'</div>'}).join("")+
-    '<div class="acts">'+(c.ubic?locBtns(c.ubic):'')+(c.tel?'<button class="sm wa" data-cw="'+i+'">'+ICWA+(c.od?"Escribirle":"WhatsApp")+'</button>':'')+'<button class="alt sm" data-ca="'+i+'">Agendar</button><button class="alt sm" data-cn="'+i+'">+ Nota</button></div></div></div>'}).join(""):'<div class="empty">Cuando agendés citas, tus clientes aparecen aquí.</div>';
+    '<div class="acts">'+(c.ubic?locBtns(c.ubic):'')+(c.tel?'<button class="sm wa" data-cw="'+i+'">'+ICWA+(c.od?"Escribirle":"WhatsApp")+'</button>':'')+'<button class="sm" data-cf="'+i+'">📋 Ficha</button><button class="alt sm" data-ca="'+i+'">Agendar</button><button class="alt sm" data-cn="'+i+'">+ Nota</button></div></div></div>'}).join(""):'<div class="empty">Cuando agendés citas, tus clientes aparecen aquí.</div>';
   Array.prototype.forEach.call(document.querySelectorAll("[data-cw]"),function(b){b.onclick=function(){var c=CA[b.dataset.cw];waTo(c.tel,"Hola "+c.n+", ¿cómo estás? Hace unos meses pulimos tu "+(c.veh||"vehículo")+" en GlassStudioCR. Con el sol los focos y el parabrisas se vuelven a opacar, si querés te hago un retoque. ¿Te agendo esta semana?")}});
   Array.prototype.forEach.call(document.querySelectorAll("[data-cn]"),function(b){b.onclick=function(){var c=CA[b.dataset.cn];show("not");$("ncl").value=c.n;$("ntx").focus()}});
+  Array.prototype.forEach.call(document.querySelectorAll("[data-cf]"),function(b){b.onclick=function(){fichaOpen(CA[b.dataset.cf])}});
   Array.prototype.forEach.call(document.querySelectorAll("[data-ca]"),function(b){b.onclick=function(){var c=CA[b.dataset.ca];show("new");$("cli").value=c.n;$("tel").value=c.tel;$("veh").value=c.veh;$("ubic").value=c.ubic||"";updUbm()}});
 }
 $("q").oninput=renderCli;
@@ -816,6 +832,7 @@ function ask(b,fn){if(b.dataset.armed){clearTimeout(b._t);delete b.dataset.armed
 function stopSubs(){SUBS.forEach(function(f){try{f()}catch(e){}});SUBS=[];DB=null}
 function startSubs(u){DB=firebase.firestore();var first=true;
   SUBS.push(DB.collection("jobs").onSnapshot(function(sn){var CX=[];S.jobs=sn.docs.map(function(d){return d.data()}).filter(function(j){if(j.st==="Cancelada"){CX.push(j);return false}return true});if(OWN)CX.forEach(function(j){DB.doc("jobs/"+j.id).delete().catch(function(){});toast("❌ "+j.cli+" canceló su cita del "+fmtD(j.date)+(j.time?" "+fmtT(j.time):""))});fix();JOBS_READY=true;reconcile();if(!first){var me=myEmail();sn.docChanges().forEach(function(ch){var j=ch.doc.data();if(ch.type==="modified"&&!ch.doc.metadata.hasPendingWrites&&j.chg==="movida"&&j.st==="Por confirmar"&&j.chgAt&&j.chgAt.toMillis&&Date.now()-j.chgAt.toMillis()<6e5)toast("🔁 "+j.cli+" cambió su cita para el "+fmtD(j.date)+" "+fmtT(j.time));if(ch.type==="removed"&&OWN&&j.tk&&j.st!=="Cancelada")DB.doc("mine/"+j.tk).update({st:"cancelada",upd:Date.now()}).catch(function(){});if(ch.type==="added"&&!ch.doc.metadata.hasPendingWrites&&j.by&&j.by!==me)toast("🔔 "+whoN(j.by)+" agendó a "+j.cli+" · "+fmtD(j.date)+(j.time?" "+fmtT(j.time):""))})}if(CUR==="new")updClash();if(first){first=false;lockShow(null);show(CUR==="num"&&!OWN?"ag":CUR)}else refresh()},function(e){if(e&&e.code==="permission-denied"){$("ne").textContent=u.email;lockShow("noauth")}else{lockShow(null)}}));
+  SUBS.push(DB.doc("settings/gar").onSnapshot(function(sn){GAR=Object.assign({},GAR0,sn.exists?sn.data():{});if(CUR==="cli")renderCli();if(CUR==="num")try{renderGar()}catch(e){}},function(){}));
   SUBS.push(DB.doc("settings/goal").onSnapshot(function(sn){S.goal=sn.exists?sn.data().v:0;if(CUR==="num"&&OWN)renderNum()},function(){}));
   SUBS.push(DB.doc("settings/notify").onSnapshot(function(sn){NTFY=sn.exists?(sn.data().topic||""):"";renderNtfy()},function(){renderNtfy()}));
   SUBS.push(DB.collection("settings").onSnapshot(onSettings,function(){}));
@@ -1552,8 +1569,75 @@ function renderRef(){var el=$("refb");if(!el)return;var L=refList(),due=L.filter
 /* RENOVAR: clientes a los que se les hizo protección cerámica hace 11 meses o más y no han vuelto.
    Al escribirles (o tocar «Quitar») la cita queda con rn:1 y ya no salen. */
 var RNDAYS=335;
+/* GARANTÍA, CUIDADOS Y MANTENIMIENTO
+   Los valores se cambian en Números → Ajustes → Garantía y mantenimiento (settings/gar). */
+var GAR0={dias:30,mant:8,renov:11,precio:0},GAR=Object.assign({},GAR0);
+var CUIDADOS=["Lavá los vidrios solo con jabón pH neutro para carro.","No uses jabón de platos (como Acción), jabón de baño ni detergente de ropa: son alcalinos y le quitan el cerámico.","No uses desengrasantes (como Ciner), cloro ni limpiadores de cocina en los vidrios.","No apliqués quitamanchas ni removedores de gota seca, ni limpiador de aros: muchos son ácidos y pueden manchar o quemar el vidrio. En el lavacar pedí que no le caiga limpiador de aros a los vidrios.","No uses esponjas abrasivas, cepillos duros ni raspadores.","Cambiá las escobillas si dejan rayas o ya están gastadas."];
+var NOCUBRE="daños por productos que no se recomiendan (jabón de platos o de ropa, desengrasantes, quitamanchas o productos ácidos), golpes de piedra, rayones nuevos ni escobillas gastadas";
+function mesesDesde(f){return (new Date()-pd(f))/2629800000}
+function addM(f,m){var d=pd(f);d.setMonth(d.getMonth()+m);return ymd(d)}
+function cuiMsg(j){return "¡Hola "+String(j.cli||"").split(" ")[0]+"! Gracias por confiar en GlassStudioCR 🙌\n\n🛡️ Para que la protección cerámica te dure:\n• "+CUIDADOS.join("\n• ")+
+  "\n\n✅ Garantía: "+GAR.dias+" días sobre el trabajo de pulido (si queda alguna mancha o marca del pulido, volvemos sin costo). No cubre "+NOCUBRE+".\n\nSi notás algo, escribinos con una foto y lo revisamos."}
+function cuiSend(j){waTo(j.tel,cuiMsg(j));j.cui=ymd(new Date());if(DB)DB.doc("jobs/"+j.id).update({cui:j.cui}).catch(dberr);toast("Cuidados enviados ✓")}
+function mtMsg(j){return "¡Hola "+String(j.cli||"").split(" ")[0]+"! Te saluda GlassStudioCR 👋\n\nHace unos "+Math.round(mesesDesde(j.date))+" meses le pusimos la protección cerámica a tu "+(j.veh||"carro")+". Es buen momento para un mantenimiento: limpieza profunda de los vidrios y una capa nueva de cerámico, para que te dure más"+(GAR.precio?" ("+crc(GAR.precio)+")":"")+".\n\n¿Te agendamos? Vamos donde estés:\nhttps://citas.glassstudiocr.com/reservar/"}
+/* último cerámico de cada cliente (agrupado por teléfono o nombre) */
+function cerPorCliente(){var M={};
+  S.jobs.forEach(function(j){if(j.st==="Cancelada")return;var k=telK(j.tel)||String(j.cli||"").trim().toLowerCase();if(!k)return;var c=M[k]||(M[k]={last:"",cer:null});
+    if(j.date>c.last)c.last=j.date;if(isDone(j)&&hasCer(j)&&(!c.cer||j.date>c.cer.date))c.cer=j});return M}
+function mtList(){var M=cerPorCliente(),a=addM(ymd(new Date()),-GAR.mant),b=addM(ymd(new Date()),-GAR.renov);
+  return Object.keys(M).map(function(k){return M[k]}).filter(function(c){return c.cer&&c.cer.tel&&!c.cer.mt&&!c.cer.rn&&c.cer.date<=a&&c.cer.date>b&&c.last<=c.cer.date}).map(function(c){return c.cer}).sort(function(x,y){return x.date<y.date?-1:1}).slice(0,25)}
+function renderMt(){var el=$("mtb"),cd=$("mtcard");if(!el)return;var L=mtList();cd.classList.toggle("hide",!L.length);if(!L.length)return;
+  el.innerHTML='<div class="m">Cumplieron '+GAR.mant+' meses con el cerámico. Ofreceles el mantenimiento antes de que se gaste.</div>'+L.map(function(j){
+    return '<div class="svc" style="display:block;padding:10px 0"><div><b>'+esc(j.cli)+'</b> <span class="m">· '+esc(j.veh||"")+'</span></div><div class="m">Cerámico: '+fmtD(j.date)+' · hace '+Math.round(mesesDesde(j.date))+' meses</div><div class="row" style="margin-top:8px"><button class="sm wa" data-mtw="'+j.id+'">'+ICWA+'Ofrecer mantenimiento</button><button class="alt sm" data-mtx="'+j.id+'">Quitar</button></div></div>'}).join("");
+  var mark=function(id){var j=S.jobs.find(function(x){return x.id==id});if(!j)return null;j.mt=1;if(DB)DB.doc("jobs/"+j.id).update({mt:1}).catch(dberr);return j};
+  Array.prototype.forEach.call(el.querySelectorAll("[data-mtw]"),function(b){b.onclick=function(){var j=S.jobs.find(function(x){return x.id==b.dataset.mtw});if(!j)return;waTo(j.tel,mtMsg(j));mark(j.id);renderMt()}});
+  Array.prototype.forEach.call(el.querySelectorAll("[data-mtx]"),function(b){b.onclick=function(){mark(b.dataset.mtx);renderMt()}})}
+/* FICHA DEL CLIENTE */
+var FICHA=null;
+function jobsDe(c){var k=telK(c.tel),n=String(c.n||"").trim().toLowerCase();return S.jobs.filter(function(j){return j.st!=="Cancelada"&&((k&&telK(j.tel)===k)||String(j.cli||"").trim().toLowerCase()===n)}).sort(function(a,b){return a.date<b.date?1:-1})}
+function fichaOpen(c){FICHA=c;fichaPintar();$("fiSheet").classList.remove("hide")}
+function fichaPintar(){var c=FICHA,el=$("fiSheet");if(!c)return;var J=jobsDe(c),hechos=J.filter(isDone),cer=hechos.filter(hasCer)[0],ult=hechos[0],hoy=ymd(new Date());
+  var est='';if(cer){var m=mesesDesde(cer.date);est=m<GAR.mant?'<span class="est g">🟢 Protegido</span>':m<GAR.renov?'<span class="est y">🟡 Toca mantenimiento</span>':'<span class="est r">🔴 Le toca renovar</span>'}else est='<span class="est y">Sin cerámico registrado</span>';
+  var gHasta=ult?ymd(addD(pd(ult.date),GAR.dias)):"",gOn=gHasta&&gHasta>=hoy;
+  var recs=[];J.forEach(function(j){(j.rec||[]).forEach(function(r){recs.push({j:j,r:r})})});recs.sort(function(a,b){return a.r.f<b.r.f?1:-1});
+  var h='<h3>'+esc(c.n)+'</h3><div class="m">'+esc(c.veh||"")+(c.tel?' · '+esc(c.tel):'')+'</div>'+est+
+   (gHasta?'<span class="est '+(gOn?'g':'r')+'">'+(gOn?'Garantía activa hasta ':'Garantía vencida el ')+fmtD(gHasta)+'</span>':'')+
+   '<div class="sec"><b>Cerámico</b><div class="m">'+(cer?'Último: '+fmtD(cer.date)+' · hace '+Math.round(mesesDesde(cer.date))+' meses · mantenimiento a los '+GAR.mant+' meses, renovar a los '+GAR.renov:'Todavía no tiene un servicio con cerámico terminado.')+'</div>'+
+   (ult?'<div class="m" style="margin-top:4px">Cuidados y garantía: '+(ult.cui?'✓ enviados el '+fmtD(ult.cui):'<b>no se han enviado</b> por la app')+'</div>':'')+'</div>'+
+   '<div class="sec"><b>Visitas ('+J.length+')</b>'+(J.length?J.slice(0,12).map(function(j){return '<div class="vis">'+fmtD(j.date)+' · '+esc(j.st)+'<div class="m">'+(j.items||[]).map(esc).join(", ")+(OWN?' · '+crc(j.total):'')+'</div></div>'}).join(""):'<div class="m">Sin visitas.</div>')+'</div>'+
+   '<div class="sec"><b>Reclamos de garantía ('+recs.length+')</b>'+recs.map(function(x){var r=x.r;return '<div class="rec"><b>'+fmtD(r.f)+'</b> · '+esc(r.res)+'<div>'+esc(r.mot)+'</div><div class="m">Visita del '+fmtD(x.j.date)+' · ¿Siguió los cuidados? '+esc(r.cui)+(r.nota?' · '+esc(r.nota):'')+'</div></div>'}).join("")+
+   '<div id="recF" class="hide">'+(hechos.length?'<label for="recJ">¿De cuál visita?</label><select id="recJ">'+hechos.map(function(j){return '<option value="'+esc(j.id)+'">'+fmtD(j.date)+' · '+esc((j.items||[])[0]||"")+'</option>'}).join("")+'</select>'+
+     '<label for="recM">¿Qué reclama?</label><textarea id="recM" rows="2" maxlength="300" placeholder="Ej: dice que el agua ya no resbala"></textarea>'+
+     '<label for="recC">¿Siguió los cuidados?</label><select id="recC"><option>No sé</option><option>Sí</option><option>No</option></select>'+
+     '<label for="recR">Resultado</label><select id="recR"><option>Pendiente</option><option>Cubierto por garantía</option><option>No cubierto</option><option>Cortesía</option></select>'+
+     '<label for="recN">Nota (opcional)</label><textarea id="recN" rows="2" maxlength="300" placeholder="Ej: usó desengrasante en el lavacar"></textarea>'+
+     '<div class="acts2"><button class="sm" id="recG">Guardar reclamo</button><button class="alt sm" id="recX">Cancelar</button></div>':'<div class="m">Primero tiene que haber una visita terminada.</div>')+'</div></div>'+
+   '<div class="acts2">'+(c.tel&&ult?'<button class="sm wa" id="fiCui">🛡️ Enviar cuidados</button>':'')+(c.tel&&cer?'<button class="sm wa" id="fiMt">🔧 Ofrecer mantenimiento</button>':'')+'<button class="alt sm" id="fiRec">+ Reclamo</button><button class="alt sm" id="fiAg">Agendar</button><button class="alt sm" id="fiX">Cerrar</button></div>';
+  el.innerHTML=h;
+  $("fiX").onclick=function(){el.classList.add("hide")};
+  $("fiAg").onclick=function(){el.classList.add("hide");show("new");$("cli").value=c.n;$("tel").value=c.tel||"";$("veh").value=c.veh||"";$("ubic").value=c.ubic||"";updUbm()};
+  $("fiRec").onclick=function(){$("recF").classList.toggle("hide")};
+  if($("fiCui"))$("fiCui").onclick=function(){cuiSend(ult);fichaPintar()};
+  if($("fiMt"))$("fiMt").onclick=function(){waTo(c.tel,mtMsg(cer));cer.mt=1;if(DB)DB.doc("jobs/"+cer.id).update({mt:1}).catch(dberr)};
+  if($("recX"))$("recX").onclick=function(){$("recF").classList.add("hide")};
+  if($("recG"))$("recG").onclick=function(){var mot=$("recM").value.trim();if(!mot){toast("Escribí qué reclama");return}
+    var j=S.jobs.find(function(x){return x.id==$("recJ").value});if(!j)return;
+    var r={f:ymd(new Date()),mot:mot.slice(0,300),cui:$("recC").value,res:$("recR").value,nota:$("recN").value.trim().slice(0,300),by:(typeof myEmail==="function"?myEmail():"")};
+    j.rec=(j.rec||[]).concat([r]);if(DB)DB.doc("jobs/"+j.id).update({rec:j.rec}).catch(dberr);toast("Reclamo guardado ✓");fichaPintar()}}
+/* Ajustes (solo dueño) */
+function renderGar(){var el=$("garb");if(!el)return;if(!BOSS){$("garcard").classList.add("hide");return}$("garcard").classList.remove("hide");
+  el.innerHTML='<div class="m">Esto sale en el mensaje de cuidados y en los recordatorios de Clientes.</div>'+
+   '<label for="gDias">Días de garantía sobre el pulido</label><input id="gDias" type="number" inputmode="numeric" min="0" max="365" value="'+GAR.dias+'">'+
+   '<label for="gMant">Ofrecer mantenimiento a los (meses)</label><input id="gMant" type="number" inputmode="numeric" min="1" max="24" value="'+GAR.mant+'">'+
+   '<label for="gRen">Renovar el cerámico a los (meses)</label><input id="gRen" type="number" inputmode="numeric" min="1" max="36" value="'+GAR.renov+'">'+
+   '<label for="gPre">Precio del mantenimiento (₡, 0 = no mostrarlo)</label><input id="gPre" type="number" inputmode="numeric" min="0" value="'+(GAR.precio||0)+'">'+
+   '<div class="row"><button class="sm" id="gSave">Guardar</button></div><div class="m" style="margin-top:8px"><b>Vista del mensaje de cuidados:</b></div><div class="m" style="white-space:pre-wrap;background:var(--bg);padding:8px;border-radius:10px">'+esc(cuiMsg({cli:"Cliente"}))+'</div>';
+  $("gSave").onclick=function(){var o={dias:Math.max(0,+$("gDias").value||0),mant:Math.max(1,+$("gMant").value||8),renov:Math.max(1,+$("gRen").value||11),precio:Math.max(0,+$("gPre").value||0)};
+    if(o.mant>=o.renov){toast("El mantenimiento tiene que ser antes de la renovación");return}
+    GAR=Object.assign({},GAR0,o);if(DB)DB.doc("settings/gar").set(o).then(function(){toast("Guardado ✓")}).catch(dberr);renderGar()}}
+var _rnNum=renderNum;renderNum=function(){_rnNum.apply(this,arguments);try{renderGar()}catch(e){}};
 function hasCer(j){return (j.items||[]).some(function(n){return /cer[aá]mic|^Promo/i.test(n)&&!/sin protecci/i.test(n)})}
-function rnList(){var cut=ymd(addD(new Date(),-RNDAYS)),M={};
+function rnList(){var cut=addM(ymd(new Date()),-GAR.renov),M={};
   S.jobs.forEach(function(j){if(j.st==="Cancelada")return;var k=telK(j.tel)||String(j.cli||"").trim().toLowerCase();if(!k)return;var c=M[k]||(M[k]={last:"",cer:null});
     if(j.date>c.last)c.last=j.date;if(isDone(j)&&hasCer(j)&&(!c.cer||j.date>c.cer.date))c.cer=j});
   return Object.keys(M).map(function(k){return M[k]}).filter(function(c){return c.cer&&c.cer.tel&&!c.cer.rn&&c.cer.date<=cut&&c.last<=c.cer.date}).map(function(c){return c.cer}).sort(function(a,b){return a.date<b.date?1:-1}).slice(0,25)}
@@ -1626,7 +1710,7 @@ function tripSheet(j0){var o=document.getElementById("trip");if(o)o.remove();var
   var day=j0.date,rest=S.jobs.filter(function(j){return j.date===day&&j.time&&j.id!==j0.id&&!isDone(j)&&tmin(j.time)>=tmin(j0.time)}).sort(function(a,b){return tmin(a.time)-tmin(b.time)});
   o=document.createElement("div");o.id="trip";o.innerHTML='<div class="tc" role="dialog" aria-label="Siguiente cita"><h3>✅ Terminado: '+esc(j0.cli||"")+'</h3><div class="m" id="trM">'+(rest.length?'Calculando el recorrido…':'')+'</div><div id="trN"></div><div id="trB"></div></div>';
   document.body.appendChild(o);o.addEventListener("click",function(e){if(e.target===o)o.remove()});
-  var revB=(j0.tel&&!j0.rv)?'<button class="sm wa" id="trRev">⭐ Pedir reseña a '+esc(String(j0.cli||"").split(" ")[0])+'</button>':'';
+  var revB=(j0.tel&&!j0.cui&&hasCer(j0)?'<button class="sm wa" id="trCui">🛡️ Enviar cuidados y garantía</button>':'')+((j0.tel&&!j0.rv)?'<button class="sm wa" id="trRev">⭐ Pedir reseña a '+esc(String(j0.cli||"").split(" ")[0])+'</button>':'');
   function draw(here,src){var b=document.getElementById("trB");if(!b)return;var h="";
     if(!rest.length){h='<p class="big" style="margin:12px 0">🎉 No hay más citas '+(day===ymd(new Date())?'hoy':'ese día')+'</p>'}
     else{var n=rest[0],pn=jobPos(n),from=here||jobPos(j0),km=tripKm(from,pn),mn=travelMin(from,pn),now=new Date(),nowM=day===ymd(now)?now.getHours()*60+now.getMinutes():tmin(j0.time)+(typeof JOBMIN!=="undefined"?JOBMIN:120),eta=mn==null?null:nowM+mn,st=tmin(n.time),lv=tripLvl(km);
@@ -1643,6 +1727,7 @@ function tripSheet(j0){var o=document.getElementById("trip");if(o)o.remove();var
     b.innerHTML=h;var m=document.getElementById("trM");if(m)m.textContent="";
     var x=document.getElementById("trX");if(x)x.onclick=function(){o.remove()};
     var rv=document.getElementById("trRev");if(rv)rv.onclick=function(){revSend(j0);rv.remove()};
+    var cu=document.getElementById("trCui");if(cu)cu.onclick=function(){cuiSend(j0);cu.remove()};
     var go=document.getElementById("trGo");if(go&&rest.length){go.onclick=function(){var n=rest[0];waTo(n.tel,onWayMsg(n,window.__trEta));markOw(n)}}}
   draw(null,"cita");
   /* aviso automático al siguiente cliente (solo hoy, si su cita es en las próximas 3 horas) */
