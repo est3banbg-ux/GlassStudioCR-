@@ -215,7 +215,10 @@ button.danger{background:var(--bad);color:#fff}
 .ch{font-size:12px;background:var(--bg);border:1px solid var(--line);border-radius:99px;padding:2px 9px;color:var(--mute)}
 .ch.late{color:var(--bad);border-color:var(--bad);font-weight:600}.ch.tod{color:var(--ink);border-color:var(--glow);background:color-mix(in srgb,var(--glow) 18%,transparent);font-weight:600}
 .cn{font-size:14px;margin-top:6px;background:color-mix(in srgb,var(--glow) 14%,transparent);border-left:3px solid var(--glow);padding:5px 9px;border-radius:6px;word-break:break-word}
-.hnote{display:flex!important;width:100%;margin-top:10px;position:relative;z-index:1;justify-content:center}
+.hnote{display:flex!important;width:100%;margin-top:8px;position:relative;z-index:1;justify-content:space-between;align-items:center;text-align:left;gap:10px;line-height:1.3}
+.hpend{position:relative;z-index:1;margin-top:12px}.hpt{font-size:13px;font-weight:600;opacity:.95}
+@keyframes pcf{0%,60%{box-shadow:0 0 0 3px var(--glow)}100%{box-shadow:0 0 0 3px transparent}}.job.pcf{animation:pcf 2.4s ease-out both}
+@media (prefers-reduced-motion:reduce){.job.pcf{animation:none;box-shadow:0 0 0 2px var(--glow)}}
 /* INSUMOS */
 .icard .ih{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
 .iname{font:700 20px/1.15 "Bricolage Grotesque",system-ui,sans-serif}
@@ -1204,9 +1207,25 @@ function bindWeb(root){var gJ=function(id){return S.jobs.find(function(x){return
     confirmDel({t:n>1?"¿Rechazar la reserva de "+n+" carros?":"¿Rechazar esta reserva?",w:esc(j.cli)+' <span class="m">· '+fmtD(j.date)+" · "+fmtT(G[0].time)+(n>1?" · "+n+" carros":"")+'</span>',m:"Se borra"+(n>1?"n las citas":" la cita")+" y esas horas quedan libres otra vez. Después te abro WhatsApp por si querés avisarle al cliente.",ok:"Sí, rechazar"},
       function(){delDocs(G.map(function(x){return ["jobs/"+x.id,x]}),n>1?"Reserva de "+n+" carros rechazada":"Reserva rechazada");if(j.tel)waTo(j.tel,"Hola "+j.cli+", te escribimos de GlassStudioCR por tu reserva del "+fmtD(j.date)+" a las "+fmtT(G[0].time)+". ")})}})}
 var _ra2=renderAg;renderAg=function(){_ra2();bindWeb($("dl"))};
+/* Reservas web por confirmar: un botón por reserva que lleva directo a su día y a su tarjeta.
+   Al abrir la app (o cuando entra una nueva) la agenda salta sola al día de la reserva más reciente. */
+var PSEEN={},PJT=0;
+function pendKey(j){return j.id+"|"+j.date+"|"+j.time}
+function goPend(j){if(!j)return;if(CUR!=="ag")show("ag");sel=j.date;wOff=Math.round((monday(pd(sel))-monday(new Date()))/6048e5);renderAg();
+  setTimeout(function(){var q=$("dl").querySelector('select[data-id="'+j.id+'"]'),c=q&&q.closest(".job");if(!c){$("dl").scrollIntoView({behavior:"smooth"});return}
+    c.scrollIntoView({behavior:"smooth",block:"center"});c.classList.remove("pcf");void c.offsetWidth;c.classList.add("pcf")},60)}
 var _rh2=renderHero;renderHero=function(){_rh2();var P=S.jobs.filter(function(j){return j.st==="Por confirmar"}).sort(function(a,b){return (a.date+a.time)<(b.date+b.time)?-1:1});
-  if(P.length){var d=document.createElement("button");d.className="sm hnote";d.textContent="🌐 "+P.length+(P.length===1?" reserva web por confirmar":" reservas web por confirmar")+" ›";
-    d.onclick=function(){sel=P[0].date;wOff=Math.round((monday(pd(sel))-monday(new Date()))/6048e5);renderAg();$("dl").scrollIntoView({behavior:"smooth"})};$("hero").appendChild(d)}};
+  var seen={},H=P.filter(function(j){var G=webGroup(j),k=G[0].id;if(seen[k])return false;seen[k]=1;return true});
+  if(H.length){var w=document.createElement("div");w.className="hpend";w.innerHTML='<div class="hpt">🌐 '+H.length+(H.length===1?" reserva web por confirmar":" reservas web por confirmar")+'</div>';
+    H.slice(0,4).forEach(function(j){var n=webGroup(j).length,d=document.createElement("button");d.className="sm hnote";
+      d.innerHTML='<span><b>'+esc(j.cli)+'</b>'+(n>1?" · "+n+" carros":"")+'<br>'+(j.date===today?"Hoy":fmtD(j.date))+" · "+fmtT(j.time)+'</span><span>Ver ›</span>';
+      d.onclick=function(){goPend(j)};w.appendChild(d)});
+    if(H.length>4){var m=document.createElement("div");m.className="hpt";m.style.opacity=".8";m.textContent="y "+(H.length-4)+" más: confirmá estas primero";w.appendChild(m)}
+    $("hero").appendChild(w)}
+  var N=P.filter(function(j){return !PSEEN[pendKey(j)]});
+  if(N.length&&CUR==="ag"&&!document.querySelector("dialog[open]")&&!/^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement||{}).tagName||"")){
+    N.forEach(function(j){PSEEN[pendKey(j)]=1});var t=N.slice().sort(function(a,b){return (+b.at||0)-(+a.at||0)})[0];
+    clearTimeout(PJT);PJT=setTimeout(function(){if(S.jobs.some(function(x){return x.id===t.id&&x.st==="Por confirmar"})){goPend(t);toast("🌐 Te llevé a la reserva de "+t.cli+" · "+fmtD(t.date))}},400)}};
 function wantLocks(){var W={};S.jobs.forEach(function(j){if(!j.time||!j.date||j.date<today)return;var p=j.time.split(":"),m=(+p[0])*60+(+p[1]||0),e=m+120,zp=jobPos(j);
   for(var h=Math.floor(m/60);h*60<e&&h<24;h++)W[j.date+"_"+pad(h)]={date:j.date,h:h,job:String(j.id),z:zp?zp.n:""}});return W}
 function reconcile(){clearTimeout(RCT);RCT=setTimeout(function(){if(!DB||!OWN||!JOBS_READY||!SLOTS_READY)return;
