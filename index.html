@@ -1473,7 +1473,7 @@ function weekPanel(){var m0=monday(new Date()),wk=function(o){var a=new Date(m0)
   var ks=Object.keys(O).sort(function(a,b){return O[b]-O[a]}),d=t.web-l.web;
   return '<div class="m" style="margin-top:12px"><b>📊 Esta semana</b> (desde el lunes)</div><div class="stats" style="margin-top:6px"><div><small>Por la página</small><b>'+t.web+'</b><small>'+(d>0?'▲ '+d:d<0?'▼ '+(-d):'=')+' vs. semana pasada</small></div><div><small>% de citas por la página</small><b>'+pct+'%</b><small>meta: la mayoría</small></div></div>'+
     (ks.length?'<div class="m" style="margin-top:6px">De dónde vienen: '+ks.map(function(k){return esc(k)+' <b>'+O[k]+'</b>'}).join(' · ')+'</div>':'')}
-function renderRv(){var el=$("rvb");if(!el)return;var P=PUB||{},wa=String(P.wa||"50670892537").replace(/^506/,""),open=P.open!==false,off=(P.off||[]).filter(function(d){return d>=today}).sort();
+function renderRv(){var el=$("rvb");if(!el)return;var P=PUB||{},wa=String(P.wa||"50661506610").replace(/^506/,""),open=P.open!==false,off=(P.off||[]).filter(function(d){return d>=today}).sort();
   var ms=today.slice(0,7),wm=S.jobs.filter(function(j){return j.web&&(j.date||"").slice(0,7)===ms}).length,pc=S.jobs.filter(function(j){return j.st==="Por confirmar"}).length;
   var h='';
   if(RULES_MISSING)h+='<div class="ial b">Falta un paso: actualizar las reglas de Firebase para que los clientes puedan agendar.</div><ol style="font-size:14px;padding-left:20px;margin:8px 0"><li>Tocá <b>Copiar reglas</b>.</li><li>En Firebase entrá a <b>Firestore → Reglas</b>, borrá todo y pegá.</li><li>Tocá <b>Publicar</b> y volvé a abrir la app.</li></ol><div class="row"><button class="sm" id="rvr">Copiar reglas</button></div>';
