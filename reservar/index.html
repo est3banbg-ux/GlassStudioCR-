@@ -401,7 +401,7 @@ footer{color:var(--dim)}
       <label for="cli">Tu nombre</label><input id="cli" autocomplete="name" autocapitalize="words" maxlength="60" placeholder="Nombre y apellido">
       <label for="tel">Tu WhatsApp</label><input id="tel" type="tel" inputmode="tel" autocomplete="tel" maxlength="16" placeholder="8888 8888">
       <label for="det">Algo que debamos saber (opcional)</label><input id="det" maxlength="140" placeholder="Ej: portón negro, preguntar por Ana">
-      <label for="src">¿Cómo nos conociste? (opcional)</label><select id="src"><option value="">—</option><option>Facebook / Instagram</option><option>WhatsApp</option><option>Recomendación</option><option>Google</option><option>Cliente que vuelve</option><option>Otro</option></select>
+      <label for="src">¿Cómo nos conociste? (opcional)</label><select id="src"><option value="">—</option><option>TikTok</option><option>Facebook / Instagram</option><option>WhatsApp</option><option>Recomendación</option><option>Google</option><option>Cliente que vuelve</option><option>Otro</option></select>
       <div class="hp" aria-hidden="true"><label for="website">No llenar</label><input id="website" tabindex="-1" autocomplete="off"></div>
     </div>
 
@@ -663,7 +663,7 @@ promoUI();
 buildZones();
 /* Botoncito flotante de WhatsApp: aparece al bajar en la portada, no sale dentro de la agenda */
 (function(){var w=$("wafab");if(!w)return;var f=function(){w.classList.toggle("on",(window.scrollY||document.documentElement.scrollTop)>260)};window.addEventListener("scroll",f,{passive:true});f()})();
-(function(){try{var q=location.search,r=document.referrer||"";if(/[?&](fbclid=|utm_source=(facebook|fb|ig|instagram|meta|messenger))/i.test(q)||/facebook\.|instagram\.|messenger\.|fb\.com|m\.me/i.test(r)){var s=$("src");if(s&&!s.value)s.value="Facebook / Instagram"}}catch(e){}})();
+(function(){try{var q=location.search,r=document.referrer||"";if(/[?&](fbclid=|utm_source=(facebook|fb|ig|instagram|meta|messenger))/i.test(q)||/facebook\.|instagram\.|messenger\.|fb\.com|m\.me/i.test(r)){var s=$("src");if(s&&!s.value)s.value="Facebook / Instagram"}else if(/[?&]utm_source=tiktok/i.test(q)||/tiktok\./i.test(r)){var s2=$("src");if(s2&&!s2.value)s2.value="TikTok"}}catch(e){}})();
 upd();
 /* Link directo a la promo (banner de glassstudiocr.com o anuncios): ?promo=1 abre la agenda con la promo puesta */
 try{if((REF||/[?&]promo=1(&|$)/.test(location.search))&&!/[?&]cita=/.test(location.search)){startBook(true);if(REF){var _sl=document.querySelector('label[for="src"]');if(_sl)_sl.style.display="none";$("src").style.display="none";setTimeout(function(){toast2("🎁 Venís recomendado: ya tenés la promo puesta")},500)}}}catch(e){}

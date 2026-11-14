@@ -1465,6 +1465,14 @@ function renderCierre(){var f=$("cdFab");if(!f)return;var on=BOSS&&CUR==="ag";f.
   var c=((PUB&&PUB.cierre)||{})[sel];f.classList.toggle("on",c!=null);f.title=c!=null?"Día cerrado para la web":"Cerrar mi día";
   if(!$("cdPop").classList.contains("hide"))cierrePop(c)}
 $("cdFab").onclick=function(){var pop=$("cdPop");if(!pop.classList.contains("hide")){pop.classList.add("hide");return}cierrePop(((PUB&&PUB.cierre)||{})[sel]);pop.classList.remove("hide")};
+/* RESUMEN SEMANAL: reservas por la página vs. agendadas a mano, y de dónde vienen (lunes a domingo) */
+function weekPanel(){var m0=monday(new Date()),wk=function(o){var a=new Date(m0);a.setDate(a.getDate()+o*7);var b=new Date(a);b.setDate(b.getDate()+7);return [ymd(a),ymd(b)]};
+  var cnt=function(o){var r=wk(o),J=S.jobs.filter(function(j){var d=j.at?ymd(new Date(+j.at)):j.date;return d&&d>=r[0]&&d<r[1]}),W=J.filter(function(j){return j.web});return {all:J.length,web:W.length,W:W}};
+  var t=cnt(0),l=cnt(-1),pct=t.all?Math.round(t.web*100/t.all):0,O={};
+  t.W.forEach(function(j){var k=/^Referido/.test(j.src||"")?"Recomendación":(j.src||"Sin decir");O[k]=(O[k]||0)+1});
+  var ks=Object.keys(O).sort(function(a,b){return O[b]-O[a]}),d=t.web-l.web;
+  return '<div class="m" style="margin-top:12px"><b>📊 Esta semana</b> (desde el lunes)</div><div class="stats" style="margin-top:6px"><div><small>Por la página</small><b>'+t.web+'</b><small>'+(d>0?'▲ '+d:d<0?'▼ '+(-d):'=')+' vs. semana pasada</small></div><div><small>% de citas por la página</small><b>'+pct+'%</b><small>meta: la mayoría</small></div></div>'+
+    (ks.length?'<div class="m" style="margin-top:6px">De dónde vienen: '+ks.map(function(k){return esc(k)+' <b>'+O[k]+'</b>'}).join(' · ')+'</div>':'')}
 function renderRv(){var el=$("rvb");if(!el)return;var P=PUB||{},wa=String(P.wa||"50670892537").replace(/^506/,""),open=P.open!==false,off=(P.off||[]).filter(function(d){return d>=today}).sort();
   var ms=today.slice(0,7),wm=S.jobs.filter(function(j){return j.web&&(j.date||"").slice(0,7)===ms}).length,pc=S.jobs.filter(function(j){return j.st==="Por confirmar"}).length;
   var h='';
@@ -1472,6 +1480,7 @@ function renderRv(){var el=$("rvb");if(!el)return;var P=PUB||{},wa=String(P.wa||
   h+='<div class="m">Mandale este enlace a tus clientes: eligen el día, la hora libre y te mandan su ubicación. La cita te llega aquí como <b>por confirmar</b>.</div><div class="rvl">'+esc(BOOKURL)+'</div>'+
     '<div class="row" style="flex-wrap:wrap"><button class="sm" id="rvc">Copiar enlace</button><button class="sm wa" id="rvw">'+ICWA+'Compartir</button><a class="alt sm" href="'+esc(BOOKURL)+'" target="_blank" rel="noopener" style="border:1px solid var(--line);color:var(--ink)">Abrir</a><a class="alt sm" href="https://api.qrserver.com/v1/create-qr-code/?size=800x800&margin=20&color=0a3c42&data='+encodeURIComponent(BOOKURL)+'" target="_blank" rel="noopener" style="border:1px solid var(--line);color:var(--ink)">Código QR</a></div>'+
     '<div class="stats" style="margin-top:10px"><div><small>Reservas web este mes</small><b>'+wm+'</b></div><div><small>Por confirmar</small><b>'+pc+'</b></div></div>';
+  h+=weekPanel();
   if(BOSS){h+='<label class="sw">Recibir reservas en línea <input type="checkbox" id="rvo"'+(open?' checked':'')+'></label>'+
     '<label for="rvwa">Tu WhatsApp para confirmaciones</label><div class="row" style="margin-top:0"><input id="rvwa" type="tel" inputmode="tel" value="'+esc(wa)+'"><button class="alt sm" id="rvws" style="padding:10px 14px">Guardar</button></div>'+
     '<label for="rvd">Bloquear un día (feriado, vacaciones)</label><div class="row" style="margin-top:0"><input id="rvd" type="date" min="'+today+'"><button class="alt sm" id="rvda" style="padding:10px 14px">Bloquear</button></div>'+
